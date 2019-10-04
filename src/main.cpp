@@ -17,32 +17,32 @@ int main()
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(screenWidth, screenHeight, "rpi-tetris");
 
-    auto texBunny = LoadTexture("wabbit.png");
+    auto texBunny = LoadTexture("resources/wabbit.png");
 
     auto bunnies = new Bunny[MAX_BUNNIES];
     int bunniesCount = 0;
 
     while (!WindowShouldClose()) {
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-            for (int i = 0; i < 100; i++) {
-                if (bunniesCount < MAX_BUNNIES) {
-                    bunnies[bunniesCount].position = GetMousePosition();
-                    bunnies[bunniesCount].speed.x = static_cast<float>(GetRandomValue(-250, 250)) / 60.0f;
-                    bunnies[bunniesCount].speed.y = static_cast<float>(GetRandomValue(-250, 250)) / 60.0f;
-                    bunnies[bunniesCount].color = Color {
-                        static_cast<unsigned char>(GetRandomValue(50, 240)),
-                        static_cast<unsigned char>(GetRandomValue(80, 240)),
-                        static_cast<unsigned char>(GetRandomValue(100, 240)),
-                        255
-                    };
-                    bunniesCount++;
-                }
+            if (bunniesCount < MAX_BUNNIES) {
+                bunnies[bunniesCount].position = GetMousePosition();
+                bunnies[bunniesCount].speed.x = static_cast<float>(GetRandomValue(-250, 250));
+                bunnies[bunniesCount].speed.y = static_cast<float>(GetRandomValue(-250, 250));
+                bunnies[bunniesCount].color = Color {
+                    static_cast<unsigned char>(GetRandomValue(50, 240)),
+                    static_cast<unsigned char>(GetRandomValue(80, 240)),
+                    static_cast<unsigned char>(GetRandomValue(100, 240)),
+                    255
+                };
+                bunniesCount++;
             }
         }
 
+        auto dt = GetFrameTime();
+
         for (int i = 0; i < bunniesCount; i++) {
-            bunnies[i].position.x += bunnies[i].speed.x;
-            bunnies[i].position.y += bunnies[i].speed.y;
+            bunnies[i].position.x += bunnies[i].speed.x * dt;
+            bunnies[i].position.y += bunnies[i].speed.y * dt;
 
             if (((bunnies[i].position.x + texBunny.width / 2) > GetScreenWidth()) || ((bunnies[i].position.x + texBunny.width / 2) < 0))
                 bunnies[i].speed.x *= -1;
