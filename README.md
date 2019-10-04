@@ -3,9 +3,19 @@
 ## Building
 
 ```bash
+Create build directory
+$ mkdir build && cd build
+
+Desktop
+$ cmake .. -DPLATFORM="Desktop"
+
+Raspberry Pi
+$ cmake .. -DPLATFORM="Raspberry Pi"
+
 Build
-$ cmake && make
+$ make
 
 Run
-$ ./rpi-tetris
+$ cd ..
+$ build/rpi-tetris
 ```
