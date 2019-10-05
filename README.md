@@ -8,9 +8,6 @@ $ sudo ./dietpi.sh
 Create build directory
 $ mkdir build && cd build
 
-Compile raylib
-$ make -C../raylib/src PLATFORM=PLATFORM_RPI
-
 Compile this project
 $ cmake .. -DPLATFORM=PLATFORM_RPI
 $ make
@@ -20,7 +17,10 @@ $ cd ..
 $ ./build/raspberry-console
 ```
 
-## Building on other platforms
+## Building on Windows
+Open project directory with Visual Studio and everything should work out of the box.
 
+## Building on other platforms
 - Follow raylib installation guide on https://github.com/raysan5/raylib#build-and-installation
-- Build console using CMake
+- Make sure that raylib is installed globally and visible for compilers
+- Build project using CMake

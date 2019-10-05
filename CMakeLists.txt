@@ -5,6 +5,7 @@ project(raspberry-console)
 
 if("${PLATFORM}" MATCHES "PLATFORM_RPI")
     link_directories(/opt/vc/lib)
+    link_directories(${PROJECT_SOURCE_DIR}/lib/raspberry)
     include_directories(
         /opt/vc/include
         /opt/vc/include/interface/vmcs_host/linux
@@ -15,12 +16,6 @@ endif()
 if(WIN32)
     link_directories(${PROJECT_SOURCE_DIR}/lib/windows)
 endif()
-
-link_directories(
-    ${PROJECT_SOURCE_DIR}/raylib
-    ${PROJECT_SOURCE_DIR}/raylib/src
-)
-include_directories(${PROJECT_SOURCE_DIR}/raylib/src)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} raylib)
