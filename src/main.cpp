@@ -15,7 +15,8 @@ int main()
     const int screenHeight = 1080;
 
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(screenWidth, screenHeight, "rpi-tetris");
+    InitWindow(screenWidth, screenHeight, "Raspberry Console");
+    SetTargetFPS(60);
 
     auto texBunny = LoadTexture("resources/wabbit.png");
 
@@ -23,9 +24,13 @@ int main()
     int bunniesCount = 0;
 
     while (!WindowShouldClose()) {
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        if (IsKeyDown(KEY_Q)) {
+            break;
+        }
+
+        if (IsKeyDown(KEY_SPACE)) {
             if (bunniesCount < MAX_BUNNIES) {
-                bunnies[bunniesCount].position = GetMousePosition();
+                bunnies[bunniesCount].position = Vector2 { static_cast<float>(GetRandomValue(0, screenWidth)), static_cast<float>(GetRandomValue(0, screenHeight)) };
                 bunnies[bunniesCount].speed.x = static_cast<float>(GetRandomValue(-250, 250));
                 bunnies[bunniesCount].speed.y = static_cast<float>(GetRandomValue(-250, 250));
                 bunnies[bunniesCount].color = Color {
