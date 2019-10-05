@@ -1,23 +1,25 @@
-# Tetris for Raspberry Pi
+# Raspberry Pi Console
 
-## Dependencies
-- [raylib](https://github.com/raysan5/raylib)
-
-## Building
+## Building on Raspberry Pi
 ```bash
+Install DietPi dependencies
+$ sudo ./dietpi.sh
+
 Create build directory
 $ mkdir build && cd build
 
-Desktop
-$ cmake ..
+Compile raylib
+$ make -C../raylib/src PLATFORM=PLATFORM_RPI
 
-Raspberry Pi
-$ cmake .. -DPLATFORM=RPI
-
-Build
+Compile this project
+$ cmake .. -DPLATFORM=PLATFORM_RPI
 $ make
 
-Run
-$ cd ..
-$ build/rpi-tetris
+Run the console
+$ cd .. && build/console
 ```
+
+## Building on other platforms
+
+- Follow raylib installation guide on https://github.com/raysan5/raylib#build-and-installation
+- Build console using CMake
