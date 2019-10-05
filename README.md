@@ -1,7 +1,9 @@
 # Tetris for Raspberry Pi
 
-## Building
+## Dependencies
+- [raylib](https://github.com/raysan5/raylib)
 
+## Building
 ```bash
 Create build directory
 $ mkdir build && cd build
