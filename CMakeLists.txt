@@ -12,6 +12,10 @@ if("${PLATFORM}" MATCHES "PLATFORM_RPI")
     )
 endif()
 
+if(WIN32)
+    link_directories(${PROJECT_SOURCE_DIR}/lib/windows)
+endif()
+
 link_directories(
     ${PROJECT_SOURCE_DIR}/raylib
     ${PROJECT_SOURCE_DIR}/raylib/src
@@ -25,3 +29,6 @@ if("${PLATFORM}" MATCHES "PLATFORM_RPI")
     target_link_libraries(${PROJECT_NAME} brcmGLESv2 brcmEGL pthread rt m bcm_host dl)
 endif()
 
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} winmm)
+endif()

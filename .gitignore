@@ -1,4 +1,3 @@
 CMakeLists.txt.user
+CMakeSettings.json
 build*
-*.o
-*.a
