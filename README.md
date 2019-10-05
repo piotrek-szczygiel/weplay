@@ -7,10 +7,10 @@ Create build directory
 $ mkdir build && cd build
 
 Desktop
-$ cmake .. -DPLATFORM="Desktop"
+$ cmake ..
 
 Raspberry Pi
-$ cmake .. -DPLATFORM="Raspberry Pi"
+$ cmake .. -DPLATFORM=RPI
 
 Build
 $ make
