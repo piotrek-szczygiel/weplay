@@ -16,7 +16,8 @@ $ cmake .. -DPLATFORM=PLATFORM_RPI
 $ make
 
 Run the console
-$ cd .. && build/console
+$ cd ..
+$ ./build/raspberry-console
 ```
 
 ## Building on other platforms
