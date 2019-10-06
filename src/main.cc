@@ -11,7 +11,7 @@ struct Bunny {
   Vector2 speed;
   Color color;
 
-  static Bunny Random(int maxX, int maxY)
+  static auto Random(int maxX, int maxY) -> Bunny
   {
     return { { static_cast<float>(GetRandomValue(0, maxX)), static_cast<float>(GetRandomValue(0, maxY)) },
       { static_cast<float>(GetRandomValue(-250, 250)), static_cast<float>(GetRandomValue(-250, 250)) },
@@ -20,13 +20,13 @@ struct Bunny {
   }
 };
 
-int main()
+auto main() -> int
 {
-  const int gameWidth = 640;
-  const int gameHeight = 640;
+  const int gameWidth = 960;
+  const int gameHeight = 540;
 
   SetConfigFlags(FLAG_FULLSCREEN_MODE);
-  InitWindow(1920, 1080, "Raspberry Console");
+  InitWindow(3000, 2000, "Raspberry Console");
 
   RenderTexture2D renderTarget = LoadRenderTexture(gameWidth, gameHeight);
   SetTextureFilter(renderTarget.texture, FILTER_POINT);
@@ -76,13 +76,17 @@ int main()
     EndTextureMode();
 
     // Draw scaled render target onto the screen
-    float scale = std::min(static_cast<float>(GetScreenWidth()) / gameWidth, static_cast<float>(GetScreenHeight()) / gameHeight);
+    float scale = std::min(
+        static_cast<float>(GetScreenWidth()) / gameWidth, static_cast<float>(GetScreenHeight()) / gameHeight);
+
     DrawTexturePro(renderTarget.texture,
-        { 0.0F, 0.0F, static_cast<float>(renderTarget.texture.width), static_cast<float>(-renderTarget.texture.height) },
+        { 0.0F, 0.0F, static_cast<float>(renderTarget.texture.width),
+            static_cast<float>(-renderTarget.texture.height) },
         { (static_cast<float>(GetScreenWidth()) - (static_cast<float>(gameWidth) * scale)) * 0.5F,
             (static_cast<float>(GetScreenHeight()) - (static_cast<float>(gameHeight) * scale)) * 0.5F,
             static_cast<float>(gameWidth) * scale, static_cast<float>(gameHeight) * scale },
         { 0, 0 }, 0.0F, WHITE);
+
     EndDrawing();
   }
 

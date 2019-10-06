@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers'
+Checks:          '*,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-fuchsia-trailing-return'
 WarningsAsErrors: ''
 HeaderFilterRegex: 'src/'
 AnalyzeTemporaryDtors: false
