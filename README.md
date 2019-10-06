@@ -1,6 +1,8 @@
 # Raspberry Pi Console
 
 ## Building on Raspberry Pi
+Used Raspberry Pi distribution: [DietPi](https://dietpi.com)  
+
 ```bash
 Install DietPi dependencies
 $ sudo ./dietpi.sh
