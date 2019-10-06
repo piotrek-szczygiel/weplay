@@ -1,5 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -e
+
+if [[ $EUID > 0 ]]; then
+    echo "Please run as root/sudo"
+    exit 1
+fi
 
 apt update
 apt install libraspberrypi-dev raspberrypi-kernel-headers build-essential cmake hostapd dnsmasq iptables
