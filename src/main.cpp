@@ -13,7 +13,7 @@ struct Bunny {
 int main()
 {
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(0, 0, "Raspberry Console");
+    InitWindow(1920, 1080, "Raspberry Console");
     SetTargetFPS(60);
 
     const int screenWidth = GetScreenWidth();
