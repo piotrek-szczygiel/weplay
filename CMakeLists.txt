@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(raspberry-console)
 
 if("${PLATFORM}" MATCHES "PLATFORM_RPI")
     link_directories(/opt/vc/lib)
-    link_directories(${PROJECT_SOURCE_DIR}/lib/raspberry)
+    link_directories(${PROJECT_SOURCE_DIR}/raylib/raspberry)
     include_directories(
         /opt/vc/include
         /opt/vc/include/interface/vmcs_host/linux
@@ -14,10 +15,15 @@ if("${PLATFORM}" MATCHES "PLATFORM_RPI")
 endif()
 
 if(WIN32)
-    link_directories(${PROJECT_SOURCE_DIR}/lib/windows)
+    link_directories(${PROJECT_SOURCE_DIR}/raylib/windows)
 endif()
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+include_directories(${PROJECT_SOURCE_DIR}/raylib)
+include_directories(${PROJECT_SOURCE_DIR}/fmt/include)
+
+file(GLOB fmt_src "${PROJECT_SOURCE_DIR}/fmt/src/*.cc")
+
+add_executable(${PROJECT_NAME} ${fmt_src} src/main.cc)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 if("${PLATFORM}" MATCHES "PLATFORM_RPI")
