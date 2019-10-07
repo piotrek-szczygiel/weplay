@@ -19,11 +19,9 @@ if(WIN32)
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/raylib)
-include_directories(${PROJECT_SOURCE_DIR}/fmt/include)
 
-file(GLOB fmt_src "${PROJECT_SOURCE_DIR}/fmt/src/*.cc")
+add_executable(${PROJECT_NAME} src/main.cc)
 
-add_executable(${PROJECT_NAME} ${fmt_src} src/main.cc)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 if("${PLATFORM}" MATCHES "PLATFORM_RPI")
