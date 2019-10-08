@@ -11,14 +11,18 @@ const int port = 1984;
 
 WiFiClient client;
 
-const int buttonsCount = 3;
-int lastState[buttonsCount] = { HIGH, HIGH, HIGH };
-int buttonsPin[buttonsCount] = { 14, 12, 13 };
+#define MESSAGE_LENGTH 16
+char message[MESSAGE_LENGTH];
+
+#define BUTTON_COUNT 3
+const int buttonPin[BUTTON_COUNT] = { 14, 12, 13 };
+const char* buttonNames[BUTTON_COUNT] = { "left", "middle", "right" };
+int lastButtonState[BUTTON_COUNT] = { HIGH, HIGH, HIGH };
 
 void setup()
 {
-    for (int i = 0; i < buttonsCount; ++i) {
-        pinMode(buttonsPin[i], INPUT_PULLUP);
+    for (int i = 0; i < BUTTON_COUNT; ++i) {
+        pinMode(buttonPin[i], INPUT_PULLUP);
     }
 
     Serial.begin(115200);
@@ -68,23 +72,15 @@ void loop()
         connectServer();
     }
 
-    char message[buttonsCount + 1];
-    bool sendMessage = false;
+    for (int i = 0; i < BUTTON_COUNT; ++i) {
+        int state = digitalRead(buttonPin[i]);
 
-    for (int i = 0; i < buttonsCount; ++i) {
-        int state = digitalRead(buttonsPin[i]);
-
-        if (state != lastState[i]) {
-            sendMessage = true;
+        if (state != lastButtonState[i]) {
+            snprintf(message, MESSAGE_LENGTH, "%s %s\r\n", buttonNames[i], state == LOW ? "down" : "up");
+            client.write(message);
+            Serial.print(message);
         }
 
-        lastState[i] = state;
-        message[i] = (state == LOW ? 'x' : '.');
-    }
-
-    if (sendMessage) {
-        message[buttonsCount] = '\0';
-        client.println(message);
-        Serial.println(message);
+        lastButtonState[i] = state;
     }
 }
