@@ -6,5 +6,4 @@ vsync = false
 showFPS = true
 
 [controller]
-address = "192.168.137.1:1984"
-#address = "127.0.0.1:1984"
+address = "192.168.12.1:1984"

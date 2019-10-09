@@ -7,7 +7,7 @@ import (
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
 )
 
-const MAX_COLUMNS = 200
+const MAX_COLUMNS = 100
 
 type Demo struct {
 	heights   [MAX_COLUMNS]float32
