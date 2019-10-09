@@ -1,9 +1,10 @@
 package demo
 
 import (
+	"math"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
-	"math"
 )
 
 const MAX_COLUMNS = 200
@@ -40,9 +41,9 @@ func New() *Demo {
 	d.target = rl.LoadRenderTexture(1920, 1080)
 	rl.SetTextureFilter(d.target.Texture, rl.FilterAnisotropic16x)
 
-	d.camera.Position = rl.Vector3{0, 5, 0}
-	d.camera.Target = rl.Vector3{0, 0, 0}
-	d.camera.Up = rl.Vector3{0, 1, 0}
+	d.camera.Position = rl.Vector3{X: 0, Y: 5, Z: 0}
+	d.camera.Target = rl.Vector3{X: 0, Y: 0, Z: 0}
+	d.camera.Up = rl.Vector3{X: 0, Y: 1, Z: 0}
 	d.camera.Fovy = 60
 	d.camera.Type = rl.CameraPerspective
 
@@ -94,7 +95,7 @@ func (d *Demo) Draw() {
 	rl.ClearBackground(rl.DarkGray)
 	rl.BeginMode3D(d.camera)
 
-	rl.DrawPlane(rl.Vector3{0, 0, 0}, rl.Vector2{100, 100}, rl.LightGray)
+	rl.DrawPlane(rl.Vector3{X: 0, Y: 0, Z: 0}, rl.Vector2{X: 100, Y: 100}, rl.LightGray)
 
 	for i := 0; i < MAX_COLUMNS; i++ {
 		rl.DrawCube(d.positions[i], 2, d.heights[i], 2, d.colors[i])
@@ -160,9 +161,9 @@ func (d *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
 	d.camera.Target.Z = d.camera.Position.Z - float32(math.Cos(d.cameraAngle[0])*FocusDistance)
 
 	dir := rl.Vector3{
-		(d.camera.Target.X - d.camera.Position.X) / FocusDistance,
-		(d.camera.Target.Y - d.camera.Position.Y) / FocusDistance,
-		(d.camera.Target.Z - d.camera.Position.Z) / FocusDistance,
+		X: (d.camera.Target.X - d.camera.Position.X) / FocusDistance,
+		Y: (d.camera.Target.Y - d.camera.Position.Y) / FocusDistance,
+		Z: (d.camera.Target.Z - d.camera.Position.Z) / FocusDistance,
 	}
 
 	tiltOffset := dt * TiltSpeed

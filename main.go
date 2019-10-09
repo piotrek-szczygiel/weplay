@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/piotrek-szczygiel/raspberry-console/console"
 	"log"
+
+	"github.com/piotrek-szczygiel/raspberry-console/console"
 )
 
 func main() {

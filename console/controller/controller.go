@@ -2,11 +2,12 @@ package controller
 
 import (
 	"bufio"
-	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 	"log"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 )
 
 type Controller struct {

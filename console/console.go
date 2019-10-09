@@ -1,12 +1,13 @@
 package console
 
 import (
-	"github.com/gen2brain/raylib-go/raylib"
+	"log"
+	"math"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
 	"github.com/piotrek-szczygiel/raspberry-console/console/demo"
-	"log"
-	"math"
 )
 
 type Console struct {
@@ -103,7 +104,7 @@ func (c *Console) draw() {
 		target.Texture,
 		rl.NewRectangle(0, 0, float32(target.Texture.Width), float32(-target.Texture.Height)),
 		dest,
-		rl.Vector2{0, 0},
+		rl.Vector2{X: 0, Y: 0},
 		0,
 		rl.White)
 

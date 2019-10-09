@@ -1,9 +1,10 @@
 package config
 
 import (
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"log"
+
+	"github.com/BurntSushi/toml"
 )
 
 type Config struct {
