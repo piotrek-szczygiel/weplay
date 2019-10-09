@@ -3,10 +3,10 @@
 void connectWiFi();
 void connectServer();
 
-const char* ssid = "esp8266";
-const char* password = "matebook";
+const char* ssid = "RaspberryConsole";
+const char* password = "Korobeiniki1984";
 
-IPAddress server(192, 168, 137, 1);
+IPAddress server(192, 168, 12, 1);
 const int port = 1984;
 
 WiFiClient client;
