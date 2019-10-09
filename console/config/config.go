@@ -16,6 +16,7 @@ type Console struct {
 	Fullscreen bool
 	Stretch    bool
 	VSync      bool
+	ShowFPS    bool
 }
 
 type Controller struct {

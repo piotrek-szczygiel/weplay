@@ -11,9 +11,6 @@ import (
 
 type Console struct {
 	config  config.Config
-	width   int32
-	height  int32
-	target  rl.RenderTexture2D
 	stretch bool
 	events  chan controller.Event
 	state   State
@@ -22,12 +19,12 @@ type Console struct {
 type State interface {
 	Update([]controller.Event)
 	Draw()
+	GetTarget() rl.RenderTexture2D
 }
 
 func New() (c Console) {
 	c.config = config.New("config.toml")
 
-	c.width, c.height = 1920, 1080
 	c.stretch = c.config.Console.Stretch
 
 	if c.config.Console.Fullscreen {
@@ -43,9 +40,6 @@ func New() (c Console) {
 	w := c.config.Console.Resolution[0]
 	h := c.config.Console.Resolution[1]
 	rl.InitWindow(w, h, "Raspberry Console")
-
-	c.target = rl.LoadRenderTexture(c.width, c.height)
-	rl.SetTextureFilter(c.target.Texture, rl.FilterAnisotropic16x)
 
 	log.Println("Initialized window")
 
@@ -63,9 +57,7 @@ func (c *Console) Start() {
 func (c *Console) loop() {
 	for !rl.WindowShouldClose() {
 		c.update()
-		c.beginDraw()
 		c.draw()
-		c.endDraw()
 	}
 }
 
@@ -85,40 +77,39 @@ loop:
 }
 
 func (c *Console) draw() {
-	c.state.Draw()
-	rl.DrawFPS(10, 10)
-}
-
-func (c *Console) beginDraw() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.Black)
-	rl.BeginTextureMode(c.target)
-	rl.ClearBackground(rl.RayWhite)
-}
 
-func (c *Console) endDraw() {
+	c.state.Draw()
+
+	target := c.state.GetTarget()
+
 	var dest rl.Rectangle
 	if c.stretch {
 		dest = rl.NewRectangle(0, 0, float32(rl.GetScreenWidth()), float32(rl.GetScreenHeight()))
 	} else {
 		scale := float32(math.Min(
-			float64(rl.GetScreenWidth())/float64(c.width),
-			float64(rl.GetScreenHeight())/float64(c.height)))
+			float64(rl.GetScreenWidth())/float64(target.Texture.Width),
+			float64(rl.GetScreenHeight())/float64(target.Texture.Height)))
 
 		dest = rl.NewRectangle(
-			(float32(rl.GetScreenWidth())-float32(c.width)*scale)*0.5,
-			(float32(rl.GetScreenHeight())-float32(c.height)*scale)*0.5,
-			float32(c.width)*scale,
-			float32(c.height)*scale)
+			(float32(rl.GetScreenWidth())-float32(target.Texture.Width)*scale)*0.5,
+			(float32(rl.GetScreenHeight())-float32(target.Texture.Height)*scale)*0.5,
+			float32(target.Texture.Width)*scale,
+			float32(target.Texture.Height)*scale)
 	}
 
-	rl.EndTextureMode()
 	rl.DrawTexturePro(
-		c.target.Texture,
-		rl.NewRectangle(0, 0, float32(c.target.Texture.Width), float32(-c.target.Texture.Height)),
+		target.Texture,
+		rl.NewRectangle(0, 0, float32(target.Texture.Width), float32(-target.Texture.Height)),
 		dest,
 		rl.Vector2{0, 0},
 		0,
 		rl.White)
+
+	if c.config.Console.ShowFPS {
+		rl.DrawFPS(5, 5)
+	}
+
 	rl.EndDrawing()
 }

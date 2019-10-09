@@ -13,6 +13,8 @@ type Demo struct {
 	positions [MAX_COLUMNS]rl.Vector3
 	colors    [MAX_COLUMNS]rl.Color
 
+	target rl.RenderTexture2D
+
 	camera      rl.Camera
 	cameraAngle [2]float64
 	pressed     [3]bool
@@ -35,6 +37,9 @@ func New() *Demo {
 		}
 	}
 
+	d.target = rl.LoadRenderTexture(3000, 2000)
+	rl.SetTextureFilter(d.target.Texture, rl.FilterAnisotropic16x)
+
 	d.camera.Position = rl.Vector3{0, 5, 0}
 	d.camera.Target = rl.Vector3{0, 5, 1}
 	d.camera.Up = rl.Vector3{0, 2, 0}
@@ -56,10 +61,10 @@ func (d *Demo) Update(events []controller.Event) {
 		}
 	}
 
-	var left, front, right, rotateLeft, rotateRight bool
+	var left, front, right, up, down bool
 
 	if d.pressed[controller.Left] || rl.IsKeyDown(rl.KeyLeft) {
-		rotateLeft = true
+		left = true
 	}
 
 	if d.pressed[controller.Middle] || rl.IsKeyDown(rl.KeyW) {
@@ -67,22 +72,25 @@ func (d *Demo) Update(events []controller.Event) {
 	}
 
 	if d.pressed[controller.Right] || rl.IsKeyDown(rl.KeyRight) {
-		rotateRight = true
-	}
-
-	if rl.IsKeyDown(rl.KeyA) {
-		left = true
-	}
-
-	if rl.IsKeyDown(rl.KeyD) {
 		right = true
 	}
 
+	if rl.IsKeyDown(rl.KeyUp) {
+		up = true
+	}
+
+	if rl.IsKeyDown(rl.KeyDown) {
+		down = true
+	}
+
 	dt := float64(rl.GetFrameTime())
-	d.updateCamera(20*dt, left, front, right, rotateLeft, rotateRight)
+	d.updateCamera(20*dt, left, front, right, up, down)
 }
 
 func (d *Demo) Draw() {
+	rl.BeginTextureMode(d.target)
+	rl.ClearBackground(rl.RayWhite)
+
 	rl.ClearBackground(rl.DarkGray)
 	rl.BeginMode3D(d.camera)
 
@@ -93,39 +101,48 @@ func (d *Demo) Draw() {
 	}
 
 	rl.EndMode3D()
+	rl.EndTextureMode()
 }
 
-func (d *Demo) updateCamera(speed float64, left, front, right, rotateLeft, rotateRight bool) {
-	var l, f, r, rotate float64
+func (d *Demo) GetTarget() rl.RenderTexture2D {
+	return d.target
+}
 
-	if left {
-		l = 1
-	}
+func (d *Demo) updateCamera(speed float64, left, front, right, up, down bool) {
+	const (
+		Sensitivity   = 0.2
+		FocusDistance = 25
+	)
 
+	var f, h, v float64
 	if front {
 		f = 1
 	}
 
-	if right {
-		r = 1
+	if left {
+		h = 1
+	} else if right {
+		h = -1
 	}
 
-	if rotateLeft {
-		rotate = 1
+	if up {
+		v = 1
+	} else if down {
+		v = -1
 	}
 
-	if rotateRight {
-		rotate = -1
-	}
-
-	offsetX := speed * (-math.Sin(d.cameraAngle[0])*f - math.Cos(d.cameraAngle[0])*l + math.Cos(d.cameraAngle[0])*r)
-	offsetZ := speed * (-math.Cos(d.cameraAngle[0])*f + math.Sin(d.cameraAngle[0])*l - math.Sin(d.cameraAngle[0])*r)
+	offsetX := speed * -math.Sin(d.cameraAngle[0]) * f
+	offsetY := speed * math.Sin(d.cameraAngle[1]) * f
+	offsetZ := speed * -math.Cos(d.cameraAngle[0]) * f
 
 	d.camera.Position.X += float32(offsetX)
+	d.camera.Position.Y += float32(offsetY)
 	d.camera.Position.Z += float32(offsetZ)
 
-	d.cameraAngle[0] += speed * rotate * 0.1
+	d.cameraAngle[0] += speed * h * Sensitivity
+	d.cameraAngle[1] += speed * v * Sensitivity
 
-	d.camera.Target.X = d.camera.Position.X - float32(math.Sin(d.cameraAngle[0])*25)
-	d.camera.Target.Z = d.camera.Position.Z - float32(math.Cos(d.cameraAngle[0])*25)
+	d.camera.Target.X = d.camera.Position.X - float32(math.Sin(d.cameraAngle[0])*FocusDistance)
+	d.camera.Target.Y = d.camera.Position.Y + float32(math.Sin(d.cameraAngle[1])*FocusDistance)
+	d.camera.Target.Z = d.camera.Position.Z - float32(math.Cos(d.cameraAngle[0])*FocusDistance)
 }

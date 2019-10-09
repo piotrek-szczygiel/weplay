@@ -3,6 +3,7 @@ resolution = [1920, 1080]
 fullscreen = true
 stretch = false
 vsync = false
+showFPS = true
 
 [controller]
 #address = "192.168.137.1:1984"
