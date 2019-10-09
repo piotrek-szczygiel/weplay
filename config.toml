@@ -1,8 +1,9 @@
 [console]
 resolution = [1920, 1080]
-fullscreen = false
+fullscreen = true
 stretch = false
-vsync = true
+vsync = false
 
 [controller]
-address = "192.168.137.1:1984"
+#address = "192.168.137.1:1984"
+address = "127.0.0.1:1984"

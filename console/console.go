@@ -27,7 +27,7 @@ type State interface {
 func New() (c Console) {
 	c.config = config.New("config.toml")
 
-	c.width, c.height = 3000, 2000
+	c.width, c.height = 1920, 1080
 	c.stretch = c.config.Console.Stretch
 
 	if c.config.Console.Fullscreen {

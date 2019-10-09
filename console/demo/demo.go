@@ -58,16 +58,24 @@ func (d *Demo) Update(events []controller.Event) {
 
 	var left, front, right, rotateLeft, rotateRight bool
 
-	if d.pressed[controller.Left] {
+	if d.pressed[controller.Left] || rl.IsKeyDown(rl.KeyLeft) {
 		rotateLeft = true
 	}
 
-	if d.pressed[controller.Middle] {
+	if d.pressed[controller.Middle] || rl.IsKeyDown(rl.KeyW) {
 		front = true
 	}
 
-	if d.pressed[controller.Right] {
+	if d.pressed[controller.Right] || rl.IsKeyDown(rl.KeyRight) {
 		rotateRight = true
+	}
+
+	if rl.IsKeyDown(rl.KeyA) {
+		left = true
+	}
+
+	if rl.IsKeyDown(rl.KeyD) {
+		right = true
 	}
 
 	dt := float64(rl.GetFrameTime())
