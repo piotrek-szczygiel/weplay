@@ -4,6 +4,7 @@ import (
 	"github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
+	"github.com/piotrek-szczygiel/raspberry-console/console/demo"
 	"log"
 	"math"
 )
@@ -15,12 +16,18 @@ type Console struct {
 	target  rl.RenderTexture2D
 	stretch bool
 	events  chan controller.Event
+	state   State
 }
 
-func New(width, height int32) (c Console) {
+type State interface {
+	Update([]controller.Event)
+	Draw()
+}
+
+func New() (c Console) {
 	c.config = config.New("config.toml")
 
-	c.width, c.height = 800, 600
+	c.width, c.height = 3000, 2000
 	c.stretch = c.config.Console.Stretch
 
 	if c.config.Console.Fullscreen {
@@ -38,11 +45,12 @@ func New(width, height int32) (c Console) {
 	rl.InitWindow(w, h, "Raspberry Console")
 
 	c.target = rl.LoadRenderTexture(c.width, c.height)
-	rl.SetTextureFilter(c.target.Texture, rl.FilterPoint)
+	rl.SetTextureFilter(c.target.Texture, rl.FilterAnisotropic16x)
 
 	log.Println("Initialized window")
 
-	c.events = make(chan controller.Event)
+	c.events = make(chan controller.Event, 10)
+	c.state = demo.New()
 	return c
 }
 
@@ -62,17 +70,22 @@ func (c *Console) loop() {
 }
 
 func (c *Console) update() {
-	select {
-	case event, ok := <-c.events:
-		if ok {
-			log.Printf("Received event: %+v\n", event)
+	var events []controller.Event
+loop:
+	for {
+		select {
+		case event := <-c.events:
+			events = append(events, event)
+		default:
+			break loop
 		}
-	default:
-
 	}
+
+	c.state.Update(events)
 }
 
 func (c *Console) draw() {
+	c.state.Draw()
 	rl.DrawFPS(10, 10)
 }
 
