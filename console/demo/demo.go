@@ -7,7 +7,7 @@ import (
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
 )
 
-const maxColumns = 100
+const maxColumns = 2000
 
 type Demo struct {
 	heights   [maxColumns]float32
@@ -17,20 +17,25 @@ type Demo struct {
 	target rl.RenderTexture2D
 
 	camera      rl.Camera
-	cameraAngle [3]float64
+	cameraAngle float64
 	pressed     [3]bool
+
+	renderDistance float32
+
+	forwardSpeed float64
+	turningSpeed float64
 }
 
 func New() *Demo {
-	var d Demo
+	var demo Demo
 	for i := 0; i < maxColumns; i++ {
-		d.heights[i] = float32(rl.GetRandomValue(1, 20))
-		d.positions[i] = rl.Vector3{
-			X: float32(rl.GetRandomValue(-50, 50)),
-			Y: d.heights[i] / 2,
-			Z: float32(rl.GetRandomValue(-50, 50)),
+		demo.heights[i] = float32(rl.GetRandomValue(3, 20))
+		demo.positions[i] = rl.Vector3{
+			X: float32(rl.GetRandomValue(50, 10000)),
+			Y: demo.heights[i] / 2,
+			Z: float32(rl.GetRandomValue(-20, 20)),
 		}
-		d.colors[i] = rl.Color{
+		demo.colors[i] = rl.Color{
 			R: uint8(rl.GetRandomValue(20, 255)),
 			G: uint8(rl.GetRandomValue(10, 55)),
 			B: 30,
@@ -38,18 +43,20 @@ func New() *Demo {
 		}
 	}
 
-	d.target = rl.LoadRenderTexture(1920, 1080)
-	rl.SetTextureFilter(d.target.Texture, rl.FilterAnisotropic16x)
+	demo.target = rl.LoadRenderTexture(1920, 1080)
+	rl.SetTextureFilter(demo.target.Texture, rl.FilterAnisotropic16x)
 
-	d.camera.Position = rl.Vector3{0, 5, 0}
-	d.camera.Target = rl.Vector3{0, 0, 0}
-	d.camera.Up = rl.Vector3{0, 1, 0}
-	d.camera.Fovy = 60
-	d.camera.Type = rl.CameraPerspective
+	demo.camera.Position = rl.Vector3{25, 5, 0}
+	demo.camera.Target = rl.Vector3{0, 0, 0}
+	demo.camera.Up = rl.Vector3{0, 1, 0}
+	demo.camera.Fovy = 60
+	demo.camera.Type = rl.CameraPerspective
 
-	rl.SetCameraMode(d.camera, rl.CameraCustom)
+	demo.cameraAngle = -math.Pi / 2
 
-	return &d
+	demo.renderDistance = 500
+
+	return &demo
 }
 
 func (demo *Demo) Update(events []controller.Event) {
@@ -63,8 +70,8 @@ func (demo *Demo) Update(events []controller.Event) {
 	}
 
 	dt := float64(rl.GetFrameTime())
-	var left, front, right, up, down bool
 
+	var left, front, right bool
 	if demo.pressed[controller.Left] || rl.IsKeyDown(rl.KeyLeft) {
 		left = true
 	}
@@ -77,28 +84,70 @@ func (demo *Demo) Update(events []controller.Event) {
 		right = true
 	}
 
-	if rl.IsKeyDown(rl.KeyUp) {
-		up = true
+	const (
+		forwardAcc = 75
+		turningAcc = 3
+		maxTurn    = 1
+	)
+
+	if front {
+		demo.forwardSpeed += dt * forwardAcc
+		if demo.forwardSpeed > forwardAcc {
+			demo.forwardSpeed = forwardAcc
+		}
+	} else {
+		demo.forwardSpeed -= dt * 10
+		if demo.forwardSpeed < 0 {
+			demo.forwardSpeed = 0
+		}
 	}
 
-	if rl.IsKeyDown(rl.KeyDown) {
-		down = true
+	if left && !right {
+		demo.turningSpeed += dt * turningAcc
+		if demo.turningSpeed > maxTurn {
+			demo.turningSpeed = maxTurn
+		}
+	} else if right && !left {
+		demo.turningSpeed -= dt * turningAcc
+		if demo.turningSpeed < -maxTurn {
+			demo.turningSpeed = -maxTurn
+		}
+	} else if demo.turningSpeed < -dt*turningAcc*2 {
+		demo.turningSpeed += dt * turningAcc * 2
+	} else if demo.turningSpeed > dt*turningAcc*2 {
+		demo.turningSpeed -= dt * turningAcc * 2
 	}
 
-	demo.updateCamera(dt, left, front, right, up, down)
+	if math.Abs(demo.turningSpeed) < dt*turningAcc {
+		demo.turningSpeed = 0
+	}
+
+	demo.updateCamera(dt)
 }
 
 func (demo *Demo) Draw() {
+	rl.SetCameraMode(demo.camera, rl.CameraCustom)
 	rl.BeginTextureMode(demo.target)
 	rl.ClearBackground(rl.RayWhite)
 
 	rl.ClearBackground(rl.DarkGray)
 	rl.BeginMode3D(demo.camera)
 
-	rl.DrawPlane(rl.Vector3{}, rl.Vector2{X: 100, Y: 100}, rl.LightGray)
+	rl.DrawPlane(rl.Vector3{5000, 0, 0}, rl.Vector2{10000, 40}, rl.LightGray)
 
+	columnsDrew := 0
 	for i := 0; i < maxColumns; i++ {
-		rl.DrawCube(demo.positions[i], 2, demo.heights[i], 2, demo.colors[i])
+		if demo.positions[i].X > demo.camera.Position.X &&
+			demo.positions[i].X-demo.camera.Position.X < demo.renderDistance {
+
+			rl.DrawCube(demo.positions[i], 2, demo.heights[i], 2, demo.colors[i])
+			columnsDrew++
+		}
+
+		if columnsDrew%100 == 0 {
+			rl.EndMode3D()
+			rl.BeginMode3D(demo.camera)
+		}
 	}
 
 	rl.EndMode3D()
@@ -109,56 +158,28 @@ func (demo *Demo) GetTarget() rl.RenderTexture2D {
 	return demo.target
 }
 
-func (demo *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
+func (demo *Demo) updateCamera(dt float64) {
 	const (
-		sensitivity   = 0.4
+		sensitivity   = 1.5
 		focusDistance = 25
-		tiltSpeed     = 3
 	)
 
-	var f, h, v float64
-	if front {
-		f = 1
-	}
-
-	if left {
-		h = 1
-	} else if right {
-		h = -1
-	}
-
-	if up {
-		v = 1
-	} else if down {
-		v = -1
-	}
-
-	offsetX := 20 * dt * -math.Sin(demo.cameraAngle[0]) * f
-	offsetY := 20 * dt * math.Sin(demo.cameraAngle[1]) * f
-	offsetZ := 20 * dt * -math.Cos(demo.cameraAngle[0]) * f
+	offsetX := demo.forwardSpeed * dt * -math.Sin(demo.cameraAngle)
+	offsetZ := demo.forwardSpeed * dt * -math.Cos(demo.cameraAngle)
 
 	demo.camera.Position.X += float32(offsetX)
-	demo.camera.Position.Y += float32(offsetY)
 	demo.camera.Position.Z += float32(offsetZ)
 
-	demo.cameraAngle[0] += 10 * dt * h * sensitivity
-	demo.cameraAngle[1] += 10 * dt * v * sensitivity
+	demo.cameraAngle += sensitivity * dt * demo.turningSpeed
 
-	if demo.cameraAngle[0] > 2*math.Pi {
-		demo.cameraAngle[0] -= 2 * math.Pi
-	} else if demo.cameraAngle[0] < 2*math.Pi {
-		demo.cameraAngle[0] += 2 * math.Pi
+	if demo.cameraAngle > 2*math.Pi {
+		demo.cameraAngle -= 2 * math.Pi
+	} else if demo.cameraAngle < 2*math.Pi {
+		demo.cameraAngle += 2 * math.Pi
 	}
 
-	if demo.cameraAngle[1] > math.Pi/3 {
-		demo.cameraAngle[1] = math.Pi / 3
-	} else if demo.cameraAngle[1] < -math.Pi/3 {
-		demo.cameraAngle[1] = -math.Pi / 3
-	}
-
-	demo.camera.Target.X = demo.camera.Position.X - float32(math.Sin(demo.cameraAngle[0])*focusDistance)
-	demo.camera.Target.Y = demo.camera.Position.Y + float32(math.Sin(demo.cameraAngle[1])*focusDistance)
-	demo.camera.Target.Z = demo.camera.Position.Z - float32(math.Cos(demo.cameraAngle[0])*focusDistance)
+	demo.camera.Target.X = demo.camera.Position.X - float32(math.Sin(demo.cameraAngle)*focusDistance)
+	demo.camera.Target.Z = demo.camera.Position.Z - float32(math.Cos(demo.cameraAngle)*focusDistance)
 
 	dir := rl.Vector3{
 		X: (demo.camera.Target.X - demo.camera.Position.X) / focusDistance,
@@ -166,27 +187,7 @@ func (demo *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
 		Z: (demo.camera.Target.Z - demo.camera.Position.Z) / focusDistance,
 	}
 
-	tiltOffset := dt * tiltSpeed
-
-	if left {
-		demo.cameraAngle[2] -= tiltOffset
-	} else if right {
-		demo.cameraAngle[2] += tiltOffset
-	} else {
-		if demo.cameraAngle[2] > tiltOffset {
-			demo.cameraAngle[2] -= tiltOffset
-		} else if demo.cameraAngle[2] < -tiltOffset {
-			demo.cameraAngle[2] += tiltOffset
-		}
-	}
-
-	if demo.cameraAngle[2] > 1.0 {
-		demo.cameraAngle[2] = 1.0
-	} else if demo.cameraAngle[2] < -1.0 {
-		demo.cameraAngle[2] = -1.0
-	}
-
-	a := float32(demo.cameraAngle[2] * -math.Pi / 8)
+	a := float32(demo.turningSpeed * math.Pi / 16)
 
 	demo.camera.Up.X = a*dir.Z - dir.X*dir.Y
 	demo.camera.Up.Y = dir.X*dir.X + dir.Z*dir.Z
