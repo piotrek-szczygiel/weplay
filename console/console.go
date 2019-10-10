@@ -2,14 +2,14 @@ package console
 
 import (
 	"log"
-	"math"
 	"math/rand"
 	"time"
 
+	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
-	"github.com/piotrek-szczygiel/raspberry-console/console/demo"
+	"github.com/piotrek-szczygiel/raspberry-console/console/spaceships"
 )
 
 type Console struct {
@@ -49,7 +49,7 @@ func New() (c Console) {
 	rand.Seed(time.Now().UnixNano())
 
 	c.events = make(chan controller.Event, 10)
-	c.state = demo.New()
+	c.state = spaceships.New()
 	return c
 }
 
@@ -93,24 +93,27 @@ func (c *Console) draw() {
 	if c.stretch {
 		dest = rl.NewRectangle(0, 0, float32(rl.GetScreenWidth()), float32(rl.GetScreenHeight()))
 	} else {
-		scale := float32(math.Min(
-			float64(rl.GetScreenWidth())/float64(target.Texture.Width),
-			float64(rl.GetScreenHeight())/float64(target.Texture.Height)))
+		scale := math32.Min(
+			float32(rl.GetScreenWidth())/float32(target.Texture.Width),
+			float32(rl.GetScreenHeight())/float32(target.Texture.Height),
+		)
 
 		dest = rl.NewRectangle(
 			(float32(rl.GetScreenWidth())-float32(target.Texture.Width)*scale)*0.5,
 			(float32(rl.GetScreenHeight())-float32(target.Texture.Height)*scale)*0.5,
 			float32(target.Texture.Width)*scale,
-			float32(target.Texture.Height)*scale)
+			float32(target.Texture.Height)*scale,
+		)
 	}
 
 	rl.DrawTexturePro(
 		target.Texture,
 		rl.NewRectangle(0, 0, float32(target.Texture.Width), float32(-target.Texture.Height)),
 		dest,
-		rl.Vector2{X: 0, Y: 0},
+		rl.Vector2{},
 		0,
-		rl.White)
+		rl.White,
+	)
 
 	if c.config.Console.ShowFPS {
 		rl.DrawFPS(5, 5)

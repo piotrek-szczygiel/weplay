@@ -1,4 +1,4 @@
-package demo
+package spaceships
 
 import rl "github.com/gen2brain/raylib-go/raylib"
 
