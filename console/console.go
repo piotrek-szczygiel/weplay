@@ -3,6 +3,8 @@ package console
 import (
 	"log"
 	"math"
+	"math/rand"
+	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
@@ -43,6 +45,8 @@ func New() (c Console) {
 	rl.InitWindow(w, h, "Raspberry Console")
 
 	log.Println("Initialized window")
+
+	rand.Seed(time.Now().UnixNano())
 
 	c.events = make(chan controller.Event, 10)
 	c.state = demo.New()
