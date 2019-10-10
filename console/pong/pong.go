@@ -1,23 +1,23 @@
 package pong
 
 import (
+	"math"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
-	"log"
-	"math"
 )
 
-const PlayerSpeed = 425
-const BallSPeed = 450
+const playerSpeed = 425
+const ballSpeed = 450
 
-type Player struct {
+type player struct {
 	position rl.Vector2
 	speed    rl.Vector2
 	width    int32
 	height   int32
 }
 
-type Ball struct {
+type ball struct {
 	position rl.Vector2
 	speed    rl.Vector2
 	radius   float32
@@ -26,34 +26,37 @@ type Ball struct {
 type Pong struct {
 	target rl.RenderTexture2D
 
-	players [2]Player
-	ball    Ball
+	width  int32
+	height int32
+
+	players [2]player
+	ball    ball
 }
 
 func New() *Pong {
 	var pong Pong
 
-	pong.target = rl.LoadRenderTexture(1920, 1080)
-	rl.SetTextureFilter(pong.target.Texture, rl.FilterAnisotropic16x)
+	pong.width = 1920
+	pong.height = 1080
+	pong.target = rl.LoadRenderTexture(pong.width, pong.height)
+	rl.SetTextureFilter(pong.target.Texture, rl.FilterPoint)
 
-	pong.players[0] = Player{
-		rl.Vector2{X: 15, Y: 10},
-		rl.Vector2{},
-		15,
-		150,
+	pong.players[0] = player{
+		position: rl.Vector2{X: 15, Y: 10},
+		width:    15,
+		height:   150,
 	}
 
-	pong.players[1] = Player{
-		rl.Vector2{X: float32(rl.GetScreenWidth() - 25), Y: 10},
-		rl.Vector2{},
-		15,
-		150,
+	pong.players[1] = player{
+		position: rl.Vector2{X: float32(pong.width - 25), Y: 10},
+		width:    15,
+		height:   150,
 	}
 
-	pong.ball = Ball{
-		rl.Vector2{X: float32(rl.GetScreenWidth() / 2), Y: float32(rl.GetScreenHeight() / 2)},
-		rl.Vector2{X: BallSPeed, Y: BallSPeed},
-		15,
+	pong.ball = ball{
+		position: rl.Vector2{X: float32(pong.width) / 2, Y: float32(pong.height) / 2},
+		speed:    rl.Vector2{X: ballSpeed, Y: ballSpeed},
+		radius:   15,
 	}
 
 	return &pong
@@ -83,6 +86,7 @@ func (pong *Pong) Update([]controller.Event) {
 }
 
 func (pong *Pong) Draw() {
+	rl.BeginTextureMode(pong.target)
 	rl.ClearBackground(rl.Black)
 
 	for _, player := range pong.players {
@@ -90,6 +94,7 @@ func (pong *Pong) Draw() {
 	}
 
 	rl.DrawCircle(int32(pong.ball.position.X), int32(pong.ball.position.Y), pong.ball.radius, rl.RayWhite)
+	rl.EndTextureMode()
 }
 
 func (pong *Pong) GetTarget() rl.RenderTexture2D {
@@ -98,17 +103,17 @@ func (pong *Pong) GetTarget() rl.RenderTexture2D {
 
 func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool) {
 	if w {
-		pong.players[0].speed.Y = -PlayerSpeed
+		pong.players[0].speed.Y = -playerSpeed
 	} else if s {
-		pong.players[0].speed.Y = PlayerSpeed
+		pong.players[0].speed.Y = playerSpeed
 	} else {
 		pong.players[0].speed.Y = 0
 	}
 
 	if up {
-		pong.players[1].speed.Y = -PlayerSpeed
+		pong.players[1].speed.Y = -playerSpeed
 	} else if down {
-		pong.players[1].speed.Y = PlayerSpeed
+		pong.players[1].speed.Y = playerSpeed
 	} else {
 		pong.players[1].speed.Y = 0
 	}
@@ -118,17 +123,23 @@ func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool
 
 		if pong.players[i].position.Y < 10 {
 			pong.players[i].position.Y = 10
-		} else if int32(pong.players[i].position.Y)+pong.players[i].height > int32(rl.GetScreenHeight())-10 {
-			pong.players[i].position.Y = float32(rl.GetScreenHeight()) - float32(pong.players[i].height) - 10
+		} else if int32(pong.players[i].position.Y)+pong.players[i].height > pong.height-10 {
+			pong.players[i].position.Y = float32(pong.height) - float32(pong.players[i].height) - 10
 		}
 
-		if rl.CheckCollisionCircleRec(
-			pong.ball.position,
-			pong.ball.radius,
-			rl.Rectangle{X: pong.players[i].position.X, Y: pong.players[i].position.Y,
-				Width: float32(pong.players[i].width), Height: float32(pong.players[i].height)}) {
-			pong.ball.speed = normalize(rl.Vector2{X: -pong.ball.speed.X, Y: pong.ball.speed.Y + pong.players[i].speed.Y})
-			pong.ball.speed = rl.Vector2{X: pong.ball.speed.X * BallSPeed, Y: pong.ball.speed.Y * BallSPeed}
+		playerRect := rl.Rectangle{
+			X:      pong.players[i].position.X,
+			Y:      pong.players[i].position.Y,
+			Width:  float32(pong.players[i].width),
+			Height: float32(pong.players[i].height),
+		}
+
+		if rl.CheckCollisionCircleRec(pong.ball.position, pong.ball.radius, playerRect) {
+			pong.ball.speed = normalize(rl.Vector2{
+				X: -pong.ball.speed.X,
+				Y: pong.ball.speed.Y + pong.players[i].speed.Y,
+			})
+			pong.ball.speed = rl.Vector2{X: pong.ball.speed.X * ballSpeed, Y: pong.ball.speed.Y * ballSpeed}
 		}
 	}
 
@@ -138,16 +149,13 @@ func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool
 	if pong.ball.position.Y < pong.ball.radius {
 		pong.ball.position.Y = pong.ball.radius
 		pong.ball.speed.Y *= -1
-	} else if pong.ball.position.Y > float32(rl.GetScreenHeight())-pong.ball.radius {
-		pong.ball.position.Y = float32(rl.GetScreenHeight()) - pong.ball.radius
+	} else if pong.ball.position.Y > float32(pong.height)-pong.ball.radius {
+		pong.ball.position.Y = float32(pong.height) - pong.ball.radius
 		pong.ball.speed.Y *= -1
 	}
 }
 
 func normalize(v rl.Vector2) rl.Vector2 {
 	var length = float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y)))
-
-	log.Print(v)
-
 	return rl.Vector2{X: v.X / length, Y: v.Y / length}
 }

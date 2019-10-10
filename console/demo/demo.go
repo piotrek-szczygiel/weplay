@@ -7,12 +7,12 @@ import (
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
 )
 
-const MAX_COLUMNS = 100
+const maxColumns = 100
 
 type Demo struct {
-	heights   [MAX_COLUMNS]float32
-	positions [MAX_COLUMNS]rl.Vector3
-	colors    [MAX_COLUMNS]rl.Color
+	heights   [maxColumns]float32
+	positions [maxColumns]rl.Vector3
+	colors    [maxColumns]rl.Color
 
 	target rl.RenderTexture2D
 
@@ -23,7 +23,7 @@ type Demo struct {
 
 func New() *Demo {
 	var d Demo
-	for i := 0; i < MAX_COLUMNS; i++ {
+	for i := 0; i < maxColumns; i++ {
 		d.heights[i] = float32(rl.GetRandomValue(1, 20))
 		d.positions[i] = rl.Vector3{
 			X: float32(rl.GetRandomValue(-50, 50)),
@@ -41,9 +41,9 @@ func New() *Demo {
 	d.target = rl.LoadRenderTexture(1920, 1080)
 	rl.SetTextureFilter(d.target.Texture, rl.FilterAnisotropic16x)
 
-	d.camera.Position = rl.Vector3{X: 0, Y: 5, Z: 0}
-	d.camera.Target = rl.Vector3{X: 0, Y: 0, Z: 0}
-	d.camera.Up = rl.Vector3{X: 0, Y: 1, Z: 0}
+	d.camera.Position = rl.Vector3{0, 5, 0}
+	d.camera.Target = rl.Vector3{0, 0, 0}
+	d.camera.Up = rl.Vector3{0, 1, 0}
 	d.camera.Fovy = 60
 	d.camera.Type = rl.CameraPerspective
 
@@ -52,28 +52,28 @@ func New() *Demo {
 	return &d
 }
 
-func (d *Demo) Update(events []controller.Event) {
+func (demo *Demo) Update(events []controller.Event) {
 	for _, event := range events {
 		switch event.Type {
 		case controller.Down:
-			d.pressed[event.Key] = true
+			demo.pressed[event.Key] = true
 		case controller.Up:
-			d.pressed[event.Key] = false
+			demo.pressed[event.Key] = false
 		}
 	}
 
 	dt := float64(rl.GetFrameTime())
 	var left, front, right, up, down bool
 
-	if d.pressed[controller.Left] || rl.IsKeyDown(rl.KeyLeft) {
+	if demo.pressed[controller.Left] || rl.IsKeyDown(rl.KeyLeft) {
 		left = true
 	}
 
-	if d.pressed[controller.Middle] || rl.IsKeyDown(rl.KeyW) {
+	if demo.pressed[controller.Middle] || rl.IsKeyDown(rl.KeyW) {
 		front = true
 	}
 
-	if d.pressed[controller.Right] || rl.IsKeyDown(rl.KeyRight) {
+	if demo.pressed[controller.Right] || rl.IsKeyDown(rl.KeyRight) {
 		right = true
 	}
 
@@ -85,35 +85,35 @@ func (d *Demo) Update(events []controller.Event) {
 		down = true
 	}
 
-	d.updateCamera(dt, left, front, right, up, down)
+	demo.updateCamera(dt, left, front, right, up, down)
 }
 
-func (d *Demo) Draw() {
-	rl.BeginTextureMode(d.target)
+func (demo *Demo) Draw() {
+	rl.BeginTextureMode(demo.target)
 	rl.ClearBackground(rl.RayWhite)
 
 	rl.ClearBackground(rl.DarkGray)
-	rl.BeginMode3D(d.camera)
+	rl.BeginMode3D(demo.camera)
 
-	rl.DrawPlane(rl.Vector3{X: 0, Y: 0, Z: 0}, rl.Vector2{X: 100, Y: 100}, rl.LightGray)
+	rl.DrawPlane(rl.Vector3{}, rl.Vector2{X: 100, Y: 100}, rl.LightGray)
 
-	for i := 0; i < MAX_COLUMNS; i++ {
-		rl.DrawCube(d.positions[i], 2, d.heights[i], 2, d.colors[i])
+	for i := 0; i < maxColumns; i++ {
+		rl.DrawCube(demo.positions[i], 2, demo.heights[i], 2, demo.colors[i])
 	}
 
 	rl.EndMode3D()
 	rl.EndTextureMode()
 }
 
-func (d *Demo) GetTarget() rl.RenderTexture2D {
-	return d.target
+func (demo *Demo) GetTarget() rl.RenderTexture2D {
+	return demo.target
 }
 
-func (d *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
+func (demo *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
 	const (
-		Sensitivity   = 0.4
-		FocusDistance = 25
-		TiltSpeed     = 3
+		sensitivity   = 0.4
+		focusDistance = 25
+		tiltSpeed     = 3
 	)
 
 	var f, h, v float64
@@ -133,62 +133,62 @@ func (d *Demo) updateCamera(dt float64, left, front, right, up, down bool) {
 		v = -1
 	}
 
-	offsetX := 20 * dt * -math.Sin(d.cameraAngle[0]) * f
-	offsetY := 20 * dt * math.Sin(d.cameraAngle[1]) * f
-	offsetZ := 20 * dt * -math.Cos(d.cameraAngle[0]) * f
+	offsetX := 20 * dt * -math.Sin(demo.cameraAngle[0]) * f
+	offsetY := 20 * dt * math.Sin(demo.cameraAngle[1]) * f
+	offsetZ := 20 * dt * -math.Cos(demo.cameraAngle[0]) * f
 
-	d.camera.Position.X += float32(offsetX)
-	d.camera.Position.Y += float32(offsetY)
-	d.camera.Position.Z += float32(offsetZ)
+	demo.camera.Position.X += float32(offsetX)
+	demo.camera.Position.Y += float32(offsetY)
+	demo.camera.Position.Z += float32(offsetZ)
 
-	d.cameraAngle[0] += 10 * dt * h * Sensitivity
-	d.cameraAngle[1] += 10 * dt * v * Sensitivity
+	demo.cameraAngle[0] += 10 * dt * h * sensitivity
+	demo.cameraAngle[1] += 10 * dt * v * sensitivity
 
-	if d.cameraAngle[0] > 2*math.Pi {
-		d.cameraAngle[0] -= 2 * math.Pi
-	} else if d.cameraAngle[0] < 2*math.Pi {
-		d.cameraAngle[0] += 2 * math.Pi
+	if demo.cameraAngle[0] > 2*math.Pi {
+		demo.cameraAngle[0] -= 2 * math.Pi
+	} else if demo.cameraAngle[0] < 2*math.Pi {
+		demo.cameraAngle[0] += 2 * math.Pi
 	}
 
-	if d.cameraAngle[1] > math.Pi/3 {
-		d.cameraAngle[1] = math.Pi / 3
-	} else if d.cameraAngle[1] < -math.Pi/3 {
-		d.cameraAngle[1] = -math.Pi / 3
+	if demo.cameraAngle[1] > math.Pi/3 {
+		demo.cameraAngle[1] = math.Pi / 3
+	} else if demo.cameraAngle[1] < -math.Pi/3 {
+		demo.cameraAngle[1] = -math.Pi / 3
 	}
 
-	d.camera.Target.X = d.camera.Position.X - float32(math.Sin(d.cameraAngle[0])*FocusDistance)
-	d.camera.Target.Y = d.camera.Position.Y + float32(math.Sin(d.cameraAngle[1])*FocusDistance)
-	d.camera.Target.Z = d.camera.Position.Z - float32(math.Cos(d.cameraAngle[0])*FocusDistance)
+	demo.camera.Target.X = demo.camera.Position.X - float32(math.Sin(demo.cameraAngle[0])*focusDistance)
+	demo.camera.Target.Y = demo.camera.Position.Y + float32(math.Sin(demo.cameraAngle[1])*focusDistance)
+	demo.camera.Target.Z = demo.camera.Position.Z - float32(math.Cos(demo.cameraAngle[0])*focusDistance)
 
 	dir := rl.Vector3{
-		X: (d.camera.Target.X - d.camera.Position.X) / FocusDistance,
-		Y: (d.camera.Target.Y - d.camera.Position.Y) / FocusDistance,
-		Z: (d.camera.Target.Z - d.camera.Position.Z) / FocusDistance,
+		X: (demo.camera.Target.X - demo.camera.Position.X) / focusDistance,
+		Y: (demo.camera.Target.Y - demo.camera.Position.Y) / focusDistance,
+		Z: (demo.camera.Target.Z - demo.camera.Position.Z) / focusDistance,
 	}
 
-	tiltOffset := dt * TiltSpeed
+	tiltOffset := dt * tiltSpeed
 
 	if left {
-		d.cameraAngle[2] -= tiltOffset
+		demo.cameraAngle[2] -= tiltOffset
 	} else if right {
-		d.cameraAngle[2] += tiltOffset
+		demo.cameraAngle[2] += tiltOffset
 	} else {
-		if d.cameraAngle[2] > tiltOffset {
-			d.cameraAngle[2] -= tiltOffset
-		} else if d.cameraAngle[2] < -tiltOffset {
-			d.cameraAngle[2] += tiltOffset
+		if demo.cameraAngle[2] > tiltOffset {
+			demo.cameraAngle[2] -= tiltOffset
+		} else if demo.cameraAngle[2] < -tiltOffset {
+			demo.cameraAngle[2] += tiltOffset
 		}
 	}
 
-	if d.cameraAngle[2] > 1.0 {
-		d.cameraAngle[2] = 1.0
-	} else if d.cameraAngle[2] < -1.0 {
-		d.cameraAngle[2] = -1.0
+	if demo.cameraAngle[2] > 1.0 {
+		demo.cameraAngle[2] = 1.0
+	} else if demo.cameraAngle[2] < -1.0 {
+		demo.cameraAngle[2] = -1.0
 	}
 
-	a := float32(d.cameraAngle[2] * -math.Pi / 8)
+	a := float32(demo.cameraAngle[2] * -math.Pi / 8)
 
-	d.camera.Up.X = a*dir.Z - dir.X*dir.Y
-	d.camera.Up.Y = dir.X*dir.X + dir.Z*dir.Z
-	d.camera.Up.Z = -dir.Y*dir.Z - a*dir.X
+	demo.camera.Up.X = a*dir.Z - dir.X*dir.Y
+	demo.camera.Up.Y = dir.X*dir.X + dir.Z*dir.Z
+	demo.camera.Up.Z = -dir.Y*dir.Z - a*dir.X
 }
