@@ -2,11 +2,11 @@ package pong
 
 import (
 	"log"
-	"math"
-	"math/rand"
 
+	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
+	u "github.com/piotrek-szczygiel/raspberry-console/console/utils"
 )
 
 type player struct {
@@ -25,8 +25,8 @@ type ball struct {
 type Pong struct {
 	target rl.RenderTexture2D
 
-	width  int32
-	height int32
+	width  float32
+	height float32
 
 	players [2]player
 	ball    ball
@@ -35,28 +35,29 @@ type Pong struct {
 func New() *Pong {
 	var pong Pong
 
-	pong.width = 1920
-	pong.height = 1080
-	pong.target = rl.LoadRenderTexture(pong.width, pong.height)
+	w, h := rl.GetScreenWidth(), rl.GetScreenHeight()
+	pong.width, pong.height = float32(w), float32(h)
+
+	pong.target = rl.LoadRenderTexture(int32(w), int32(h))
 	rl.SetTextureFilter(pong.target.Texture, rl.FilterPoint)
 
 	pong.players[0] = player{
-		position: rl.Vector2{X: 15, Y: float32(pong.height/2 - 180/2)},
-		speed:    rl.Vector2{},
+		position: u.Vec2(15, pong.height/2-180/2),
+		speed:    u.Vec2(0, 0),
 		width:    15,
 		height:   180,
 	}
 
 	pong.players[1] = player{
-		position: rl.Vector2{X: float32(pong.width - 25), Y: float32(pong.height/2 - 180/2)},
-		speed:    rl.Vector2{},
+		position: u.Vec2(pong.width-25, pong.height/2-180/2),
+		speed:    u.Vec2(0, 0),
 		width:    15,
 		height:   180,
 	}
 
 	pong.ball = ball{
-		position: rl.Vector2{X: float32(pong.width) / 2, Y: float32(pong.height) / 2},
-		speed:    computeBallSpeed(rl.Vector2{X: 1, Y: 0}),
+		position: u.Vec2(pong.width/2, pong.height/2),
+		speed:    computeBallSpeed(u.Vec2(1, 0)),
 		radius:   15,
 	}
 
@@ -64,7 +65,7 @@ func New() *Pong {
 }
 
 func (pong *Pong) Update([]controller.Event) {
-	dt := float64(rl.GetFrameTime())
+	dt := rl.GetFrameTime()
 	var w, s, up, down bool
 
 	if rl.IsKeyDown(rl.KeyW) {
@@ -102,10 +103,12 @@ func (pong *Pong) GetTarget() rl.RenderTexture2D {
 	return pong.target
 }
 
-func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool) {
-	const playerSpeed = 700
-	const ballSpeed = 850
-	const friction = 0.8
+func (pong *Pong) updatePositions(dt float32, w bool, s bool, up bool, down bool) {
+	const (
+		playerSpeed = 700
+		ballSpeed   = 850
+		friction    = 0.8
+	)
 
 	if w {
 		pong.players[0].speed.Y = -1
@@ -124,12 +127,12 @@ func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool
 	}
 
 	for i := range pong.players {
-		pong.players[i].position.Y += pong.players[i].speed.Y * playerSpeed * float32(dt)
+		pong.players[i].position.Y += pong.players[i].speed.Y * playerSpeed * dt
 
 		if pong.players[i].position.Y < 10 {
 			pong.players[i].position.Y = 10
-		} else if int32(pong.players[i].position.Y)+pong.players[i].height > pong.height-10 {
-			pong.players[i].position.Y = float32(pong.height) - float32(pong.players[i].height) - 10
+		} else if pong.players[i].position.Y+float32(pong.players[i].height) > pong.height-10 {
+			pong.players[i].position.Y = pong.height - float32(pong.players[i].height) - 10
 		}
 
 		playerRect := rl.Rectangle{
@@ -140,13 +143,13 @@ func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool
 		}
 
 		if rl.CheckCollisionCircleRec(pong.ball.position, pong.ball.radius, playerRect) {
-			if pong.ball.position.X > 19 && pong.ball.position.X < float32(pong.width)-19 {
+			if pong.ball.position.X > 19 && pong.ball.position.X < pong.width-19 {
 				pong.ball.speed = computeBallSpeed(rl.Vector2{
 					X: -pong.ball.speed.X,
 					Y: pong.ball.speed.Y + pong.players[i].speed.Y*friction,
 				})
 
-				if pong.ball.position.X < float32(pong.width)/2 {
+				if pong.ball.position.X < pong.width/2 {
 					pong.ball.position.X = pong.players[i].position.X + float32(pong.players[i].width) + pong.ball.radius + 1
 				} else {
 					pong.ball.position.X = pong.players[i].position.X - pong.ball.radius - 1
@@ -158,42 +161,42 @@ func (pong *Pong) updatePositions(dt float64, w bool, s bool, up bool, down bool
 	if pong.ball.position.Y < pong.ball.radius {
 		pong.ball.position.Y = pong.ball.radius
 		pong.ball.speed.Y *= -1
-	} else if pong.ball.position.Y > float32(pong.height)-pong.ball.radius {
-		pong.ball.position.Y = float32(pong.height) - pong.ball.radius
+	} else if pong.ball.position.Y > pong.height-pong.ball.radius {
+		pong.ball.position.Y = pong.height - pong.ball.radius
 		pong.ball.speed.Y *= -1
 	}
 
-	pong.ball.position.X += pong.ball.speed.X * ballSpeed * float32(dt)
-	pong.ball.position.Y += pong.ball.speed.Y * ballSpeed * float32(dt)
+	pong.ball.position.X += pong.ball.speed.X * ballSpeed * dt
+	pong.ball.position.Y += pong.ball.speed.Y * ballSpeed * dt
 
 	if pong.ball.position.X < 15 {
 		pong.restart()
-	} else if pong.ball.position.X > float32(pong.width)-15 {
+	} else if pong.ball.position.X > pong.width-15 {
 		pong.restart()
 	}
 }
 
 func (pong *Pong) restart() {
-	var modAngle = (rand.Float64() * float64(1) / 4 * math.Pi) - float64(1)/8 * math.Pi
+	modAngle := u.Random(-math32.Pi/8, math32.Pi/8)
 	log.Print(modAngle)
-	var dirX = pong.ball.speed.X / float32(math.Abs(float64(pong.ball.speed.X))) * -1
+	var dirX = pong.ball.speed.X / math32.Abs(pong.ball.speed.X) * -1
 	pong.ball = ball{
-		position: rl.Vector2{X: float32(pong.width) / 2, Y: float32(pong.height) / 2},
-		speed:    computeBallSpeed(rl.Vector2{X: float32(math.Cos(modAngle)) * dirX, Y: float32(math.Sin(modAngle))}),
+		position: u.Vec2(pong.width/2, pong.height/2),
+		speed:    computeBallSpeed(u.Vec2(math32.Cos(modAngle)*dirX, math32.Sin(modAngle))),
 		radius:   15,
 	}
-	pong.players[0].position = rl.Vector2{X: 15, Y: float32(pong.height/2 - pong.players[0].height/2)}
-	pong.players[1].position = rl.Vector2{X: float32(pong.width - 25), Y: float32(pong.height/2 - pong.players[1].height/2)}
+	pong.players[0].position = u.Vec2(15, pong.height/2-float32(pong.players[0].height/2))
+	pong.players[1].position = u.Vec2(pong.width-25, pong.height/2-float32(pong.players[1].height/2))
 }
 
 func computeBallSpeed(v rl.Vector2) rl.Vector2 {
-	var length = float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y)))
-	v = rl.Vector2{X: v.X / length, Y: v.Y / length}
-	var vXDir = float64(v.X) / math.Abs(float64(v.X))
-	var vYDir = float64(v.Y) / math.Abs(float64(v.Y))
-	if math.Abs(float64(v.Y)) >= 0.90 {
-		v.Y = float32(0.90 * vYDir)
-		v.X = float32(math.Sqrt(float64(1-v.Y*v.Y)) * vXDir)
+	var length = math32.Sqrt(v.X*v.X + v.Y*v.Y)
+	v = u.Vec2(v.X/length, v.Y/length)
+	var vXDir = v.X / math32.Abs(v.X)
+	var vYDir = v.Y / math32.Abs(v.Y)
+	if math32.Abs(v.Y) >= 0.90 {
+		v.Y = 0.90 * vYDir
+		v.X = math32.Sqrt(1-v.Y*v.Y) * vXDir
 	}
 	return v
 }

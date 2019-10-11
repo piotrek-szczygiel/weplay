@@ -4,6 +4,7 @@ import (
 	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
+	u "github.com/piotrek-szczygiel/raspberry-console/console/utils"
 )
 
 type Spaceships struct {
@@ -57,7 +58,7 @@ func (s *Spaceships) Draw() {
 	rl.ClearBackground(rl.Black)
 	rl.BeginMode3D(s.ship.getCamera())
 
-	rl.DrawPlane(vec3(5000, 0, 0), vec2(10_000, 50), rl.DarkGray)
+	rl.DrawPlane(u.Vec3(5000, 0, 0), u.Vec2(10_000, 50), rl.DarkGray)
 
 	columnsDrew := 0
 	for i := range s.columns {

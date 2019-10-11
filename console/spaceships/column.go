@@ -1,6 +1,9 @@
 package spaceships
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+	u "github.com/piotrek-szczygiel/raspberry-console/console/utils"
+)
 
 type column struct {
 	position rl.Vector3
@@ -27,19 +30,19 @@ func (column *column) draw() {
 func generateColumns(n int, mapLength, mapWidth float32) []column {
 	columns := make([]column, n)
 	for i := 0; i < n; i++ {
-		height := random(6, 30)
+		height := u.Random(6, 30)
 		columns[i] = newColumn(
-			random(50, mapLength),
+			u.Random(50, mapLength),
 			height/2,
-			random(-mapWidth/2, mapWidth/2),
+			u.Random(-mapWidth/2, mapWidth/2),
 			2,
 			height,
 			2,
 			rl.Color{
-				R: uint8(random(20, 255)),
-				G: uint8(random(10, 55)),
-				B: uint8(random(30, 60)),
-				A: uint8(random(200, 255)),
+				R: uint8(u.Random(20, 255)),
+				G: uint8(u.Random(10, 55)),
+				B: uint8(u.Random(30, 60)),
+				A: uint8(u.Random(200, 255)),
 			})
 	}
 	return columns
