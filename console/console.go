@@ -5,11 +5,12 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/piotrek-szczygiel/raspberry-console/console/pong"
+
 	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
-	"github.com/piotrek-szczygiel/raspberry-console/console/spaceships"
 )
 
 type Console struct {
@@ -49,7 +50,7 @@ func New() (c Console) {
 	rand.Seed(time.Now().UnixNano())
 
 	c.events = make(chan controller.Event, 10)
-	c.state = spaceships.New()
+	c.state = pong.New()
 	return c
 }
 

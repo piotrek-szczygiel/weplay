@@ -98,7 +98,10 @@ func handleController(conn net.Conn, event chan Event) {
 		var eventKey EventKey
 
 		if bytes[0] == 'b' {
-			switch bytes[1] {
+			id := bytes[1]
+			state := bytes[2]
+
+			switch id {
 			case '<':
 				eventKey = Left
 			case '^':
@@ -106,16 +109,17 @@ func handleController(conn net.Conn, event chan Event) {
 			case '>':
 				eventKey = Right
 			default:
-				log.Println("Invalid button id:", bytes[1])
+				log.Println("Invalid button id:", id)
 				return
 			}
 
-			if bytes[2] == 'd' {
+			switch state {
+			case 'd':
 				eventType = Down
-			} else if bytes[2] == 'u' {
+			case 'u':
 				eventType = Up
-			} else {
-				log.Println("Invalid button state:", bytes[2])
+			default:
+				log.Println("Invalid button state:", state)
 				return
 			}
 		}
