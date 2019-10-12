@@ -1,15 +1,14 @@
 # Raspberry Pi Console
 
 ## Building
-Download [Go](https://golang.org/dl).
-
-```bash
-go build
-```
+- Download and install [Go](https://golang.org/dl)
+- Run `go build`
 
 ## Raspberry Pi dependencies
-Flash [DietPi](https://dietpi.com) onto SD Card.
+- Flash [DietPi](https://dietpi.com) onto SD Card
+- Run `sudo ./dietpi.sh`
 
-```bash
-sudo ./dietpi.sh
-```
+## ESP8266 controller
+- Install [PlatformIO IDE](https://platformio.org/platformio-ide)
+- Open `controller` directory
+- Build and upload using PlatformIO
