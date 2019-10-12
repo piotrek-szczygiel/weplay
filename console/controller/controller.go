@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strings"
 
 	"github.com/piotrek-szczygiel/raspberry-console/console/config"
 )
@@ -49,7 +48,11 @@ func (c *Controller) Start(event chan Event) {
 		os.Exit(1)
 	}
 
-	defer l.Close()
+	defer func() {
+		if err := l.Close(); err != nil {
+			log.Println("Unable to close server")
+		}
+	}()
 
 	log.Println("Controller server listening on", c.config.Address)
 
@@ -68,35 +71,53 @@ func handleController(conn net.Conn, event chan Event) {
 	log.Println("Controller connected", conn.RemoteAddr())
 	r := bufio.NewReader(conn)
 
+	greeting, err := r.ReadBytes('\n')
+	if err != nil {
+		log.Println("Error while reading greeting:", err)
+		return
+	}
+
+	if greeting[0] != 0x19 || greeting[1] != 0x84 {
+		log.Println("Invalid controller greeting:")
+		return
+	}
+
+	if greeting[2] != 0x01 {
+		log.Println("Invalid controller protocol version:", greeting[2])
+		return
+	}
+
 	for {
 		bytes, err := r.ReadBytes('\n')
 		if err != nil {
 			log.Println("Error while reading:", err)
-			break
-		}
-
-		s := strings.Split(strings.Trim(string(bytes), "\r\n"), " ")
-		if len(s) != 2 {
-			log.Println("Invalid message:", bytes)
-			break
+			return
 		}
 
 		var eventType EventType
-		switch s[1] {
-		case "up":
-			eventType = Up
-		case "down":
-			eventType = Down
-		}
-
 		var eventKey EventKey
-		switch s[0] {
-		case "left":
-			eventKey = Left
-		case "middle":
-			eventKey = Middle
-		case "right":
-			eventKey = Right
+
+		if bytes[0] == 'b' {
+			switch bytes[1] {
+			case '<':
+				eventKey = Left
+			case '^':
+				eventKey = Middle
+			case '>':
+				eventKey = Right
+			default:
+				log.Println("Invalid button id:", bytes[1])
+				return
+			}
+
+			if bytes[2] == 'd' {
+				eventType = Down
+			} else if bytes[2] == 'u' {
+				eventType = Up
+			} else {
+				log.Println("Invalid button state:", bytes[2])
+				return
+			}
 		}
 
 		// TODO: separate controller ids
