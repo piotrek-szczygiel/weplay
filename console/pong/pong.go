@@ -1,6 +1,7 @@
 package pong
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/chewxy/math32"
@@ -14,6 +15,7 @@ type player struct {
 	speed    rl.Vector2
 	width    int32
 	height   int32
+	score    int32
 }
 
 type ball struct {
@@ -46,6 +48,7 @@ func New() *Pong {
 		speed:    u.Vec2(0, 0),
 		width:    15,
 		height:   180,
+		score:    0,
 	}
 
 	pong.players[1] = player{
@@ -53,6 +56,7 @@ func New() *Pong {
 		speed:    u.Vec2(0, 0),
 		width:    15,
 		height:   180,
+		score:    0,
 	}
 
 	pong.ball = ball{
@@ -88,12 +92,32 @@ func (pong *Pong) Update([]controller.Event) {
 }
 
 func (pong *Pong) Draw() {
+	const (
+		fontSize  = 24
+		fontRatio = 0.5
+	)
+
 	rl.BeginTextureMode(pong.target)
 	rl.ClearBackground(rl.Black)
 
 	for _, player := range pong.players {
 		rl.DrawRectangle(int32(player.position.X), int32(player.position.Y), player.width, player.height, rl.White)
 	}
+
+	log.Print(countDigits(pong.players[0].score))
+
+	var text = fmt.Sprintf("%d", pong.players[0].score)
+	var posX = int32(pong.width/2 - 90)
+	var posY = int32(15)
+	rl.DrawText(text, posX, posY, fontSize, rl.White)
+
+	text = fmt.Sprintf(":")
+	posX = int32(pong.width / 2)
+	rl.DrawText(text, posX, posY, fontSize, rl.White)
+
+	text = fmt.Sprintf("%d", pong.players[1].score)
+	posX = int32(pong.width/2 + 80 - float32(countDigits(pong.players[0].score)-1)*fontRatio*fontSize)
+	rl.DrawText(text, posX, posY, fontSize, rl.White)
 
 	rl.DrawCircle(int32(pong.ball.position.X), int32(pong.ball.position.Y), pong.ball.radius, rl.RayWhite)
 	rl.EndTextureMode()
@@ -171,8 +195,10 @@ func (pong *Pong) updatePositions(dt float32, w bool, s bool, up bool, down bool
 
 	if pong.ball.position.X < 15 {
 		pong.restart()
+		pong.players[1].score += 1
 	} else if pong.ball.position.X > pong.width-15 {
 		pong.restart()
+		pong.players[0].score += 1
 	}
 }
 
@@ -199,4 +225,13 @@ func computeBallSpeed(v rl.Vector2) rl.Vector2 {
 		v.X = math32.Sqrt(1-v.Y*v.Y) * vXDir
 	}
 	return v
+}
+
+func countDigits(i int32) int32 {
+	var cnt = 1
+	for i/10 >= 1 {
+		cnt += 1
+		i /= 10
+	}
+	return int32(cnt)
 }
