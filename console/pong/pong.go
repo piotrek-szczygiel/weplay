@@ -2,7 +2,6 @@ package pong
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -104,8 +103,6 @@ func (pong *Pong) Draw() {
 		rl.DrawRectangle(int32(player.position.X), int32(player.position.Y), player.width, player.height, rl.White)
 	}
 
-	log.Print(countDigits(pong.players[0].score))
-
 	var text = fmt.Sprintf("%d", pong.players[0].score)
 	var posX = int32(pong.width/2 - 90)
 	var posY = int32(15)
@@ -204,7 +201,6 @@ func (pong *Pong) updatePositions(dt float32, w bool, s bool, up bool, down bool
 
 func (pong *Pong) restart() {
 	modAngle := u.Random(-math32.Pi/8, math32.Pi/8)
-	log.Print(modAngle)
 	var dirX = pong.ball.speed.X / math32.Abs(pong.ball.speed.X) * -1
 	pong.ball = ball{
 		position: u.Vec2(pong.width/2, pong.height/2),
