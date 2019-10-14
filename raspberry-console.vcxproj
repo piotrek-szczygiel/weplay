@@ -18,6 +18,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="console\Console.cpp" />
+    <ClCompile Include="console\Main.cpp" />
+    <ClCompile Include="console\Starship.cpp" />
+    <ClCompile Include="console\Util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="console\Console.hpp" />
+    <ClInclude Include="console\Starship.hpp" />
+    <ClInclude Include="console\State.hpp" />
+    <ClInclude Include="console\Util.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{D3301CF8-23E7-4605-A306-9BA204F7B557}</ProjectGuid>
@@ -143,19 +155,6 @@
       <AdditionalDependencies>raylib\raylib_static.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Console.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Starship.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="Util.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="Starship.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="Util.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

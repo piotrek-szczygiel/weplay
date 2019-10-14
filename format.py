@@ -20,7 +20,7 @@ if __name__ == "__main__":
     extensions = [".c", ".cc", ".cpp", ".h", ".hh", ".hpp"]
 
     format_base = ["clang-format", "-i"]
-    tidy_base = ["clang-tidy", "", "--", "-Iraylib"]
+    tidy_base = ["clang-tidy", "-extra-arg=-std=c++17", "", "--", "-Iraylib"]
 
     for f in collect_files(["console", "controller"], extensions):
         command = format_base + [f]
@@ -29,6 +29,6 @@ if __name__ == "__main__":
 
     for f in collect_files(["console"], extensions):
         command = tidy_base
-        command[1] = f
+        command[2] = f
         print("\n\n{1}\nTidying {0}\n{1}".format(f, "#" * (len(f) + 8)))
         result = subprocess.run(command)

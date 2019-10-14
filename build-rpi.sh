@@ -5,7 +5,7 @@ GAME_NAME="raspberry-console"
 # Set your sources here (relative paths!)
 # Example with two source folders:
 # SOURCES="src/*.c src/submodule/*.c"
-SOURCES="console/*.c"
+SOURCES="console/*.cpp"
 
 # Set your raylib/src location here (relative path!)
 RAYLIB_SRC="raylib"
@@ -86,14 +86,14 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/linux"
-COMPILATION_FLAGS="-std=c99 -Os -flto"
+COMPILATION_FLAGS="-std=c++17 -Os -flto"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/linux"
-    COMPILATION_FLAGS="-std=c99 -O0 -g"
+    COMPILATION_FLAGS="-std=c++17 -O0 -g"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 fi

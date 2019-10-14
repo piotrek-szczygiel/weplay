@@ -5,7 +5,7 @@ set GAME_NAME=raspberry-console.exe
 REM Set your sources here (relative paths!)
 REM Example with two source folders:
 REM set SOURCES=src\*.c src\submodule\*.c
-set SOURCES=console\*.c
+set SOURCES=console\*.cpp
 
 REM Set your raylib\src location here (relative path!)
 set RAYLIB_SRC=raylib
@@ -118,7 +118,7 @@ set "RAYLIB_SRC=!ROOT_DIR!\!RAYLIB_SRC!"
 
 REM Flags
 set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-set COMPILATION_FLAGS=/O1 /GL
+set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc
 set WARNING_FLAGS=
 set SUBSYSTEM_FLAGS=/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
 set LINK_FLAGS=/link /LTCG kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
@@ -126,7 +126,7 @@ set OUTPUT_DIR=builds\windows-msvc
 REM Debug changes to flags
 IF DEFINED BUILD_DEBUG (
   set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-  set COMPILATION_FLAGS=/Od /Zi
+  set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc
   set WARNING_FLAGS=/Wall
   set SUBSYSTEM_FLAGS=
   set LINK_FLAGS=/link kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib

@@ -1,5 +1,5 @@
-#include "Starship.h"
-#include "Util.h"
+#include "Starship.hpp"
+#include "Util.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -55,7 +55,7 @@ void Ship::Update(float dt)
         if (speed.z > 0.0F) {
             speed.z -= dt * strength * 2.0F;
         } else {
-            speed.z -= dt * strength * 2.0F;
+            speed.z -= dt * strength;
         }
     } else {
         speed.z = Fade(speed.z, 0.0F, dt * strength / 2.0F);
@@ -99,22 +99,15 @@ void Ship::Update(float dt)
         speed.z * dt,
     };
 
-	Vector3 newPosition{
-		std::clamp(position.x + offset.x, -20.0F, 20.0F),
-		std::clamp(position.y + offset.y, 1.0F, 20.0F),
-		std::clamp(position.z + offset.z, 0.0F, 10'000.0F),
-	};
+    Vector3 newPosition {
+        std::clamp(position.x + offset.x, -20.0F, 20.0F),
+        std::clamp(position.y + offset.y, 1.0F, 20.0F),
+        std::clamp(position.z + offset.z, 0.0F, 10'000.0F),
+    };
 
-	position = newPosition;
+    position = newPosition;
     camera.camera.position = position;
     camera.Update();
-}
-
-ShipCamera::ShipCamera()
-{
-    angle = Vector3 {PI, 0.0F, 0.0};
-    camera.fovy = 60.0F;
-    camera.type = CAMERA_PERSPECTIVE;
 }
 
 void ShipCamera::Update()
@@ -156,7 +149,7 @@ std::vector<Column> Column::GenerateColumns(size_t n, Vector3 mapSize)
     std::vector<Column> columns;
 
     for (size_t i = 0; i < n; ++i) {
-		float height = Random(mapSize.y / 4.0F, mapSize.y);
+        float height = Random(mapSize.y / 4.0F, mapSize.y);
 
         Vector3 position {
             std::roundf(Random(-mapSize.x / 2 + 1.0F, mapSize.x / 2 - 1.0F)),
@@ -170,7 +163,12 @@ std::vector<Column> Column::GenerateColumns(size_t n, Vector3 mapSize)
             2.0F,
         };
 
-        Color color { Random(20, 255), Random(10, 55), Random(30, 60), 255 };
+        Color color {
+            static_cast<unsigned char>(Random(20, 255)),
+            static_cast<unsigned char>(Random(10, 55)),
+            static_cast<unsigned char>(Random(30, 60)),
+            255,
+        };
 
         columns.emplace_back(position, size, color);
     }

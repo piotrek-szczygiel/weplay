@@ -5,7 +5,7 @@ GAME_NAME="raspberry-console"
 # Set your sources here (relative paths!)
 # Example with two source folders:
 # SOURCES="src/*.c src/submodule/*.c"
-SOURCES="console/*.c"
+SOURCES="console/*.cpp"
 
 # Set your raylib/src location here (relative path!)
 RAYLIB_SRC="raylib"
@@ -86,14 +86,14 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/osx"
-COMPILATION_FLAGS="-std=c99 -O2 -flto"
+COMPILATION_FLAGS="-std=c++17 -O2 -flto"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/osx"
-    COMPILATION_FLAGS="-std=c99 -O0 -g"
+    COMPILATION_FLAGS="-std=c++17 -O0 -g"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 fi
