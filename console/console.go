@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/piotrek-szczygiel/raspberry-console/console/pong"
+	"github.com/piotrek-szczygiel/raspberry-console/console/spaceships"
 
 	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -44,13 +44,14 @@ func New() (c Console) {
 	w := c.config.Console.Resolution[0]
 	h := c.config.Console.Resolution[1]
 	rl.InitWindow(w, h, "Raspberry Console")
+	rl.HideCursor()
 
 	log.Println("Initialized window")
 
 	rand.Seed(time.Now().UnixNano())
 
 	c.events = make(chan controller.Event, 10)
-	c.state = pong.New()
+	c.state = spaceships.New()
 	return c
 }
 

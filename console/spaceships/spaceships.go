@@ -1,6 +1,8 @@
 package spaceships
 
 import (
+	"sort"
+
 	"github.com/chewxy/math32"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/piotrek-szczygiel/raspberry-console/console/controller"
@@ -15,13 +17,25 @@ type Spaceships struct {
 	renderDistance float32
 
 	target rl.RenderTexture2D
+
+	width  float32
+	height float32
+	length float32
 }
 
 func New() *Spaceships {
 	var demo Spaceships
 
-	demo.ship = newShip(5, 5, 0, 1)
-	demo.columns = generateColumns(1_000, 10_000, 40)
+	demo.width = 40
+	demo.height = 30
+	demo.length = 10000
+
+	demo.ship = newShip(5, 5, 0, 60)
+	demo.columns = generateColumns(int(demo.length/10), demo.length, demo.width, demo.height)
+
+	sort.Slice(demo.columns[:], func(i, j int) bool {
+		return demo.columns[i].position.X < demo.columns[j].position.X
+	})
 
 	demo.renderDistance = 500
 
@@ -50,7 +64,7 @@ func (s *Spaceships) Update(events []controller.Event) {
 	s.ship.up = rl.IsKeyDown(rl.KeyUp)
 	s.ship.down = rl.IsKeyDown(rl.KeyDown)
 
-	s.ship.update(dt)
+	s.ship.update(dt, s.columns, s.length, s.width, s.height/2)
 }
 
 func (s *Spaceships) Draw() {
@@ -58,13 +72,17 @@ func (s *Spaceships) Draw() {
 	rl.ClearBackground(rl.Black)
 	rl.BeginMode3D(s.ship.getCamera())
 
-	rl.DrawPlane(u.Vec3(5000, 0, 0), u.Vec2(10_000, 50), rl.DarkGray)
+	rl.DrawPlane(u.Vec3(s.length/2, 0, 0), u.Vec2(s.length, s.width+2), rl.DarkGray)
 
 	columnsDrew := 0
+	var drewFirstColumn bool
 	for i := range s.columns {
 		if math32.Abs(s.columns[i].position.X-s.ship.position.X) < s.renderDistance {
+			drewFirstColumn = true
 			s.columns[i].draw()
 			columnsDrew++
+		} else if drewFirstColumn {
+			break
 		}
 
 		if columnsDrew%100 == 0 {
