@@ -43,18 +43,3 @@ EOF
 
 systemctl start create_ap
 systemctl enable create_ap
-
-pushd $HOME
-file="go1.13.1.linux-armv6l.tar.gz"
-wget "https://dl.google.com/go/$file"
-sudo tar -C /usr/local -xvf "$file"
-
-cat << eof >> /home/dietpi/.profile
-export GOPATH='$HOME/go'
-export GOROOT=/usr/local/go
-export PATH='/usr/local/go/bin:$PATH:$GOPATH/bin'
-eof
-
-chown dietpi:dietpi /home/dietpi/.profile
-
-popd
