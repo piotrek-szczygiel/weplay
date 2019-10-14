@@ -11,19 +11,6 @@ template <typename T> T Random(T min, T max)
     return dist { min, max }(gen);
 }
 
-inline float Fade(float x, float y, float offset)
-{
-    if (x > y) {
-        x -= offset;
-        if (x < y) {
-            x = y;
-        }
-    } else if (x < y) {
-        x += offset;
-        if (x > y) {
-            x = y;
-        }
-    }
+bool Between(float x, float y, float threshold);
 
-    return x;
-}
+float Fade(float x, float y, float offset);

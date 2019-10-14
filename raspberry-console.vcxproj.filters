@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Starship">
+      <UniqueIdentifier>{96c8ea1e-3994-402d-b065-615952319620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Starship">
+      <UniqueIdentifier>{0de0f73c-481d-416d-99f4-ae3fa5a12171}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="console\Console.cpp">
@@ -21,18 +27,15 @@
     <ClCompile Include="console\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="console\Starship.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="console\Util.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="console\Starship.cpp">
+      <Filter>Source Files\Starship</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="console\Console.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="console\Starship.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="console\State.hpp">
@@ -40,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="console\Util.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="console\Starship.hpp">
+      <Filter>Header Files\Starship</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

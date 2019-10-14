@@ -7,8 +7,7 @@ Console::Console() { currentState = std::make_unique<Starship>(); }
 
 void Console::Initialize()
 {
-    SetConfigFlags(FLAG_VSYNC_HINT);
-    SetConfigFlags(FLAG_FULLSCREEN_MODE);
+    SetConfigFlags(static_cast<unsigned int>(FLAG_VSYNC_HINT) | static_cast<unsigned int>(FLAG_FULLSCREEN_MODE));
     InitWindow(3000, 2000, "Raspberry Console");
 
     currentState->Initialize();
