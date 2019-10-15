@@ -27,6 +27,7 @@
     <ClCompile Include="..\console\starship\ship_camera.cpp" />
     <ClCompile Include="..\console\starship\starship.cpp" />
     <ClCompile Include="..\console\util.cpp" />
+    <ClCompile Include="..\libraries\easyloggingpp\easylogging++.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\console\console.hpp" />
@@ -90,18 +91,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\libraries\raylib;..\libraries\asio;$(IncludePath)</IncludePath>
+    <IncludePath>..\libraries\raylib;..\libraries\asio;..\libraries\cpptoml;..\libraries\easyloggingpp;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\libraries\raylib;..\libraries\asio;$(IncludePath)</IncludePath>
+    <IncludePath>..\libraries\raylib;..\libraries\asio;..\libraries\cpptoml;..\libraries\easyloggingpp;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\libraries\raylib;..\libraries\asio;$(IncludePath)</IncludePath>
+    <IncludePath>..\libraries\raylib;..\libraries\asio;..\libraries\cpptoml;..\libraries\easyloggingpp;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\libraries\raylib;..\libraries\asio;$(IncludePath)</IncludePath>
+    <IncludePath>..\libraries\raylib;..\libraries\asio;..\libraries\cpptoml;..\libraries\easyloggingpp;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\build\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>

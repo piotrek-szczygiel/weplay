@@ -39,6 +39,9 @@
     <ClCompile Include="..\console\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\libraries\easyloggingpp\easylogging++.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\console\controller\controller.hpp">
