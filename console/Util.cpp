@@ -1,10 +1,10 @@
-#include "Util.hpp"
+#include "util.hpp"
 
-thread_local std::mt19937 gen { std::random_device {}() }; // NOLINT
+thread_local std::mt19937 random_generator { std::random_device {}() }; // NOLINT
 
-bool Between(float x, float y, float threshold) { return std::fabs(x - y) < threshold; }
+bool threshold(float x, float y, float threshold) { return std::fabs(x - y) < threshold; }
 
-float Fade(float x, float y, float offset)
+float fade(float x, float y, float offset)
 {
     if (x > y) {
         x -= offset;

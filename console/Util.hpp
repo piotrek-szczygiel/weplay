@@ -1,16 +1,16 @@
 #pragma once
 #include <random>
 
-extern thread_local std::mt19937 gen;
+extern thread_local std::mt19937 random_generator;
 
-template <typename T> T Random(T min, T max)
+template <typename T> T random(T min, T max)
 {
 
     using dist = std::conditional_t<std::is_integral<T>::value, std::uniform_int_distribution<T>,
         std::uniform_real_distribution<T>>;
-    return dist { min, max }(gen);
+    return dist { min, max }(random_generator);
 }
 
-bool Between(float x, float y, float threshold);
+bool threshold(float x, float y, float threshold);
 
-float Fade(float x, float y, float offset);
+float fade(float x, float y, float offset);

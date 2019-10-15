@@ -1,13 +1,13 @@
 #pragma once
-#include "State.hpp"
+#include "state.hpp"
 #include <memory>
 
 class Console {
 private:
-    std::unique_ptr<State> currentState;
+    std::unique_ptr<State> current_state;
 
 public:
     Console();
-    void Initialize();
-    void Run();
+    void init();
+    void run();
 };

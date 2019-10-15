@@ -1,10 +1,11 @@
-#include "Console.hpp"
+#include "console.hpp"
 
 int main()
 {
-    Console c;
-    c.Initialize();
-    c.Run();
+    Console console;
+
+    console.init();
+    console.run();
 
     return 0;
 }

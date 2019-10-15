@@ -1,5 +1,5 @@
 #pragma once
-#include "raylib.h"
+#include <raylib.h>
 
 class State {
 public:
@@ -12,8 +12,9 @@ public:
     State& operator=(State&&) = delete;
 
     virtual ~State() = default;
-    virtual void Initialize() = 0;
-    virtual void Update() = 0;
-    virtual void Draw() = 0;
-    virtual RenderTexture2D GetFramebuffer() = 0;
+
+    virtual void init() = 0;
+    virtual void update() = 0;
+    virtual void draw() = 0;
+    virtual RenderTexture2D get_framebuffer() = 0;
 };

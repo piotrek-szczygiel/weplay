@@ -1,29 +1,30 @@
-#include "Console.hpp"
-#include "Starship.hpp"
-#include "raylib.h"
+#include "console.hpp"
+#include "starship/starship.hpp"
 #include <algorithm>
+#include <raylib.h>
 
-Console::Console() { currentState = std::make_unique<Starship>(); }
+Console::Console() { current_state = std::make_unique<Starship>(); }
 
-void Console::Initialize()
+void Console::init()
 {
     SetConfigFlags(static_cast<unsigned int>(FLAG_VSYNC_HINT) | static_cast<unsigned int>(FLAG_FULLSCREEN_MODE));
     InitWindow(3000, 2000, "Raspberry Console");
+    HideCursor();
 
-    currentState->Initialize();
+    current_state->init();
 }
 
-void Console::Run()
+void Console::run()
 {
     while (!WindowShouldClose()) {
-        currentState->Update();
-        currentState->Draw();
+        current_state->update();
+        current_state->draw();
 
         BeginDrawing();
         ClearBackground(WHITE);
 
-        auto gw = static_cast<float>(currentState->GetFramebuffer().texture.width);
-        auto gh = static_cast<float>(currentState->GetFramebuffer().texture.height);
+        auto gw = static_cast<float>(current_state->get_framebuffer().texture.width);
+        auto gh = static_cast<float>(current_state->get_framebuffer().texture.height);
         auto sw = static_cast<float>(GetScreenWidth());
         auto sh = static_cast<float>(GetScreenHeight());
         float scale = std::min(sw / gw, sh / gh);
@@ -42,7 +43,7 @@ void Console::Run()
             gh * scale,
         };
 
-        DrawTexturePro(currentState->GetFramebuffer().texture, source, dest, Vector2 {}, 0.0F, WHITE);
+        DrawTexturePro(current_state->get_framebuffer().texture, source, dest, Vector2 {}, 0.0F, WHITE);
 
         DrawFPS(10, 10);
         EndDrawing();

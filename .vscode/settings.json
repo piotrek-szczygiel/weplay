@@ -1,0 +1,15 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/.mypy_cache": true,
+        "**/.vs": true,
+        "**/builds": true,
+        "**/temp": true,
+        "*.sln": true,
+        "*.vcxproj*": true,
+    }
+}

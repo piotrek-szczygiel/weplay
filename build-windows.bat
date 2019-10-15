@@ -1,14 +1,16 @@
 @echo off
+REM For the ! variable notation
+setlocal EnableDelayedExpansion
+REM For shifting, which the command line argument parsing needs
+setlocal EnableExtensions
+
 REM Change your executable name here
 set GAME_NAME=raspberry-console.exe
 
-REM Set your sources here (relative paths!)
-REM Example with two source folders:
-REM set SOURCES=src\*.c src\submodule\*.c
-set SOURCES=console\*.cpp
-
-REM Set your raylib\src location here (relative path!)
-set RAYLIB_SRC=raylib
+REM Directories
+set "ROOT_DIR=%CD%"
+set "SOURCES=!ROOT_DIR!\console\*.cpp !ROOT_DIR!\console\starship\*.cpp !ROOT_DIR!\console\controller\*.cpp"
+set "RAYLIB_SRC=!ROOT_DIR!\libraries\raylib"
 
 REM About this build script: it does many things, but in essence, it's
 REM very simple. It has 3 compiler invocations: building raylib (which
@@ -18,12 +20,6 @@ REM wrapped in an if statement to make the -qq flag work, it's pretty
 REM verbose, sorry.
 
 REM To skip to the actual building part of the script, search for ":BUILD"
-
-REM For the ! variable notation
-setlocal EnableDelayedExpansion
-REM For shifting, which the command line argument parsing needs
-setlocal EnableExtensions
-
 
 :ARG_LOOP
 set ARG=%1
@@ -111,14 +107,9 @@ IF DEFINED VERBOSE (
 
 
 :BUILD
-REM Directories
-set "ROOT_DIR=%CD%"
-set "SOURCES=!ROOT_DIR!\!SOURCES!"
-set "RAYLIB_SRC=!ROOT_DIR!\!RAYLIB_SRC!"
-
 REM Flags
 set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc
+set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc /DWIN32 /DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio"
 set WARNING_FLAGS=
 set SUBSYSTEM_FLAGS=/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
 set LINK_FLAGS=/link /LTCG kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
@@ -126,7 +117,7 @@ set OUTPUT_DIR=builds\windows-msvc
 REM Debug changes to flags
 IF DEFINED BUILD_DEBUG (
   set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-  set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc
+  set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc /DWIN32 /DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio"
   set WARNING_FLAGS=/Wall
   set SUBSYSTEM_FLAGS=
   set LINK_FLAGS=/link kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
