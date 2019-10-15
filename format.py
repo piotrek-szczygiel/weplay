@@ -28,18 +28,17 @@ def tidy(file):
     tidy_base = [
         "clang-tidy",
         "-extra-arg=-std=c++17",
-        "-fix",
-        "-fix-errors",
         "",
         "--",
         "-Ilibraries/raylib",
         "-Ilibraries/asio",
+        "-Ilibraries/easyloggingpp",
         "-DASIO_STANDALONE",
         "-D_WIN32_WINNT=0x0A00",
     ]
 
     command = tidy_base
-    command[4] = f
+    command[2] = f
     print("\n\n{1}\nTidying {0}\n{1}".format(f, "#" * (len(f) + 8)))
     subprocess.run(command)
 

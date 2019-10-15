@@ -1,6 +1,10 @@
 #include "starship.hpp"
 
-void Starship::init() { framebuffer = LoadRenderTexture(GetScreenWidth(), GetScreenHeight()); }
+void Starship::init()
+{
+    framebuffer = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    log->info("Initialized starship module");
+}
 
 void Starship::update()
 {

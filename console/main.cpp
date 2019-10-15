@@ -1,7 +1,13 @@
 #include "console.hpp"
+#include <easylogging++.h>
 
-int main()
+INITIALIZE_EASYLOGGINGPP; // NOLINT
+
+int main(int argc, char* argv[])
 {
+    START_EASYLOGGINGPP(argc, argv);
+    el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+
     Console console;
 
     console.init();

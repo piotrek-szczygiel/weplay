@@ -21,7 +21,8 @@
             "compilerArgs": [
                 "-Ilibraries/raylib",
                 "-Ilibraries/asio",
-                "-Ilibraries/cpptoml"
+                "-Ilibraries/cpptoml",
+                "-Ilibraries/easyloggingpp"
             ]
         }
     ],

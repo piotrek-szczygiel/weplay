@@ -5,7 +5,7 @@ GAME_NAME="raspberry-console"
 # Set your sources here (relative paths!)
 # Example with two source folders:
 # SOURCES="src/*.c src/submodule/*.c"
-SOURCES="console/*.cpp console/starship/*.cpp console/controller/*.cpp"
+SOURCES="console/*.cpp console/starship/*.cpp console/controller/*.cpp libraries/easyloggingpp/*.cc"
 
 # Set your raylib/src location here (relative path!)
 RAYLIB_SRC="libraries/raylib"
@@ -90,7 +90,7 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/linux"
-INCLUDE_DIRS="-DASIO_STANDALONE -Ilibraries/asio -Ilibraries/cpptoml"
+INCLUDE_DIRS="-DASIO_STANDALONE -Ilibraries/asio -Ilibraries/cpptoml -Ilibraries/easyloggingpp"
 C_STANDARD="-std=c99"
 CXX_STANDARD="-std=c++17"
 COMPILATION_FLAGS="-Os -flto"

@@ -9,7 +9,7 @@ set GAME_NAME=raspberry-console.exe
 
 REM Directories
 set "ROOT_DIR=%CD%"
-set "SOURCES=!ROOT_DIR!\console\*.cpp !ROOT_DIR!\console\starship\*.cpp !ROOT_DIR!\console\controller\*.cpp"
+set "SOURCES=!ROOT_DIR!\console\*.cpp !ROOT_DIR!\console\starship\*.cpp !ROOT_DIR!\console\controller\*.cpp !ROOT_DIR!\libraries\easyloggingpp\*.cc"
 set "RAYLIB_SRC=!ROOT_DIR!\libraries\raylib"
 
 REM About this build script: it does many things, but in essence, it's
@@ -109,7 +109,7 @@ IF DEFINED VERBOSE (
 :BUILD
 REM Flags
 set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-set INCLUDE_DIRS=/DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio" /I"!ROOT_DIR!\libraries\cpptoml"
+set INCLUDE_DIRS=/DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio" /I"!ROOT_DIR!\libraries\cpptoml" /I"!ROOT_DIR!\libraries\easyloggingpp"
 set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc
 set WARNING_FLAGS=
 set SUBSYSTEM_FLAGS=/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
@@ -119,7 +119,7 @@ REM Debug changes to flags
 IF DEFINED BUILD_DEBUG (
   set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
   set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc
-  set WARNING_FLAGS=/Wall
+  set WARNING_FLAGS=
   set SUBSYSTEM_FLAGS=
   set LINK_FLAGS=/link kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
   set OUTPUT_DIR=builds-debug\windows-msvc

@@ -3,10 +3,13 @@
 #include "column.hpp"
 #include "ship.hpp"
 #include <algorithm>
+#include <easylogging++.h>
 #include <vector>
 
 class Starship final : public State {
 private:
+    el::Logger* log;
+
     RenderTexture2D framebuffer;
 
     Ship ship;
@@ -20,6 +23,7 @@ public:
         , ship(Ship(Vector3 { 0.0, 5.0, 5.0 }, 50.0F))
         , map_size(Vector3 { 40.0F, 30.0F, 10'000.0F })
     {
+        log = el::Loggers::getLogger("starship");
         columns = Column::generate_random_columns(static_cast<size_t>(map_size.z / 10.0F), map_size);
         std::sort(columns.begin(), columns.end(),
             [](const Column& a, const Column& b) -> bool { return a.position.z < b.position.z; });

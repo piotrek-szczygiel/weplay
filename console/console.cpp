@@ -1,17 +1,25 @@
 #include "console.hpp"
+#include "controller/controller.hpp"
 #include "starship/starship.hpp"
 #include <algorithm>
+#include <easylogging++.h>
 #include <raylib.h>
 
-Console::Console() { current_state = std::make_unique<Starship>(); }
+Console::Console()
+{
+    log = el::Loggers::getLogger("console");
+    current_state = std::make_unique<Starship>();
+}
 
 void Console::init()
 {
-    SetConfigFlags(static_cast<unsigned int>(FLAG_VSYNC_HINT) | static_cast<unsigned int>(FLAG_FULLSCREEN_MODE));
-    InitWindow(3000, 2000, "Raspberry Console");
-    HideCursor();
+    SetConfigFlags(FLAG_VSYNC_HINT);
+    InitWindow(1920, 1080, "Raspberry Console");
+
+    log->info("Initialized window");
 
     current_state->init();
+    // start_controller();
 }
 
 void Console::run()

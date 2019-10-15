@@ -10,6 +10,7 @@
         "**/builds": true,
         "**/temp": true,
         "*.sln": true,
-        "*.vcxproj*": true,
-    }
+        "**/vs2019": true,
+    },
+    "python.linting.enabled": false
 }
