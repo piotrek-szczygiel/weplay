@@ -79,6 +79,10 @@ if [ -z "$CC" ]; then
     CC=cc
 fi
 
+if [ -z "$CXX" ]; then
+    CXX=g++
+fi
+
 # Directories
 ROOT_DIR=$PWD
 SOURCES="$ROOT_DIR/$SOURCES"
@@ -86,14 +90,16 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/linux"
-COMPILATION_FLAGS="-std=c++17 -Os -flto -DASIO_STANDALONE -Ilibraries/asio"
+C_STANDARD="-std=c99"
+CXX_STANDARD="-std=c++17"
+COMPILATION_FLAGS="-Os -flto -DASIO_STANDALONE -Ilibraries/asio"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/linux"
-    COMPILATION_FLAGS="-std=c++17 -O0 -g -DASIO_STANDALONE -Ilibraries/asio"
+    COMPILATION_FLAGS="-O0 -g -DASIO_STANDALONE -Ilibraries/asio"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 fi
@@ -124,9 +130,9 @@ if [ ! -d "$TEMP_DIR" ]; then
     RAYLIB_INCLUDE_FLAGS="-I$RAYLIB_SRC -I/opt/vc/include"
 
     if [ -n "$REALLY_QUIET" ]; then
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS $RAYLIB_C_FILES > /dev/null 2>&1
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS $RAYLIB_C_FILES > /dev/null 2>&1
     else
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS $RAYLIB_C_FILES
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS $RAYLIB_C_FILES
     fi
     [ -z "$QUIET" ] && echo "COMPILE-INFO: Raylib compiled into object files in: $TEMP_DIR/"
     cd $ROOT_DIR
@@ -137,11 +143,11 @@ mkdir -p $OUTPUT_DIR
 cd $OUTPUT_DIR
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Compiling game code."
 if [ -n "$REALLY_QUIET" ]; then
-    $CC -c -I$RAYLIB_SRC $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES > /dev/null 2>&1
-    $CC -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
+    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES > /dev/null 2>&1
+    $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
 else
-    $CC -c -I$RAYLIB_SRC $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES
-    $CC -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
+    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES
+    $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
 fi
 rm *.o
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Game compiled into an executable in: $OUTPUT_DIR/"

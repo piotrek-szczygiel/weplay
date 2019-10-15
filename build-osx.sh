@@ -76,7 +76,11 @@ done
 
 # Set CC if it's not set already
 if [ -z "$CC" ]; then
-    CC=cc
+    CC=gcc
+fi
+
+if [ -z "$CXX" ]; then
+    CXX=g++
 fi
 
 # Directories
@@ -86,14 +90,16 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/osx"
-COMPILATION_FLAGS="-std=c++17 -O2 -flto -DASIO_STANDALONE -Ilibraries/asio"
+C_STANDARD="-std=c99"
+CXX_STANDARD="-std=c++17"
+COMPILATION_FLAGS="-O2 -flto -DASIO_STANDALONE -Ilibraries/asio"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/osx"
-    COMPILATION_FLAGS="-std=c++17 -O0 -g -DASIO_STANDALONE -Ilibraries/asio"
+    COMPILATION_FLAGS="-O0 -g -DASIO_STANDALONE -Ilibraries/asio"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 fi
@@ -124,11 +130,11 @@ if [ ! -d "$TEMP_DIR" ]; then
     RAYLIB_INCLUDE_FLAGS="-I$RAYLIB_SRC -I$RAYLIB_SRC/external/glfw/include"
 
     if [ -n "$REALLY_QUIET" ]; then
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS -x objective-c $RAYLIB_SRC/rglfw.c > /dev/null 2>&1
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS $RAYLIB_C_FILES > /dev/null 2>&1
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS -x objective-c $RAYLIB_SRC/rglfw.c > /dev/null 2>&1
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS $RAYLIB_C_FILES > /dev/null 2>&1
     else
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS -x objective-c $RAYLIB_SRC/rglfw.c
-        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $COMPILATION_FLAGS $RAYLIB_C_FILES
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS -x objective-c $RAYLIB_SRC/rglfw.c
+        $CC -c $RAYLIB_DEFINES $RAYLIB_INCLUDE_FLAGS $C_STANDARD $COMPILATION_FLAGS $RAYLIB_C_FILES
     fi
     [ -z "$QUIET" ] && echo "COMPILE-INFO: Raylib compiled into object files in: $TEMP_DIR/"
     cd $ROOT_DIR
@@ -139,11 +145,11 @@ mkdir -p $OUTPUT_DIR
 cd $OUTPUT_DIR
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Compiling game code."
 if [ -n "$REALLY_QUIET" ]; then
-    $CC -c -I$RAYLIB_SRC $SOURCES $COMPILATION_FLAGS $WARNING_FLAGS > /dev/null 2>&1
-    $CC -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
+    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS > /dev/null 2>&1
+    $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
 else
-    $CC -c -I$RAYLIB_SRC $SOURCES $COMPILATION_FLAGS $WARNING_FLAGS
-    $CC -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
+    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS
+    $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
 fi
 rm *.o
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Game compiled into an executable in: $OUTPUT_DIR/"
