@@ -109,7 +109,8 @@ IF DEFINED VERBOSE (
 :BUILD
 REM Flags
 set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc /DWIN32 /DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio"
+set INCLUDE_DIRS=/DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio" /I"!ROOT_DIR!\libraries\cpptoml"
+set COMPILATION_FLAGS=/O1 /GL /std:c++17 /EHsc
 set WARNING_FLAGS=
 set SUBSYSTEM_FLAGS=/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
 set LINK_FLAGS=/link /LTCG kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
@@ -117,7 +118,7 @@ set OUTPUT_DIR=builds\windows-msvc
 REM Debug changes to flags
 IF DEFINED BUILD_DEBUG (
   set OUTPUT_FLAG=/Fe: "!GAME_NAME!"
-  set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc /DWIN32 /DASIO_STANDALONE /D_WIN32_WINNT=0x0A00 /I"!ROOT_DIR!\libraries\asio"
+  set COMPILATION_FLAGS=/Od /Zi /std:c++17 /EHsc
   set WARNING_FLAGS=/Wall
   set SUBSYSTEM_FLAGS=
   set LINK_FLAGS=/link kernel32.lib user32.lib shell32.lib winmm.lib gdi32.lib opengl32.lib
@@ -175,10 +176,10 @@ cd !OUTPUT_DIR!
 REM Build the actual game
 IF NOT DEFINED QUIET echo COMPILE-INFO: Compiling game code.
 IF DEFINED REALLY_QUIET (
-  cl.exe !VERBOSITY_FLAG! !COMPILATION_FLAGS! !WARNING_FLAGS! /c /I"!RAYLIB_SRC!" !SOURCES! > NUL 2>&1 || exit /B
+  cl.exe !VERBOSITY_FLAG! !COMPILATION_FLAGS! !INCLUDE_DIRS! !WARNING_FLAGS! /c /I"!RAYLIB_SRC!" !SOURCES! > NUL 2>&1 || exit /B
   cl.exe !VERBOSITY_FLAG! !OUTPUT_FLAG! "!ROOT_DIR!\!TEMP_DIR!\*.obj" *.obj !LINK_FLAGS! !SUBSYSTEM_FLAGS! > NUL 2>&1 || exit /B
 ) ELSE (
-  cl.exe !VERBOSITY_FLAG! !COMPILATION_FLAGS! !WARNING_FLAGS! /c /I"!RAYLIB_SRC!" !SOURCES! || exit /B
+  cl.exe !VERBOSITY_FLAG! !COMPILATION_FLAGS! !INCLUDE_DIRS! !WARNING_FLAGS! /c /I"!RAYLIB_SRC!" !SOURCES! || exit /B
   cl.exe !VERBOSITY_FLAG! !OUTPUT_FLAG! "!ROOT_DIR!\!TEMP_DIR!\*.obj" *.obj !LINK_FLAGS! !SUBSYSTEM_FLAGS! || exit /B
 )
 del *.obj

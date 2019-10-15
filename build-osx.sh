@@ -90,16 +90,17 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/osx"
+INCLUDE_DIRS="-DASIO_STANDALONE -Ilibraries/asio -Ilibraries/cpptoml"
 C_STANDARD="-std=c99"
 CXX_STANDARD="-std=c++17"
-COMPILATION_FLAGS="-O2 -flto -DASIO_STANDALONE -Ilibraries/asio"
+COMPILATION_FLAGS="-O2 -flto"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/osx"
-    COMPILATION_FLAGS="-O0 -g -DASIO_STANDALONE -Ilibraries/asio"
+    COMPILATION_FLAGS="-O0 -g"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-framework OpenGL -framework OpenAL -framework IOKit -framework CoreVideo -framework Cocoa"
 fi
@@ -145,10 +146,10 @@ mkdir -p $OUTPUT_DIR
 cd $OUTPUT_DIR
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Compiling game code."
 if [ -n "$REALLY_QUIET" ]; then
-    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS > /dev/null 2>&1
+    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $INCLUDE_DIRS $COMPILATION_FLAGS $WARNING_FLAGS > /dev/null 2>&1
     $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
 else
-    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS
+    $CXX -c -I$RAYLIB_SRC $SOURCES $CXX_STANDARD $INCLUDE_DIRS $COMPILATION_FLAGS $WARNING_FLAGS
     $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
 fi
 rm *.o

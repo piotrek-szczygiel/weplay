@@ -90,16 +90,17 @@ RAYLIB_SRC="$ROOT_DIR/$RAYLIB_SRC"
 
 # Flags
 OUTPUT_DIR="builds/linux"
+INCLUDE_DIRS="-DASIO_STANDALONE -Ilibraries/asio -Ilibraries/cpptoml"
 C_STANDARD="-std=c99"
 CXX_STANDARD="-std=c++17"
-COMPILATION_FLAGS="-Os -flto -DASIO_STANDALONE -Ilibraries/asio"
+COMPILATION_FLAGS="-Os -flto"
 FINAL_COMPILE_FLAGS="-s"
 WARNING_FLAGS="-Wall -Wextra -Wpedantic"
 LINK_FLAGS="-flto -lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 # Debug changes to flags
 if [ -n "$BUILD_DEBUG" ]; then
     OUTPUT_DIR="builds-debug/linux"
-    COMPILATION_FLAGS="-O0 -g -DASIO_STANDALONE -Ilibraries/asio"
+    COMPILATION_FLAGS="-O0 -g"
     FINAL_COMPILE_FLAGS=""
     LINK_FLAGS="-lm -ldl -lrt -lpthread -lv4l2 -lbrcmGLESv2 -lbrcmEGL -lbcm_host -L/opt/vc/lib"
 fi
@@ -143,10 +144,10 @@ mkdir -p $OUTPUT_DIR
 cd $OUTPUT_DIR
 [ -z "$QUIET" ] && echo "COMPILE-INFO: Compiling game code."
 if [ -n "$REALLY_QUIET" ]; then
-    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES > /dev/null 2>&1
+    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $INCLUDE_DIRS $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES > /dev/null 2>&1
     $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS > /dev/null 2>&1
 else
-    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES
+    $CXX -c -I$RAYLIB_SRC $CXX_STANDARD $INCLUDE_DIRS $COMPILATION_FLAGS $WARNING_FLAGS $SOURCES
     $CXX -o $GAME_NAME $ROOT_DIR/$TEMP_DIR/*.o *.o $LINK_FLAGS
 fi
 rm *.o

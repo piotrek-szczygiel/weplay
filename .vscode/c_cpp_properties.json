@@ -20,7 +20,8 @@
             "cppStandard": "c++17",
             "compilerArgs": [
                 "-Ilibraries/raylib",
-                "-Ilibraries/asio"
+                "-Ilibraries/asio",
+                "-Ilibraries/cpptoml"
             ]
         }
     ],
