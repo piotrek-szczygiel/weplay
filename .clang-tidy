@@ -1,5 +1,11 @@
 ---
-Checks:          '*,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-modernize-use-trailing-return-type,-llvm-header-guard,-misc-non-private-member-variables-in-classes,-cppcoreguidelines-non-private-member-variables-in-classes,-fuchsia-default-arguments-calls,-google-runtime-references'
+Checks: '
+  *,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers, -modernize-use-trailing-return-type,
+  -llvm-header-guard,-misc-non-private-member-variables-in-classes,
+  -cppcoreguidelines-non-private-member-variables-in-classes,-fuchsia-default-arguments-calls,
+  -google-runtime-references,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg,-hicpp-no-array-decay,-hicpp-vararg'
+
 WarningsAsErrors: ''
 HeaderFilterRegex: 'console/'
 AnalyzeTemporaryDtors: false

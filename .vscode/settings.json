@@ -8,9 +8,9 @@
         "**/.mypy_cache": true,
         "**/.vs": true,
         "**/builds": true,
+        "**/builds-debug": true,
         "**/temp": true,
         "*.sln": true,
         "**/vs2019": true,
     },
-    "python.linting.enabled": false
 }

@@ -5,21 +5,13 @@
 #include <easylogging++.h>
 #include <raylib.h>
 
-Console::Console()
-{
-    log = el::Loggers::getLogger("console");
-    current_state = std::make_unique<Starship>();
-}
+Console::Console() { current_state = std::make_unique<Starship>(); }
 
 void Console::init()
 {
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(1920, 1080, "Raspberry Console");
-
-    log->info("Initialized window");
-
     current_state->init();
-    // start_controller();
 }
 
 void Console::run()

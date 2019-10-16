@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
 {
     START_EASYLOGGINGPP(argc, argv);
     el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+    el::Loggers::getLogger("controller");
 
     Console console;
 

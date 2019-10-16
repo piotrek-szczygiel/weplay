@@ -1,12 +1,12 @@
 #pragma once
+#include "controller/controller.hpp"
 #include "state.hpp"
-#include <easylogging++.h>
 #include <memory>
 
 class Console {
 private:
     std::unique_ptr<State> current_state;
-    el::Logger* log;
+    Controller controller;
 
 public:
     Console();

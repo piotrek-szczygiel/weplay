@@ -1,3 +1,11 @@
 #pragma once
+#include <thread>
 
-void start_controller();
+class Controller {
+private:
+    std::thread thread;
+    void worker();
+
+public:
+    Controller() { thread = std::thread(&Controller::worker, this); }
+};
