@@ -8,8 +8,9 @@ Console::Console() { current_state = std::make_unique<Starship>(); }
 
 void Console::init()
 {
-    SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_FULLSCREEN_MODE);
     InitWindow(1920, 1080, "Raspberry Console");
+    HideCursor();
     current_state->init();
 }
 
@@ -42,7 +43,8 @@ void Console::run()
             gh * scale,
         };
 
-        DrawTexturePro(current_state->get_framebuffer().texture, source, dest, Vector2 {}, 0.0F, WHITE);
+        DrawTexturePro(
+            current_state->get_framebuffer().texture, source, dest, Vector2 {}, 0.0F, WHITE);
 
         DrawFPS(10, 10);
         EndDrawing();

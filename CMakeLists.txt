@@ -4,7 +4,7 @@ project(raspberry_console)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(SOURCE
+set(SOURCE_FILES
   console/console.cpp
   console/main.cpp
   console/util.cpp
@@ -17,7 +17,8 @@ set(SOURCE
 
 find_package(Threads)
 
-find_package(Boost 1.71.0 REQUIRED COMPONENTS date_time regex)
+add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_CODE_HEADER_ONLY)
+find_package(Boost 1.67 COMPONENTS log REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(raylib 2.5 QUIET)
@@ -43,10 +44,11 @@ if (NOT raylib_FOUND)
   endif()
 endif()
 
-add_executable(${PROJECT_NAME} ${SOURCE})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME}
   ${CMAKE_THREAD_LIBS_INIT}
-  Boost::date_time
+  Boost::log_setup
+  Boost::log
   raylib
 )

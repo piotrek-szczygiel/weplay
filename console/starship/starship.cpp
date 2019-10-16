@@ -10,8 +10,8 @@ void Starship::update()
     ship.back = IsKeyDown(KEY_S);
     ship.left = IsKeyDown(KEY_A);
     ship.right = IsKeyDown(KEY_D);
-    ship.up = IsKeyDown(KEY_UP);
-    ship.down = IsKeyDown(KEY_DOWN);
+    ship.up = IsKeyDown(KEY_P);
+    ship.down = IsKeyDown(KEY_L);
 
     ship.update(dt, map_size, columns);
 }
@@ -49,8 +49,8 @@ void Starship::draw()
         if (distance < render_distance) {
 
             if (distance > render_distance * 0.5F) {
-                column.color.a
-                    = static_cast<unsigned char>((1.0F - ((distance / render_distance) - 0.5F) * 2.0F) * 255.0F);
+                column.color.a = static_cast<unsigned char>(
+                    (1.0F - ((distance / render_distance) - 0.5F) * 2.0F) * 255.0F);
             } else {
                 column.color.a = 255;
             }

@@ -1,123 +1,84 @@
 #include "controller.hpp"
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
-#include <ctime>
+#include <boost/log/trivial.hpp>
 #include <iostream>
-#include <string>
 
-using boost::asio::ip::tcp;
-using boost::asio::ip::udp;
+namespace ba = boost::asio;
+using ba::ip::tcp;
 
-std::string make_daytime_string()
-{
-    using namespace std;
-    time_t now = time(0);
-    return ctime(&now);
-}
+class Tcp_Session : public std::enable_shared_from_this<Tcp_Session> {
+private:
+    static const size_t max_length = 1024;
 
-class tcp_connection : public boost::enable_shared_from_this<tcp_connection> {
+    tcp::socket socket;
+    boost::array<uint8_t, max_length> data;
+
+    void do_read()
+    {
+        auto self = shared_from_this();
+        socket.async_read_some(ba::buffer(data, max_length),
+            [this, self](boost::system::error_code ec, std::size_t length) {
+                auto address = socket.remote_endpoint().address().to_string();
+
+                if (!ec) {
+                    BOOST_LOG_TRIVIAL(info)
+                        << "Received message " << length << " bytes from " << address;
+
+                    do_read();
+                } else {
+                    BOOST_LOG_TRIVIAL(error)
+                        << "Error while receiving data from " << address << ": " << ec.message();
+                }
+            });
+    }
+
 public:
-    typedef boost::shared_ptr<tcp_connection> pointer;
-
-    static pointer create(boost::asio::io_context& io_context) { return pointer(new tcp_connection(io_context)); }
-
-    tcp::socket& socket() { return socket_; }
+    explicit Tcp_Session(tcp::socket socket)
+        : socket(std::move(socket))
+        , data {}
+    {
+    }
 
     void start()
     {
-        message_ = make_daytime_string();
+        BOOST_LOG_TRIVIAL(info) << "Started new session with "
+                                << socket.remote_endpoint().address().to_string();
 
-        boost::asio::async_write(
-            socket_, boost::asio::buffer(message_), boost::bind(&tcp_connection::handle_write, shared_from_this()));
+        do_read();
     }
-
-private:
-    tcp_connection(boost::asio::io_context& io_context)
-        : socket_(io_context)
-    {
-    }
-
-    void handle_write() {}
-
-    tcp::socket socket_;
-    std::string message_;
 };
 
-class tcp_server {
-public:
-    tcp_server(boost::asio::io_context& io_context)
-        : io_context_(io_context)
-        , acceptor_(io_context, tcp::endpoint(tcp::v4(), 1984))
-    {
-        start_accept();
-    }
-
+class Tcp_Server {
 private:
-    void start_accept()
-    {
-        tcp_connection::pointer new_connection = tcp_connection::create(io_context_);
+    tcp::acceptor acceptor;
 
-        acceptor_.async_accept(new_connection->socket(),
-            boost::bind(&tcp_server::handle_accept, this, new_connection, boost::asio::placeholders::error));
+    void do_accept()
+    {
+        acceptor.async_accept([this](boost::system::error_code ec, tcp::socket socket) {
+            if (!ec) {
+                std::make_shared<Tcp_Session>(std::move(socket))->start();
+            }
+
+            do_accept();
+        });
     }
 
-    void handle_accept(tcp_connection::pointer new_connection, const boost::system::error_code& error)
-    {
-        if (!error) {
-            new_connection->start();
-        }
-
-        start_accept();
-    }
-
-    boost::asio::io_context& io_context_;
-    tcp::acceptor acceptor_;
-};
-
-class udp_server {
 public:
-    udp_server(boost::asio::io_context& io_context)
-        : socket_(io_context, udp::endpoint(udp::v4(), 1984))
+    Tcp_Server(ba::io_context& io_context, short port)
+        : acceptor(io_context, tcp::endpoint(tcp::v4(), port))
     {
-        start_receive();
+        do_accept();
     }
-
-private:
-    void start_receive()
-    {
-        socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
-            boost::bind(&udp_server::handle_receive, this, boost::asio::placeholders::error));
-    }
-
-    void handle_receive(const boost::system::error_code& error)
-    {
-        if (!error) {
-            boost::shared_ptr<std::string> message(new std::string(make_daytime_string()));
-
-            socket_.async_send_to(
-                boost::asio::buffer(*message), remote_endpoint_, boost::bind(&udp_server::handle_send, this, message));
-
-            start_receive();
-        }
-    }
-
-    void handle_send(boost::shared_ptr<std::string> /*message*/) {}
-
-    udp::socket socket_;
-    udp::endpoint remote_endpoint_;
-    boost::array<char, 1> recv_buffer_;
 };
 
 void Controller::worker()
 {
+    BOOST_LOG_TRIVIAL(info) << "Starting controller worker";
     try {
-        tcp_server server1(io_context);
-        udp_server server2(io_context);
-        io_context.run();
+        Tcp_Server s(ctx, 1984);
+        ctx.run();
     } catch (std::exception& e) {
-        std::cerr << e.what() << std::endl;
+        BOOST_LOG_TRIVIAL(error) << "Exception while running TCP server: " << e.what();
     }
 }

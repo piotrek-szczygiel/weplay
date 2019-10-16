@@ -4,7 +4,7 @@
 
 class Controller {
 private:
-    boost::asio::io_context io_context;
+    boost::asio::io_context ctx;
     std::thread thread;
     void worker();
 
@@ -12,7 +12,7 @@ public:
     Controller() { thread = std::thread(&Controller::worker, this); }
     ~Controller()
     {
-        io_context.stop();
+        ctx.stop();
         thread.join();
     }
 };

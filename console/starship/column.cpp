@@ -6,7 +6,8 @@ void Column::draw() const { DrawCube(position, size.x, size.y, size.z, color); }
 
 bool Column::check_collision(Vector3 ship) const
 {
-    return threshold(ship.x, position.x, size.x / 2.0F + 1.0F) && threshold(ship.y, position.y, size.y / 2.0F + 1.0F)
+    return threshold(ship.x, position.x, size.x / 2.0F + 1.0F)
+        && threshold(ship.y, position.y, size.y / 2.0F + 1.0F)
         && threshold(ship.z, position.z, size.z / 2.0F + 1.0F);
 }
 
