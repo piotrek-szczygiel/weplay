@@ -22,7 +22,17 @@ void Starship::draw()
     ClearBackground(BLACK);
     BeginMode3D(ship.camera.camera);
 
-    DrawPlane(Vector3{ 0.0F, 0.0F, map_size.z / 2.0F }, Vector2{ map_size.x, map_size.z }, DARKBROWN);
+    DrawPlane(
+        Vector3 {
+            0.0F,
+            0.0F,
+            map_size.z / 2.0F,
+        },
+        Vector2 {
+            map_size.x,
+            map_size.z,
+        },
+        DARKBROWN);
 
     size_t columns_drawn = 0;
     bool first_column_drawn = false;

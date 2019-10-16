@@ -1,99 +1,123 @@
 #include "controller.hpp"
-// #include <asio.hpp>
-// #include <cstdlib>
-// #include <easylogging++.h>
-// #include <iostream>
-// #include <memory>
-// #include <utility>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/shared_ptr.hpp>
+#include <ctime>
+#include <iostream>
+#include <string>
 
-// using asio::ip::tcp;
+using boost::asio::ip::tcp;
+using boost::asio::ip::udp;
 
-// class Tcp_Session : public std::enable_shared_from_this<Tcp_Session> {
-// private:
-//     static const size_t max_length = 1024;
+std::string make_daytime_string()
+{
+    using namespace std;
+    time_t now = time(0);
+    return ctime(&now);
+}
 
-//     tcp::socket socket;
-//     std::array<uint8_t, max_length> buffer;
+class tcp_connection : public boost::enable_shared_from_this<tcp_connection> {
+public:
+    typedef boost::shared_ptr<tcp_connection> pointer;
 
-//     void read()
-//     {
-//         auto self = shared_from_this();
-//         socket.async_read_some(
-//             asio::buffer(buffer, max_length), [this, self](std::error_code error, std::size_t length) {
-//                 if (!error) {
-//                     write(length);
-//                 } else {
-//                     CLOG(ERROR, "controller")
-//                         << "Error while reading from " << socket.remote_endpoint().address().to_string() << ": "
-//                         << error.message();
-//                 }
-//             });
-//     }
+    static pointer create(boost::asio::io_context& io_context) { return pointer(new tcp_connection(io_context)); }
 
-//     void write(std::size_t length)
-//     {
-//         auto self(shared_from_this());
-//         asio::async_write(
-//             socket, asio::buffer(buffer, length), [this, self](std::error_code error, std::size_t /* length */) {
-//                 if (!error) {
-//                     read();
-//                 } else {
-//                     CLOG(ERROR, "controller")
-//                         << "Error while writing to " << socket.remote_endpoint().address().to_string() << ": "
-//                         << error.message();
-//                 }
-//             });
-//     }
+    tcp::socket& socket() { return socket_; }
 
-// public:
-//     explicit Tcp_Session(tcp::socket socket)
-//         : socket(std::move(socket))
-//         , buffer{}
-//     {
-//     }
+    void start()
+    {
+        message_ = make_daytime_string();
 
-//     void start()
-//     {
-//         CLOG(INFO, "controller") << "Started new session with " << socket.remote_endpoint().address().to_string();
-//         read();
-//     }
-// };
+        boost::asio::async_write(
+            socket_, boost::asio::buffer(message_), boost::bind(&tcp_connection::handle_write, shared_from_this()));
+    }
 
-// class Tcp_Server {
-// private:
-//     tcp::acceptor acceptor;
+private:
+    tcp_connection(boost::asio::io_context& io_context)
+        : socket_(io_context)
+    {
+    }
 
-//     void accept()
-//     {
-//         CLOG(INFO, "controller") << "Awaiting connection";
-//         acceptor.async_accept([this](std::error_code error, tcp::socket socket) {
-//             if (!error) {
-//                 std::make_shared<Tcp_Session>(std::move(socket))->start();
-//             } else {
-//                 CLOG(ERROR, "controller") << "Unable to accept connection: " << error.message();
-//             }
+    void handle_write() {}
 
-//             accept();
-//         });
-//     }
+    tcp::socket socket_;
+    std::string message_;
+};
 
-// public:
-//     Tcp_Server(asio::io_context& io_context, int16_t port)
-//         : acceptor(io_context, tcp::endpoint(tcp::v4(), port))
-//     {
-//         accept();
-//     }
-// };
+class tcp_server {
+public:
+    tcp_server(boost::asio::io_context& io_context)
+        : io_context_(io_context)
+        , acceptor_(io_context, tcp::endpoint(tcp::v4(), 1984))
+    {
+        start_accept();
+    }
+
+private:
+    void start_accept()
+    {
+        tcp_connection::pointer new_connection = tcp_connection::create(io_context_);
+
+        acceptor_.async_accept(new_connection->socket(),
+            boost::bind(&tcp_server::handle_accept, this, new_connection, boost::asio::placeholders::error));
+    }
+
+    void handle_accept(tcp_connection::pointer new_connection, const boost::system::error_code& error)
+    {
+        if (!error) {
+            new_connection->start();
+        }
+
+        start_accept();
+    }
+
+    boost::asio::io_context& io_context_;
+    tcp::acceptor acceptor_;
+};
+
+class udp_server {
+public:
+    udp_server(boost::asio::io_context& io_context)
+        : socket_(io_context, udp::endpoint(udp::v4(), 1984))
+    {
+        start_receive();
+    }
+
+private:
+    void start_receive()
+    {
+        socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
+            boost::bind(&udp_server::handle_receive, this, boost::asio::placeholders::error));
+    }
+
+    void handle_receive(const boost::system::error_code& error)
+    {
+        if (!error) {
+            boost::shared_ptr<std::string> message(new std::string(make_daytime_string()));
+
+            socket_.async_send_to(
+                boost::asio::buffer(*message), remote_endpoint_, boost::bind(&udp_server::handle_send, this, message));
+
+            start_receive();
+        }
+    }
+
+    void handle_send(boost::shared_ptr<std::string> /*message*/) {}
+
+    udp::socket socket_;
+    udp::endpoint remote_endpoint_;
+    boost::array<char, 1> recv_buffer_;
+};
 
 void Controller::worker()
 {
-    // asio::io_context ctx;
-    // context = &ctx;
-
-    // try {
-    //     Tcp_Server s(ctx, 1984);
-    //     ctx.run();
-    // } catch (std::exception& e) {
-    //     CLOG(ERROR, "controller") << "Exception occured: " << e.what();
-    // }
+    try {
+        tcp_server server1(io_context);
+        udp_server server2(io_context);
+        io_context.run();
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
+    }
 }

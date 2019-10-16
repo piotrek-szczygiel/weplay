@@ -11,6 +11,19 @@ template <typename T> T random(T min, T max)
     return dist { min, max }(random_generator);
 }
 
+template <typename T> T clamp(T value, T min, T max)
+{
+    if (value < min) {
+        return min;
+    }
+
+    if (value > max) {
+        return max;
+    }
+
+    return value;
+}
+
 bool threshold(float x, float y, float threshold);
 
 float fade(float x, float y, float offset);

@@ -1,4 +1,5 @@
 #include "ship_camera.hpp"
+#include "../util.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -6,7 +7,7 @@ void Ship_Camera::update()
 {
     const float focus_distance = 25.0F;
 
-    angle.y = std::clamp(angle.y, -1.48F, 1.48F);
+    angle.y = clamp(angle.y, -1.48F, 1.48F);
     if (angle.x > 2.0F * PI) {
         angle.x -= 2.0F * PI;
     } else if (angle.x < -2.0F * PI) {
@@ -14,9 +15,9 @@ void Ship_Camera::update()
     }
 
     camera.target = Vector3 {
-        camera.position.x - std::sinf(angle.x) * focus_distance,
-        camera.position.y + std::sinf(angle.y) * focus_distance,
-        camera.position.z - std::cosf(angle.x) * focus_distance,
+        camera.position.x - std::sin(angle.x) * focus_distance,
+        camera.position.y + std::sin(angle.y) * focus_distance,
+        camera.position.z - std::cos(angle.x) * focus_distance,
     };
 
     Vector3 direction {

@@ -17,8 +17,8 @@ private:
 public:
     Starship()
         : framebuffer({})
-        , ship(Ship(Vector3{ 0.0, 5.0, 5.0 }, 50.0F))
-        , map_size(Vector3{ 40.0F, 30.0F, 10'000.0F })
+        , ship(Ship(Vector3 { 0.0, 5.0, 5.0 }, 50.0F))
+        , map_size(Vector3 { 40.0F, 30.0F, 10'000.0F })
     {
         columns = Column::generate_random_columns(static_cast<size_t>(map_size.z / 10.0F), map_size);
         std::sort(columns.begin(), columns.end(),

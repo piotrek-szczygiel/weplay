@@ -48,9 +48,9 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
     }
 
     speed = Vector3 {
-        std::clamp(speed.x, -strength / 2.0F, strength / 2.0F),
-        std::clamp(speed.y, -strength, strength),
-        std::clamp(speed.z, -strength / 4.0F, strength * 2.0F),
+        clamp(speed.x, -strength / 2.0F, strength / 2.0F),
+        clamp(speed.y, -strength, strength),
+        clamp(speed.z, -strength / 4.0F, strength * 2.0F),
     };
 
     camera.angle.z = speed.x / strength * -PI / 8.0F;
@@ -62,9 +62,9 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
     };
 
     Vector3 new_position {
-        std::clamp(position.x + offset.x, -map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F),
-        std::clamp(position.y + offset.y, 1.0F, map_size.y),
-        std::clamp(position.z + offset.z, 0.0F, map_size.z),
+        clamp(position.x + offset.x, -map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F),
+        clamp(position.y + offset.y, 1.0F, map_size.y),
+        clamp(position.z + offset.z, 0.0F, map_size.z),
     };
 
     bool colliding = false;
