@@ -1,7 +1,0 @@
-build
-builds
-builds-debug
-temp
-.vs
-.mypy_cache
-*.log

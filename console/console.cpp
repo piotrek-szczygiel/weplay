@@ -2,7 +2,6 @@
 #include "controller/controller.hpp"
 #include "starship/starship.hpp"
 #include <algorithm>
-#include <easylogging++.h>
 #include <raylib.h>
 
 Console::Console() { current_state = std::make_unique<Starship>(); }

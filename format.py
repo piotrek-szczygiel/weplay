@@ -24,37 +24,12 @@ def format(file):
     subprocess.run(command)
 
 
-def tidy(file):
-    tidy_base = [
-        "clang-tidy",
-        "-extra-arg=-std=c++17",
-        "",
-        "--",
-        "-Ilibraries/raylib",
-        "-Ilibraries/asio",
-        "-Ilibraries/easyloggingpp",
-        "-DASIO_STANDALONE",
-        "-D_WIN32_WINNT=0x0A00",
-    ]
-
-    command = tidy_base
-    command[2] = f
-    print("\n\n{1}\nTidying {0}\n{1}".format(f, "#" * (len(f) + 8)))
-    subprocess.run(command)
-
-
 if __name__ == "__main__":
     extensions = [".c", ".cc", ".cpp", ".h", ".hh", ".hpp"]
 
     if len(sys.argv) > 1:
         for f in sys.argv[1:]:
             format(f)
-
-        for f in sys.argv[1:]:
-            tidy(f)
     else:
         for f in collect_files(["console", "controller"], extensions):
             format(f)
-
-        for f in collect_files(["console"], extensions):
-            tidy(f)
