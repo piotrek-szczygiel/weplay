@@ -1,11 +1,11 @@
-// #pragma once
-// #include <thread>
+#pragma once
+#include <thread>
 
-// class Controller {
-// private:
-//     std::thread thread;
-//     void worker();
+class Controller {
+private:
+    std::thread thread;
+    void worker();
 
-// public:
-//     Controller() { thread = std::thread(&Controller::worker, this); }
-// };
+public:
+    Controller() { thread = std::thread(&Controller::worker, this); }
+};

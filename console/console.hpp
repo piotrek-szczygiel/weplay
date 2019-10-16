@@ -6,7 +6,7 @@
 class Console {
 private:
     std::unique_ptr<State> current_state;
-    Controller controller;
+    // Controller controller;
 
 public:
     Console();

@@ -1,6 +1,7 @@
-// #include "controller.hpp"
+#include "controller.hpp"
 // #include <asio.hpp>
 // #include <cstdlib>
+// #include <easylogging++.h>
 // #include <iostream>
 // #include <memory>
 // #include <utility>
@@ -47,7 +48,7 @@
 // public:
 //     explicit Tcp_Session(tcp::socket socket)
 //         : socket(std::move(socket))
-//         , buffer {}
+//         , buffer{}
 //     {
 //     }
 
@@ -84,13 +85,15 @@
 //     }
 // };
 
-// void Controller::worker()
-// {
-//     try {
-//         asio::io_context io_context;
-//         Tcp_Server s(io_context, 1984);
-//         io_context.run();
-//     } catch (std::exception& e) {
-//         CLOG(ERROR, "controller") << "Exception occured: " << e.what();
-//     }
-// }
+void Controller::worker()
+{
+    // asio::io_context ctx;
+    // context = &ctx;
+
+    // try {
+    //     Tcp_Server s(ctx, 1984);
+    //     ctx.run();
+    // } catch (std::exception& e) {
+    //     CLOG(ERROR, "controller") << "Exception occured: " << e.what();
+    // }
+}
