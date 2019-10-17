@@ -1,5 +1,4 @@
 #include "controller.hpp"
-#include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
@@ -9,10 +8,10 @@ using ba::ip::tcp;
 
 class Tcp_Session : public std::enable_shared_from_this<Tcp_Session> {
 private:
-    static const size_t max_length = 1024;
+    static const size_t max_length = 4;
 
     tcp::socket socket;
-    boost::array<uint8_t, max_length> data;
+    std::array<uint8_t, max_length> data;
 
     std::shared_ptr<Controller::State> state;
 
