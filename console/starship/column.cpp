@@ -11,7 +11,7 @@ bool Column::check_collision(Vector3 ship) const
         && threshold(ship.z, position.z, size.z / 2.0F + 1.0F);
 }
 
-std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size)
+std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, bool horizontal)
 {
     std::vector<Column> columns;
 
@@ -28,7 +28,7 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size)
             255,
         };
 
-        if (i % 10 == 0) {
+        if (horizontal && i % 20 == 0) {
             position = {
                 0.0F,
                 std::roundf(random(1.0F, height)),

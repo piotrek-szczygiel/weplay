@@ -19,5 +19,5 @@ public:
 
     [[nodiscard]] bool check_collision(Vector3 ship) const;
 
-    static std::vector<Column> generate_random_columns(size_t n, Vector3 map_size);
+    static std::vector<Column> generate_random_columns(size_t n, Vector3 map_size, bool horizontal);
 };
