@@ -16,13 +16,7 @@ void Console::init()
 void Console::run()
 {
     while (!WindowShouldClose()) {
-        std::vector<Event_Key> events;
-        Event_Key ev {};
-        while (controller.queue.pop(ev)) {
-            events.push_back(ev);
-        }
-
-        current_state->update(events);
+        current_state->update(controller.state);
         current_state->draw();
 
         BeginDrawing();

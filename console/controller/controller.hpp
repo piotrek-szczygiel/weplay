@@ -1,18 +1,7 @@
 #pragma once
+#include <atomic>
 #include <boost/asio/io_context.hpp>
-#include <boost/lockfree/queue.hpp>
 #include <thread>
-
-enum Controller_Key {
-    C_KEY_LEFT,
-    C_KEY_MIDDLE,
-    C_KEY_RIGHT,
-};
-
-struct Event_Key {
-    Controller_Key key;
-    bool down;
-};
 
 class Controller {
 private:
@@ -21,13 +10,20 @@ private:
     void worker();
 
 public:
-    boost::lockfree::queue<Event_Key> queue;
+    struct State {
+        std::atomic_bool left;
+        std::atomic_bool forward;
+        std::atomic_bool right;
+    };
+
+    std::shared_ptr<State> state;
 
     Controller()
-        : queue(128)
+        : state(new State {})
     {
         thread = std::thread(&Controller::worker, this);
     }
+
     ~Controller()
     {
         ctx.stop();

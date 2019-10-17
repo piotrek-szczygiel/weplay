@@ -2,32 +2,16 @@
 
 void Starship::init() { framebuffer = LoadRenderTexture(GetScreenWidth(), GetScreenHeight()); }
 
-void Starship::update(const std::vector<Event_Key>& events)
+void Starship::update(std::shared_ptr<Controller::State> state)
 {
     float dt = GetFrameTime();
 
-    ship.forward = IsKeyDown(KEY_W);
+    ship.forward = IsKeyDown(KEY_W) | state->forward.load();
     ship.back = IsKeyDown(KEY_S);
-    ship.left = IsKeyDown(KEY_A);
-    ship.right = IsKeyDown(KEY_D);
+    ship.left = IsKeyDown(KEY_A) | state->left.load();
+    ship.right = IsKeyDown(KEY_D) | state->right.load();
     ship.up = IsKeyDown(KEY_P);
     ship.down = IsKeyDown(KEY_L);
-
-    for (const auto& ev : events) {
-        switch (ev.key) {
-        case C_KEY_LEFT:
-            ship.left = ev.down;
-            break;
-        case C_KEY_MIDDLE:
-            ship.forward = ev.down;
-            break;
-        case C_KEY_RIGHT:
-            ship.right = ev.down;
-            break;
-        default:
-            break;
-        }
-    }
 
     ship.update(dt, map_size, columns);
 }

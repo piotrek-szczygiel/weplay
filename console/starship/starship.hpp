@@ -35,7 +35,7 @@ public:
     ~Starship() override = default;
 
     void init() override;
-    void update(const std::vector<Event_Key>& events) override;
+    void update(std::shared_ptr<Controller::State> state) override;
     void draw() override;
     RenderTexture2D get_framebuffer() override;
 };
