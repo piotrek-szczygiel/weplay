@@ -2,7 +2,7 @@
 
 void Starship::init() { framebuffer = LoadRenderTexture(GetScreenWidth(), GetScreenHeight()); }
 
-void Starship::update()
+void Starship::update(const std::vector<Event_Key>& events)
 {
     float dt = GetFrameTime();
 
@@ -12,6 +12,22 @@ void Starship::update()
     ship.right = IsKeyDown(KEY_D);
     ship.up = IsKeyDown(KEY_P);
     ship.down = IsKeyDown(KEY_L);
+
+    for (const auto& ev : events) {
+        switch (ev.key) {
+        case C_KEY_LEFT:
+            ship.left = ev.down;
+            break;
+        case C_KEY_MIDDLE:
+            ship.forward = ev.down;
+            break;
+        case C_KEY_RIGHT:
+            ship.right = ev.down;
+            break;
+        default:
+            break;
+        }
+    }
 
     ship.update(dt, map_size, columns);
 }

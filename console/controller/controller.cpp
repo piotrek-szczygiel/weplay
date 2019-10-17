@@ -14,6 +14,8 @@ private:
     tcp::socket socket;
     boost::array<uint8_t, max_length> data;
 
+    bool controller = false;
+
     void do_read()
     {
         auto self = shared_from_this();
@@ -22,8 +24,43 @@ private:
                 auto address = socket.remote_endpoint().address().to_string();
 
                 if (!ec) {
-                    BOOST_LOG_TRIVIAL(info)
-                        << "Received message " << length << " bytes from " << address;
+                    BOOST_LOG_TRIVIAL(info) << "Received message from " << address << ": ";
+
+                    if (!controller && length == 4) {
+                        if (data[0] == 0x19 && data[1] == 0x84 && data[2] == 0x01
+                            && data[3] == '\n') {
+
+                            controller = true;
+                        }
+                    } else if (controller && length == 4) {
+                        if (data[0] == 'b' && data[3] == '\n') {
+                            Event_Key ev;
+
+                            if (data[2] == 'd') {
+                                ev.down = true;
+                            } else if (data[2] == 'u') {
+                                ev.down = false;
+                            } else {
+                                BOOST_LOG_TRIVIAL(error) << "Invalid EventKey.down: " << data[2];
+                                return;
+                            }
+
+                            switch (data[1]) {
+                            case '<':
+                                ev.key = C_KEY_LEFT;
+                                break;
+                            case '^':
+                                ev.key = C_KEY_MIDDLE;
+                                break;
+                            case '>':
+                                ev.key = C_KEY_RIGHT;
+                                break;
+                            default:
+                                BOOST_LOG_TRIVIAL(error) << "Invalid EventKey.key: " << data[1];
+                                return;
+                            }
+                        }
+                    }
 
                     do_read();
                 } else {

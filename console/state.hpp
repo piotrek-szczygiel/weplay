@@ -1,4 +1,5 @@
 #pragma once
+#include "controller/controller.hpp"
 #include <raylib.h>
 
 class State {
@@ -14,7 +15,7 @@ public:
     virtual ~State() = default;
 
     virtual void init() = 0;
-    virtual void update() = 0;
+    virtual void update(const std::vector<Event_Key>&) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D get_framebuffer() = 0;
 };
