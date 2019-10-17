@@ -21,26 +21,30 @@ add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_
 find_package(Boost 1.67 COMPONENTS log REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
-find_package(raylib 2.5 QUIET)
+# Don't download and compile raylib on Raspberry Pi because it doesn't work
+# https://github.com/raysan5/raylib/issues/987
+option(DOWNLOAD_RAYLIB "Download raylib if not present" OFF)
+if (DOWNLOAD_RAYLIB)
+  find_package(raylib 2.5 QUIET)
 
-if (NOT raylib_FOUND)
-  include(FetchContent)
+  if (NOT raylib_FOUND)
+    include(FetchContent)
 
-  FetchContent_Declare(
-    raylib
-    URL https://github.com/raysan5/raylib/archive/master.tar.gz
-  )
+    FetchContent_Declare(
+      raylib
+      URL https://github.com/raysan5/raylib/archive/master.tar.gz
+    )
 
-  FetchContent_GetProperties(raylib)
-  if (NOT raylib_POPULATED)
-    set(FETCHCONTENT_QUIET NO)
-    FetchContent_Populate(raylib)
+    FetchContent_GetProperties(raylib)
+    if (NOT raylib_POPULATED)
+      set(FETCHCONTENT_QUIET NO)
+      FetchContent_Populate(raylib)
 
-    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-    set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
+      set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+      set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
 
-    add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
-
+      add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
+    endif()
   endif()
 endif()
 
