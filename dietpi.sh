@@ -7,7 +7,8 @@ if [[ $EUID > 0 ]]; then
 fi
 
 apt update
-apt install libraspberrypi-dev raspberrypi-kernel-headers build-essential cmake hostapd dnsmasq iptables
+apt install libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers build-essential cmake hostapd dnsmasq iptables
+
 usermod -aG video dietpi
 
 cat << EOF > /etc/create_ap.conf
