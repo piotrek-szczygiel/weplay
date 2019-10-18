@@ -1,5 +1,4 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#pragma once
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -32,5 +31,3 @@ public:
 
     bool read();
 };
-
-#endif

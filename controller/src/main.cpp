@@ -1,5 +1,5 @@
-#include "button.h"
-#include "connection.h"
+#include "button.hpp"
+#include "connection.hpp"
 #include <string>
 
 std::array<Button, 3> buttons = {

@@ -28,14 +28,14 @@ void Console::run()
         auto sh = static_cast<float>(GetScreenHeight());
         float scale = std::min(sw / gw, sh / gh);
 
-        Rectangle source = {
+        RlRectangle source = {
             0.0F,
             0.0F,
             gw,
             -gh,
         };
 
-        Rectangle dest = {
+        RlRectangle dest = {
             (sw - gw * scale) / 2.0F,
             (sh - gh * scale) / 2.0F,
             gw * scale,
@@ -49,5 +49,5 @@ void Console::run()
         EndDrawing();
     }
 
-    CloseWindow();
+    RlCloseWindow();
 }

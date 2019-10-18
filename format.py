@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import errno
 import os
 import pathlib
 import subprocess
@@ -25,11 +26,35 @@ def format(file):
 
 
 if __name__ == "__main__":
-    extensions = [".c", ".cc", ".cpp", ".h", ".hh", ".hpp"]
+    extensions = [".cpp", ".hpp"]
 
-    if len(sys.argv) > 1:
-        for f in sys.argv[1:]:
-            format(f)
-    else:
-        for f in collect_files(["console", "controller"], extensions):
-            format(f)
+    try:
+        if len(sys.argv) > 1:
+            for f in sys.argv[1:]:
+                format(f)
+        else:
+            for f in collect_files(["console", "controller"], extensions):
+                format(f)
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            print("Error: clang-format is not installed!")
+            print("Install from package manager")
+            print("Download from https://llvm.org/builds/ on Windows")
+
+    print("Formatting CMakeLists.txt")
+    try:
+        subprocess.run(
+            [
+                "cmake-format",
+                "-i",
+                "--line-width",
+                "100",
+                "--tab-size",
+                "4",
+                "CMakeLists.txt",
+            ]
+        )
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            print("Error: cmake-format is not installed!")
+            print("Install with: pip install cmake-format")

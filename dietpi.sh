@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 if [[ $EUID > 0 ]]; then
@@ -6,8 +6,9 @@ if [[ $EUID > 0 ]]; then
     exit 1
 fi
 
-apt update
-apt install libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers build-essential cmake hostapd dnsmasq iptables
+apt update -y
+apt install -y libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers \
+               build-essential cmake hostapd dnsmasq iptables
 
 usermod -aG video dietpi
 

@@ -1,7 +1,6 @@
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#pragma once
 
-#include "button.h"
+#include "button.hpp"
 #include <ESP8266WiFi.h>
 
 const uint8_t PROTOCOL_DELIMITER = '\n';
@@ -41,5 +40,3 @@ public:
     void connect();
     void sendButton(const Button& button);
 };
-
-#endif // CONNECTION_H
