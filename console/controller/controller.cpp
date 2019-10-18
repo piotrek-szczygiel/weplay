@@ -8,36 +8,35 @@ using ba::ip::tcp;
 
 class Tcp_Session : public std::enable_shared_from_this<Tcp_Session> {
 private:
-    static const size_t max_length = 4;
+    static const size_t max_length { 4 };
 
     tcp::socket socket;
     std::array<uint8_t, max_length> data;
 
     std::shared_ptr<Controller::State> state;
 
-    bool controller = false;
+    bool valid_controller;
 
     void do_read()
     {
-        auto self = shared_from_this();
-        socket.async_read_some(ba::buffer(data, max_length),
-            [this, self](boost::system::error_code ec, std::size_t length) {
+        auto self { shared_from_this() };
+        socket.async_read_some(
+            ba::buffer(data, max_length), [this, self](boost::system::error_code ec, std::size_t length) {
                 auto address = socket.remote_endpoint().address().to_string();
 
                 if (ec) {
-                    BOOST_LOG_TRIVIAL(error)
-                        << "Error while receiving data from " << address << ": " << ec.message();
+                    BOOST_LOG_TRIVIAL(error) << "Error while receiving data from " << address << ": " << ec.message();
                     return;
                 }
 
                 BOOST_LOG_TRIVIAL(info) << "Received " << length << " bytes from " << address;
 
-                if (!controller && length == 4) {
+                if (!valid_controller && length == 4) {
                     if (data[0] == 0x19 && data[1] == 0x84 && data[2] == 0x01 && data[3] == '\n') {
 
-                        controller = true;
+                        valid_controller = true;
                     }
-                } else if (controller && length == 4) {
+                } else if (valid_controller && length == 4) {
                     if (data[0] == 'b' && data[3] == '\n') {
                         bool key_down {};
 
@@ -76,13 +75,13 @@ public:
         : socket(std::move(socket))
         , state(state)
         , data {}
+        , valid_controller { false }
     {
     }
 
     void start()
     {
-        BOOST_LOG_TRIVIAL(info) << "Started new session with "
-                                << socket.remote_endpoint().address().to_string();
+        BOOST_LOG_TRIVIAL(info) << "Started new session with " << socket.remote_endpoint().address().to_string();
 
         do_read();
     }
@@ -117,7 +116,7 @@ void Controller::worker()
 {
     BOOST_LOG_TRIVIAL(info) << "Starting controller worker";
     try {
-        Tcp_Server s(ctx, 1984, state);
+        Tcp_Server s { ctx, 1984, state };
         ctx.run();
     } catch (std::exception& e) {
         BOOST_LOG_TRIVIAL(error) << "Exception while running TCP server: " << e.what();

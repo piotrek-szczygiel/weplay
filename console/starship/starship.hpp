@@ -10,20 +10,17 @@ private:
     RenderTexture2D framebuffer;
 
     Ship ship;
-    std::vector<Column> columns;
-
     Vector3 map_size;
+
+    std::vector<Column> columns;
 
 public:
     Starship()
-        : framebuffer({})
-        , ship(Ship(Vector3 { 0.0, 5.0, 5.0 }, 50.0F))
-        , map_size(Vector3 { 40.0F, 30.0F, 10'000.0F })
+        : framebuffer { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
+        , ship { { 0.0, 5.0, 5.0 }, 50.0F }
+        , map_size { 40.0F, 30.0F, 10'000.0F }
+        , columns { Column::generate_random_columns(static_cast<size_t>(map_size.z / 10.0F), map_size, false) }
     {
-        columns = Column::generate_random_columns(
-            static_cast<size_t>(map_size.z / 10.0F), map_size, false);
-        std::sort(columns.begin(), columns.end(),
-            [](const Column& a, const Column& b) -> bool { return a.position.z < b.position.z; });
     }
 
     Starship(const Starship&) = delete;
@@ -34,7 +31,6 @@ public:
 
     ~Starship() override = default;
 
-    void init() override;
     void update(std::shared_ptr<Controller::State> state) override;
     void draw() override;
     RenderTexture2D get_framebuffer() override;

@@ -14,7 +14,6 @@ public:
 
     virtual ~State() = default;
 
-    virtual void init() = 0;
     virtual void update(std::shared_ptr<Controller::State>) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D get_framebuffer() = 0;

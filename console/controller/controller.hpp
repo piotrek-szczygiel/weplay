@@ -19,9 +19,9 @@ public:
     std::shared_ptr<State> state;
 
     Controller()
-        : state(new State {})
+        : state(std::make_shared<State>())
+        , thread { std::thread(&Controller::worker, this) }
     {
-        thread = std::thread(&Controller::worker, this);
     }
 
     ~Controller()

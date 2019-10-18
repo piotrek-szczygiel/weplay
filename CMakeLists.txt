@@ -17,8 +17,7 @@ set(SOURCE_FILES
 find_package(Threads)
 
 if(NOT WIN32)
-    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED
-                    -DBOOST_ERROR_CODE_HEADER_ONLY)
+    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_CODE_HEADER_ONLY)
 endif()
 
 find_package(
@@ -28,8 +27,7 @@ find_package(
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-# Don 't download raylib on Raspberry Pi because it doesn' t compile
-# https://github.com/raysan5/raylib/issues/987
+# Don 't download raylib on Raspberry Pi because it doesn' t compile https://github.com/raysan5/raylib/issues/987
 option(DOWNLOAD_RAYLIB "Download raylib if not present" OFF)
 if(DOWNLOAD_RAYLIB)
     find_package(raylib 2.5 QUIET)
@@ -38,8 +36,7 @@ if(DOWNLOAD_RAYLIB)
         include(FetchContent)
 
         # My fork of original library that fixes symbol collisions on Windows
-        FetchContent_Declare(raylib
-                             URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
+        FetchContent_Declare(raylib URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
 
         FetchContent_GetProperties(raylib)
         if(NOT raylib_POPULATED)
@@ -60,8 +57,7 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log
-                      raylib_static)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log raylib_static)
 
 # Windows shenanigans
 if(WIN32)

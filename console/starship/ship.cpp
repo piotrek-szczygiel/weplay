@@ -3,16 +3,19 @@
 
 void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns)
 {
-    double now = GetTime();
+    double now { GetTime() };
+
     if (now - last_collision_timestamp < 0.75) {
-        speed.x = fade(speed.x, 0.0F, dt * strength / 4.0F);
-        speed.y = fade(speed.y, 0.0F, dt * strength / 4.0F);
-        speed.z = fade(speed.z, 0.0F, dt * strength / 4.0F);
+        speed = {
+            fade(speed.x, 0.0F, dt * strength / 4.0F),
+            speed.y = fade(speed.y, 0.0F, dt * strength / 4.0F),
+            speed.z = fade(speed.z, 0.0F, dt * strength / 4.0F),
+        };
     } else {
 
-        if (forward && !back) {
+        if (controls.forward && !controls.back) {
             speed.z += dt * strength * 2.0F;
-        } else if (back && !forward) {
+        } else if (controls.back && !controls.forward) {
             if (speed.z > 0.0F) {
                 speed.z -= dt * strength * 2.0F;
             } else {
@@ -22,13 +25,13 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             speed.z = fade(speed.z, 0.0F, dt * strength / 2.0F);
         }
 
-        if (left && !right) {
+        if (controls.left && !controls.right) {
             if (speed.x > 0.0F) {
                 speed.x += dt * strength * 4.0F;
             } else {
                 speed.x += dt * strength * 8.0F;
             }
-        } else if (right && !left) {
+        } else if (controls.right && !controls.left) {
             if (speed.x < 0.0F) {
                 speed.x -= dt * strength * 4.0F;
             } else {
@@ -38,16 +41,16 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             speed.x = fade(speed.x, 0, dt * strength * 2.0F);
         }
 
-        if (up && !down) {
+        if (controls.up && !controls.down) {
             speed.y += dt * strength * 2.0F;
-        } else if (down && !up) {
+        } else if (controls.down && !controls.up) {
             speed.y -= dt * strength * 2.0F;
         } else {
             speed.y = fade(speed.y, 0, dt * strength * 4.0F);
         }
     }
 
-    speed = Vector3 {
+    speed = {
         clamp(speed.x, -strength / 2.0F, strength / 2.0F),
         clamp(speed.y, -strength, strength),
         clamp(speed.z, -strength / 4.0F, strength * 2.0F),
@@ -67,7 +70,7 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
         clamp(position.z + offset.z, 0.0F, map_size.z),
     };
 
-    bool colliding = false;
+    bool colliding { false };
 
     for (const auto& column : columns) {
         if (column.position.z < new_position.z) {
@@ -89,9 +92,11 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             last_collision_timestamp = now;
         }
 
-        speed.x = -speed.x / 10.0F;
-        speed.y = -speed.y / 10.0F;
-        speed.z = -speed.z / 10.0F;
+        speed = {
+            -speed.x / 10.0F,
+            -speed.y / 10.0F,
+            -speed.z / 10.0F,
+        };
     } else {
         position = new_position;
     }

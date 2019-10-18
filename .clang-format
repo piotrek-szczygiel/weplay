@@ -1,4 +1,7 @@
 ---
 Language: Cpp
 BasedOnStyle: WebKit
-ColumnLimit: 100
+ColumnLimit: 120
+
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty

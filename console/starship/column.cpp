@@ -2,24 +2,26 @@
 #include "../util.hpp"
 #include <cmath>
 
-void Column::draw() const { DrawCube(position, size.x, size.y, size.z, color); }
+void Column::draw() const
+{
+    DrawCube(position, size.x, size.y, size.z, color);
+}
 
 bool Column::check_collision(Vector3 ship) const
 {
-    return threshold(ship.x, position.x, size.x / 2.0F + 1.0F)
-        && threshold(ship.y, position.y, size.y / 2.0F + 1.0F)
+    return threshold(ship.x, position.x, size.x / 2.0F + 1.0F) && threshold(ship.y, position.y, size.y / 2.0F + 1.0F)
         && threshold(ship.z, position.z, size.z / 2.0F + 1.0F);
 }
 
 std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, bool horizontal)
 {
-    std::vector<Column> columns;
+    std::vector<Column> columns {};
 
     for (size_t i = 0; i < n; ++i) {
-        float height = random(map_size.y / 4.0F, map_size.y * 2.0F);
+        float height { random(map_size.y / 4.0F, map_size.y * 2.0F) };
 
-        Vector3 position;
-        Vector3 size;
+        Vector3 position {};
+        Vector3 size {};
 
         Color color {
             static_cast<unsigned char>(random(20, 255)),
@@ -56,6 +58,9 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
 
         columns.emplace_back(position, size, color);
     }
+
+    std::sort(columns.begin(), columns.end(),
+        [](const Column& a, const Column& b) -> bool { return a.position.z < b.position.z; });
 
     return columns;
 }

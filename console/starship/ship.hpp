@@ -12,17 +12,29 @@ private:
     double last_collision_timestamp;
 
 public:
+    struct Controls {
+        bool forward;
+        bool back;
+        bool left;
+        bool right;
+        bool up;
+        bool down;
+    };
+
     Vector3 position;
     Ship_Camera camera;
-    bool forward, back, left, right, up, down;
+
+    Controls controls;
 
     Ship(Vector3 position, float strength)
-        : position(position)
-        , speed(Vector3 {})
-        , strength(strength)
-        , last_collision_timestamp(0.0)
+        : speed {}
+        , strength { strength }
+        , last_collision_timestamp { -1.0 }
+        , position { position }
+        , camera {}
+        , controls {}
     {
-        forward = back = left = right = up = down = false;
     }
+
     void update(float dt, Vector3 map_size, const std::vector<Column>& columns);
 };
