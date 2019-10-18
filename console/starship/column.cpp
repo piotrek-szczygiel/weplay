@@ -1,5 +1,6 @@
 #include "column.hpp"
 #include "../util.hpp"
+#include <algorithm>
 #include <cmath>
 
 void Column::draw() const

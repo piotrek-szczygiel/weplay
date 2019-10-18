@@ -2,6 +2,4 @@
 Language: Cpp
 BasedOnStyle: WebKit
 ColumnLimit: 120
-
-AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: Empty

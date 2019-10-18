@@ -27,14 +27,8 @@ find_package(
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-# Don 't download raylib on Raspberry Pi because it doesn' t compile https://github.com/raysan5/raylib/issues/987
-option(DOWNLOAD_RAYLIB "Download raylib if not present" OFF)
-if(WIN32)
-    set(DOWNLOAD_RAYLIB
-        ON
-        CACHE BOOL "" FORCE)
-endif()
-
+# Don't download raylib on Raspberry Pi because it doesn't compile https://github.com/raysan5/raylib/issues/987
+option(DOWNLOAD_RAYLIB "Download raylib if not present" ON)
 if(DOWNLOAD_RAYLIB)
     find_package(raylib 2.5 QUIET)
 
@@ -70,7 +64,7 @@ if(WIN32)
     target_link_libraries(${PROJECT_NAME} winmm)
 endif()
 
-# Windows shenanigans
+# Set _WIN32_WINNT so Boost doesn't complain
 if(WIN32)
     macro(get_win32_winnt version)
         if(CMAKE_SYSTEM_VERSION)
