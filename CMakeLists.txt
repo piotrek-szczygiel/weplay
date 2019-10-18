@@ -29,6 +29,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 # Don 't download raylib on Raspberry Pi because it doesn' t compile https://github.com/raysan5/raylib/issues/987
 option(DOWNLOAD_RAYLIB "Download raylib if not present" OFF)
+if(WIN32)
+    set(DOWNLOAD_RAYLIB
+        ON
+        CACHE BOOL "" FORCE)
+endif()
+
 if(DOWNLOAD_RAYLIB)
     find_package(raylib 2.5 QUIET)
 
@@ -59,6 +65,11 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log raylib_static)
 
+# Link against winmm.lib on Windows
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} winmm)
+endif()
+
 # Windows shenanigans
 if(WIN32)
     macro(get_win32_winnt version)
@@ -78,6 +89,4 @@ if(WIN32)
 
     get_win32_winnt(ver)
     add_definitions(-D_WIN32_WINNT=${ver})
-
-    target_link_libraries(${PROJECT_NAME} winmm)
 endif(WIN32)
