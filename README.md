@@ -21,22 +21,16 @@ bootstrap
 - Install [DietPi](https://dietpi.com) distribution
 
 ```bash
-# Install some dependencies
-raspberry-console$ sudo ./dietpi.sh
-
-# Manually build my fork of raylib
-$ git clone https://github.com/piotrek-szczygiel/raylib
-raylib/src$ make -j4 PLATFORM=PLATFORM_RPI RAYLIB_LIBTYPE=SHARED
-raylib/src$ sudo make install RAYLIB_LIBTYPE=SHARED
+# Install dependencies and configurations
+$ sudo ./dietpi.sh
 
 # Build this project in separate directory
-raspberry-console$ mkdir out && cd out
-raspberry-console/out$ cmake .. && make -j4
+$ mkdir out && cd out
+$ cmake .. -DRASPBERRY_PI=ON && make -j4
 ```
-
-- Project should now compile using globally installed raylib
 
 ## ESP8266 controller
 - Install [PlatformIO IDE](https://platformio.org/platformio-ide)
 - Open `controller` directory
 - Build and upload using PlatformIO
+

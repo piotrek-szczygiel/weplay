@@ -6,12 +6,22 @@ if [[ $EUID > 0 ]]; then
     exit 1
 fi
 
+if [[ "$(uname -n)" != "DietPi" ]]; then
+    echo "You are not running $(uname -n) instead of the DietPi distribution"
+    exit 1
+fi
+
+echo "Updating the system"
 apt update -y
+apt full-upgrade -y
+
+echo "Installing dependencies"
 apt install -y libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers \
                build-essential cmake hostapd dnsmasq iptables
 
 usermod -aG video dietpi
 
+echo "Configuring Access Point"
 cat << EOF > /etc/create_ap.conf
 CHANNEL=default
 GATEWAY=192.168.12.1
@@ -45,3 +55,14 @@ EOF
 
 systemctl start create_ap
 systemctl enable create_ap
+
+echo "Installing raylib"
+pushd /tmp
+wget https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz
+tar -zxf master.tar.gz
+pushd raylib-master/src
+make PLATFORM=PLATFORM_RPI RAYLIB_LIBTYPE=SHARED -j4
+make install RAYLIB_LIBTYPE=SHARED
+popd
+popd
+

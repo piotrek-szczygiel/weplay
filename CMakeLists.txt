@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.11)
 project(raspberry_console)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCE_FILES
     console/console.cpp
@@ -27,9 +26,8 @@ find_package(
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-# Don't download raylib on Raspberry Pi because it doesn't compile https://github.com/raysan5/raylib/issues/987
-option(DOWNLOAD_RAYLIB "Download raylib if not present" ON)
-if(DOWNLOAD_RAYLIB)
+option(RASPBERRY_PI "Compile for Raspberry Pi" OFF)
+if(NOT RASPBERRY_PI)
     find_package(raylib 2.5 QUIET)
 
     if(NOT raylib_FOUND)
@@ -57,7 +55,13 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log raylib_static)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log)
+
+if(RASPBERRY_PI)
+    target_link_libraries(${PROJECT_NAME} raylib)
+else()
+    target_link_libraries(${PROJECT_NAME} raylib_static)
+endif()
 
 # Link against winmm.lib on Windows
 if(WIN32)
