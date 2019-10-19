@@ -3,9 +3,11 @@
 
 int main(int argc, char* argv[])
 {
+    BOOST_LOG_TRIVIAL(info) << "Current working directory: " << GetWorkingDirectory();
+
     BOOST_LOG_TRIVIAL(info) << "Initializing window";
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_FULLSCREEN_MODE);
-    InitWindow(1920, 1080, "Raspberry Console");
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
+    InitWindow(1600, 900, "Raspberry Console");
     HideCursor();
 
     BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";

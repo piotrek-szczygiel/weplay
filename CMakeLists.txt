@@ -68,10 +68,8 @@ endif()
 # Link against winmm.lib on Windows
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} winmm)
-endif()
 
-# Set _WIN32_WINNT so Boost doesn't complain
-if(WIN32)
+    # Set _WIN32_WINNT so Boost doesn't complain
     macro(get_win32_winnt version)
         if(CMAKE_SYSTEM_VERSION)
             set(ver ${CMAKE_SYSTEM_VERSION})
