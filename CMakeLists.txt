@@ -7,11 +7,13 @@ set(SOURCE_FILES
     console/console.cpp
     console/main.cpp
     console/util.cpp
+    console/menu/menu.cpp
     console/controller/controller.cpp
     console/starship/column.cpp
     console/starship/ship_camera.cpp
     console/starship/ship.cpp
-    console/starship/starship.cpp)
+    console/starship/starship.cpp
+    console/tetris/tetris.cpp)
 
 find_package(Threads)
 

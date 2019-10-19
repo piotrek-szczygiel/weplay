@@ -10,8 +10,8 @@ void Column::draw() const
 
 bool Column::check_collision(Vector3 ship) const
 {
-    return threshold(ship.x, position.x, size.x / 2.0F + 1.0F) && threshold(ship.y, position.y, size.y / 2.0F + 1.0F)
-        && threshold(ship.z, position.z, size.z / 2.0F + 1.0F);
+    return threshold(ship.x, position.x, size.x / 2.0F + 0.5F) && threshold(ship.y, position.y, size.y / 2.0F + 0.5F)
+        && threshold(ship.z, position.z, size.z / 2.0F + 0.5F);
 }
 
 std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, bool horizontal)
@@ -21,9 +21,6 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
     for (size_t i = 0; i < n; ++i) {
         float height { random(map_size.y / 4.0F, map_size.y * 2.0F) };
 
-        Vector3 position {};
-        Vector3 size {};
-
         Color color {
             static_cast<unsigned char>(random(20, 255)),
             static_cast<unsigned char>(random(10, 55)),
@@ -32,32 +29,51 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
         };
 
         if (horizontal && i % 20 == 0) {
-            position = {
+            color.a = 200;
+
+            Vector3 position {
                 0.0F,
-                std::roundf(random(1.0F, height)),
+                std::roundf(random(1.0F, map_size.y)),
                 std::roundf(random(50.0F, map_size.z)),
             };
 
-            size = {
+            Vector3 size {
                 map_size.x,
                 2.0F,
                 2.0F,
             };
+
+            columns.emplace_back(position, size, color);
+
+            Vector3 pole_position {
+                -map_size.x / 2.0F + 1.0F,
+                position.y / 2.0F,
+                position.z,
+            };
+            Vector3 pole_size {
+                2.0F,
+                position.y,
+                2.0F,
+            };
+
+            columns.emplace_back(pole_position, pole_size, color);
+            pole_position.x *= -1.0F;
+            columns.emplace_back(pole_position, pole_size, color);
         } else {
-            position = {
-                std::roundf(random(-map_size.x / 2 + 1.0F, map_size.x / 2 - 1.0F)),
-                height / 2,
+            Vector3 position {
+                std::roundf(random(-map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F)),
+                height / 2.0F,
                 std::roundf(random(50.0F, map_size.z)),
             };
 
-            size = {
+            Vector3 size {
                 2.0F,
                 height,
                 2.0F,
             };
-        }
 
-        columns.emplace_back(position, size, color);
+            columns.emplace_back(position, size, color);
+        }
     }
 
     std::sort(columns.begin(), columns.end(),
