@@ -1,10 +1,10 @@
-#include "tetris.hpp"
+#include "Tetris.hpp"
 
 void Tetris::update(std::shared_ptr<Controller::State> state) { }
 
 void Tetris::draw()
 {
-    BeginTextureMode(framebuffer);
+    BeginTextureMode(framebuffer_);
     ClearBackground(BLACK);
 
     RlDrawText("Tetris", 100, 100, 32, GREEN);
@@ -12,7 +12,7 @@ void Tetris::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Tetris::get_framebuffer()
+RenderTexture2D Tetris::getFramebuffer()
 {
-    return framebuffer;
+    return framebuffer_;
 }

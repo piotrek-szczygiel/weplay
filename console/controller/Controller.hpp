@@ -4,11 +4,6 @@
 #include <thread>
 
 class Controller {
-private:
-    boost::asio::io_context ctx;
-    std::thread thread;
-    void worker();
-
 public:
     struct State {
         std::atomic_bool left;
@@ -20,13 +15,19 @@ public:
 
     Controller()
         : state(std::make_shared<State>())
-        , thread { std::thread(&Controller::worker, this) }
+        , thread_ { std::thread(&Controller::worker, this) }
     {
     }
 
     ~Controller()
     {
-        ctx.stop();
-        thread.join();
+        ctx_.stop();
+        thread_.join();
     }
+
+private:
+    boost::asio::io_context ctx_;
+    std::thread thread_;
+
+    void worker();
 };

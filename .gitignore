@@ -1,2 +1,5 @@
+.vs/*
+!.vs/launch.vs.json
+.idea
 out
 CMakeSettings.json

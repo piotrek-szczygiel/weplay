@@ -1,12 +1,12 @@
 #pragma once
 #include <raylib.h>
 
-class Ship_Camera {
+class ShipCamera {
 public:
     Camera camera;
     Vector3 angle;
 
-    Ship_Camera()
+    ShipCamera()
         : camera { {}, {}, {}, 60.0F, CAMERA_PERSPECTIVE }
         , angle { PI, 0.0F, 0.0F }
     {

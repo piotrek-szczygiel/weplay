@@ -1,6 +1,6 @@
-#include "util.hpp"
+#include "Util.hpp"
 
-thread_local std::mt19937 random_generator { std::random_device {}() };
+thread_local std::mt19937 randomGenerator { std::random_device {}() }; // NOLINT
 
 bool threshold(float x, float y, float threshold)
 {

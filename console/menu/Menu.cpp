@@ -1,10 +1,10 @@
-#include "menu.hpp"
+#include "Menu.hpp"
 
 void Menu::update(std::shared_ptr<Controller::State> state) { }
 
 void Menu::draw()
 {
-    BeginTextureMode(framebuffer);
+    BeginTextureMode(framebuffer_);
     ClearBackground(BLACK);
 
     RlDrawText("Main Menu", 100, 100, 12, MAROON);
@@ -12,7 +12,7 @@ void Menu::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Menu::get_framebuffer()
+RenderTexture2D Menu::getFramebuffer()
 {
-    return framebuffer;
+    return framebuffer_;
 }
