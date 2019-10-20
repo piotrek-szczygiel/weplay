@@ -4,20 +4,20 @@ project(raspberry_console)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES
-    console/Console.cpp
     console/Main.cpp
-    console/Util.cpp
-    console/menu/Menu.cpp
+    console/Console.cpp
     console/controller/Controller.cpp
-    console/starship/Column.cpp
-    console/starship/ShipCamera.cpp
-    console/starship/Ship.cpp
-    console/starship/Starship.cpp
-    console/tetris/Tetris.cpp
     console/controller/TcpSession.cpp
     console/controller/TcpSession.hpp
     console/controller/TcpServer.cpp
-    console/controller/TcpServer.hpp)
+    console/controller/TcpServer.hpp
+    console/menu/Menu.cpp
+    console/starship/Starship.cpp
+    console/starship/Ship.cpp
+    console/starship/ShipCamera.cpp
+    console/starship/Column.cpp
+    console/tetris/Tetris.cpp
+    console/Util.cpp)
 
 find_package(Threads)
 
