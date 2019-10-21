@@ -14,11 +14,6 @@ using MatrixGrid = std::array<std::array<ShapeType, WIDTH>, HEIGHT + VANISH>;
 
 class Matrix {
 public:
-    Matrix()
-        : grid_ {}
-    {
-    }
-
     ShapeType get(int x, int y);
 
     bool lock(const Piece& piece);
@@ -28,7 +23,7 @@ public:
     void draw(int drawX, int drawY) const;
 
 private:
-    MatrixGrid grid_;
+    MatrixGrid grid_ {};
 };
 
 }

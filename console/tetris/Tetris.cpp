@@ -25,6 +25,12 @@ void Tetris::update(std::shared_ptr<Controller::State> state)
         matrix_.lock(piece_);
         piece_ = Piece { SHAPE_J };
     }
+
+    if (IsKeyPressed(KEY_Z)) {
+        piece_.rotate(false, collision);
+    } else if (IsKeyPressed(KEY_X)) {
+        piece_.rotate(true, collision);
+    }
 }
 
 void Tetris::draw()
