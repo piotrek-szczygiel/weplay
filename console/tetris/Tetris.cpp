@@ -6,31 +6,21 @@ namespace Tetris {
 
 void Tetris::update(std::shared_ptr<Controller::State> state)
 {
-    auto collision = std::bind(&Matrix::collision, matrix_, std::placeholders::_1);
-    if (IsKeyPressed(KEY_LEFT)) {
-        piece_.move(-1, 0, collision);
-    } else if (IsKeyPressed(KEY_RIGHT)) {
-        piece_.move(1, 0, collision);
-    }
+    if (IsKeyPressed(KEY_LEFT))
+        player1.action(Action::MOVE_LEFT);
+    if (IsKeyPressed(KEY_RIGHT))
+        player1.action(Action::MOVE_RIGHT);
+    if (IsKeyPressed(KEY_DOWN))
+        player1.action(Action::SOFT_DROP);
+    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))
+        player1.action(Action::HARD_DROP);
+    if (IsKeyPressed(KEY_Z))
+        player1.action(Action::ROTATE_COUNTER_CLOCKWISE);
+    if (IsKeyPressed(KEY_X))
+        player1.action(Action::ROTATE_CLOCKWISE);
 
-    if (IsKeyPressed(KEY_DOWN)) {
-        piece_.move(0, 1, collision);
-    }
-
-    if (IsKeyPressed(KEY_UP)) {
-        piece_.move(0, -1, collision);
-    }
-
-    if (IsKeyPressed(KEY_SPACE)) {
-        matrix_.lock(piece_);
-        piece_ = Piece { SHAPE_J };
-    }
-
-    if (IsKeyPressed(KEY_Z)) {
-        piece_.rotate(false, collision);
-    } else if (IsKeyPressed(KEY_X)) {
-        piece_.rotate(true, collision);
-    }
+    float dt = GetFrameTime();
+    player1.update(dt);
 }
 
 void Tetris::draw()
@@ -38,10 +28,8 @@ void Tetris::draw()
     BeginTextureMode(framebuffer_);
     ClearBackground(BLACK);
 
-    matrix_.draw(30, 30);
-    piece_.draw(30, 30);
-
-    // RlDrawText("Tetris", 100, 100, 32, GREEN);
+    player1.draw(30, 30);
+    player2.draw(width_ - 30 - WIDTH * BLOCK_SIZE, 30);
 
     EndTextureMode();
 }

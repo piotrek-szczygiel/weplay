@@ -20,8 +20,8 @@ struct Kick {
 };
 
 struct RotationKick {
-    std::array<Kick, 4> counterClockwise;
     std::array<Kick, 4> clockwise;
+    std::array<Kick, 4> counterClockwise;
 };
 
 using ShapeKicks = std::array<RotationKick, 4>;
@@ -159,7 +159,27 @@ constexpr Shape SHAPE_Z {
     } },
 };
 
-constexpr std::array<Shape, 7> SHAPES_ALL { { SHAPE_I, SHAPE_J, SHAPE_L, SHAPE_O, SHAPE_S, SHAPE_T, SHAPE_Z } };
+constexpr std::array<ShapeType, 7> SHAPES_ALL { { I, J, L, O, S, T, Z } };
+
+constexpr Shape shapeFromType(ShapeType type)
+{
+    switch (type) {
+    case I:
+        return SHAPE_I;
+    case J:
+        return SHAPE_J;
+    case L:
+        return SHAPE_L;
+    case O:
+        return SHAPE_O;
+    case S:
+        return SHAPE_S;
+    case T:
+        return SHAPE_T;
+    case Z:
+        return SHAPE_Z;
+    }
+}
 
 constexpr std::array<Color, 8> SHAPE_COLORS { {
     BLACK,

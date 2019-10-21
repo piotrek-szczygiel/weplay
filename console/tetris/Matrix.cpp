@@ -60,14 +60,17 @@ bool Matrix::collision(const Piece& piece)
 
 void Matrix::draw(int drawX, int drawY) const
 {
-    RlRectangle outline {
-        static_cast<float>(drawX),
-        static_cast<float>(drawY),
-        static_cast<float>(WIDTH * BLOCK_SIZE),
-        static_cast<float>(HEIGHT * BLOCK_SIZE),
+    constexpr int outline = 2;
+
+    RlRectangle outlineRect {
+        static_cast<float>(drawX - outline),
+        static_cast<float>(drawY - BLOCK_SIZE / 2 - outline),
+        static_cast<float>(WIDTH * BLOCK_SIZE + outline * 2),
+        static_cast<float>(HEIGHT * BLOCK_SIZE + outline * 2 + BLOCK_SIZE / 2),
     };
 
-    DrawRectangleLinesEx(outline, 2, BLUE);
+    DrawRectangleLinesEx(outlineRect, outline, GRAY);
+    DrawRectangle(drawX, drawY - BLOCK_SIZE * 2 - BLOCK_SIZE / 2 - outline, WIDTH * BLOCK_SIZE, BLOCK_SIZE * 2, BLACK);
 
     for (int y = 0; y <= HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {

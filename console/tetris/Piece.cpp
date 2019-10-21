@@ -17,11 +17,11 @@ bool Piece::move(int x, int y, CollisionFunction collision)
 
 bool Piece::rotate(bool clockwise, CollisionFunction collision)
 {
-    if (shape_->type == O) {
+    if (shape_.type == O) {
         return false;
     }
 
-    const auto& rotationKick = shape_->kicks[rotation_];
+    const auto& rotationKick = shape_.kicks[rotation_];
     int lastRotation = rotation_;
     bool rotated = false;
 
@@ -57,12 +57,22 @@ bool Piece::rotate(bool clockwise, CollisionFunction collision)
     return rotated;
 }
 
+int Piece::fall(CollisionFunction collision)
+{
+    int rows = 0;
+    while (move(0, 1, collision)) {
+        rows += 1;
+    }
+
+    return rows;
+}
+
 void Piece::draw(int drawX, int drawY) const
 {
     int x = drawX + x_ * BLOCK_SIZE;
     int y = drawY + (y_ - VANISH) * BLOCK_SIZE;
 
-    shape_->draw(x, y, rotation_);
+    shape_.draw(x, y, rotation_);
 }
 
 bool Piece::collision_(int x, int y, CollisionFunction collision)

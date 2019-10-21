@@ -9,12 +9,12 @@ class Piece {
 public:
     using CollisionFunction = std::function<bool(const Piece&)>;
 
-    Piece(const Shape& shape)
-        : shape_ { &const_cast<Shape&>(shape) }
+    Piece(ShapeType shapeType)
+        : shape_ { shapeFromType(shapeType) }
     {
         x_ = static_cast<int>(
-            static_cast<float>(WIDTH) / 2.0F - static_cast<float>(shape_->grids[rotation_].width) / 2.0F);
-        y_ = VANISH - shape_->grids[rotation_].height - shape_->grids[rotation_].offsetY;
+            static_cast<float>(WIDTH) / 2.0F - static_cast<float>(shape_.grids[rotation_].width) / 2.0F);
+        y_ = VANISH - shape_.grids[rotation_].height - shape_.grids[rotation_].offsetY;
     }
 
     int x() const
@@ -29,15 +29,16 @@ public:
 
     const ShapeGrid& grid() const
     {
-        return shape_->grids[rotation_];
+        return shape_.grids[rotation_];
     }
 
     bool move(int x, int y, CollisionFunction collision);
     bool rotate(bool clockwise, CollisionFunction collision);
+    int fall(CollisionFunction collision);
     void draw(int drawX, int drawY) const;
 
 private:
-    Shape* shape_;
+    Shape shape_;
     int x_;
     int y_;
     int rotation_ { 0 };
