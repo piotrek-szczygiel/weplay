@@ -2,6 +2,8 @@
 #include "../Util.hpp"
 #include <cmath>
 
+namespace Starship {
+
 void ShipCamera::update()
 {
     static const float focusDistance { 25.0F };
@@ -32,4 +34,6 @@ void ShipCamera::update()
         direction.x * direction.x + direction.z * direction.z,
         -direction.y * direction.z - alpha * direction.x,
     };
+}
+
 }

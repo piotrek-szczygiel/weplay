@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <vector>
 
+namespace Starship {
+
 class Starship final : public State {
 public:
     Starship()
@@ -32,3 +34,5 @@ private:
 
     std::vector<Column> columns_;
 };
+
+}

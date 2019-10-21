@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 
+namespace Starship {
+
 void Column::draw() const
 {
     DrawCube(position, size.x, size.y, size.z, color);
@@ -80,4 +82,6 @@ std::vector<Column> Column::generateRandomColumns(size_t n, Vector3 map_size, bo
         [](const Column& a, const Column& b) -> bool { return a.position.z < b.position.z; });
 
     return columns;
+}
+
 }

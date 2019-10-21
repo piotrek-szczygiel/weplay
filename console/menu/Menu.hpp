@@ -1,6 +1,8 @@
 #include "../State.hpp"
 #include <raylib.h>
 
+namespace Menu {
+
 class Menu final : public State {
 public:
     Menu()
@@ -20,3 +22,5 @@ public:
 private:
     RenderTexture2D framebuffer_;
 };
+
+}

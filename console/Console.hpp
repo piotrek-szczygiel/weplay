@@ -7,7 +7,7 @@
 class Console {
 public:
     Console()
-        : currentState_ { std::make_unique<Menu>() }
+        : currentState_ { std::make_unique<Menu::Menu>() }
     {
     }
 

@@ -9,9 +9,9 @@ void Console::run()
 {
     while (!WindowShouldClose()) {
         if (IsKeyPressed(KEY_F1)) {
-            currentState_ = std::make_unique<Menu>();
+            currentState_ = std::make_unique<Menu::Menu>();
         } else if (IsKeyPressed(KEY_F2)) {
-            currentState_ = std::make_unique<Starship>();
+            currentState_ = std::make_unique<Starship::Starship>();
         } else if (IsKeyPressed(KEY_F3)) {
             currentState_ = std::make_unique<Tetris::Tetris>();
         }

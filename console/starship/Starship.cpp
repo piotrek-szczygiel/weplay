@@ -1,5 +1,7 @@
 #include "Starship.hpp"
 
+namespace Starship {
+
 void Starship::update(std::shared_ptr<Controller::State> state)
 {
     float dt = GetFrameTime();
@@ -76,4 +78,6 @@ void Starship::draw()
 RenderTexture2D Starship::getFramebuffer()
 {
     return framebuffer_;
+}
+
 }

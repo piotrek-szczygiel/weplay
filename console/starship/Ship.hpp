@@ -4,6 +4,8 @@
 #include <raylib.h>
 #include <vector>
 
+namespace Starship {
+
 class Ship {
 public:
     struct Controls {
@@ -38,3 +40,5 @@ private:
     float strength_;
     double lastCollision_;
 };
+
+}

@@ -2,6 +2,8 @@
 #include <raylib.h>
 #include <vector>
 
+namespace Starship {
+
 class Column {
 public:
     Vector3 position;
@@ -21,3 +23,5 @@ public:
 
     static std::vector<Column> generateRandomColumns(size_t n, Vector3 map_size, bool horizontal);
 };
+
+}

@@ -1,5 +1,7 @@
 #include "Menu.hpp"
 
+namespace Menu {
+
 void Menu::update(std::shared_ptr<Controller::State> state) { }
 
 void Menu::draw()
@@ -15,4 +17,6 @@ void Menu::draw()
 RenderTexture2D Menu::getFramebuffer()
 {
     return framebuffer_;
+}
+
 }

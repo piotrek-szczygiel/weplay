@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib.h>
 
+namespace Starship {
+
 class ShipCamera {
 public:
     Camera camera;
@@ -14,3 +16,5 @@ public:
 
     void update();
 };
+
+}

@@ -1,6 +1,8 @@
 #include "Ship.hpp"
 #include "../Util.hpp"
 
+namespace Starship {
+
 void Ship::update(float dt, Vector3 mapSize, const std::vector<Column>& columns)
 {
     double now { GetTime() };
@@ -103,4 +105,6 @@ void Ship::update(float dt, Vector3 mapSize, const std::vector<Column>& columns)
 
     camera.camera.position = position;
     camera.update();
+}
+
 }
