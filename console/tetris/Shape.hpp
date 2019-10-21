@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
 
+namespace Tetris {
+
 struct Kick {
     int x;
     int y;
@@ -153,3 +155,7 @@ constexpr Shape shapeZ {
         { 0, 0, 2, 3, { { { { 0, Z, 0, 0 } }, { { Z, Z, 0, 0 } }, { { Z, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
     } },
 };
+
+constexpr std::array<Shape, 7> allShapes { { shapeI, shapeJ, shapeL, shapeO, shapeS, shapeT, shapeZ } };
+
+}

@@ -1,4 +1,7 @@
 #include "Tetris.hpp"
+#include "Piece.hpp"
+
+namespace Tetris {
 
 void Tetris::update(std::shared_ptr<Controller::State> state) { }
 
@@ -15,4 +18,6 @@ void Tetris::draw()
 RenderTexture2D Tetris::getFramebuffer()
 {
     return framebuffer_;
+}
+
 }

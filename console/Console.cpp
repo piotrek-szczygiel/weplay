@@ -13,7 +13,7 @@ void Console::run()
         } else if (IsKeyPressed(KEY_F2)) {
             currentState_ = std::make_unique<Starship>();
         } else if (IsKeyPressed(KEY_F3)) {
-            currentState_ = std::make_unique<Tetris>();
+            currentState_ = std::make_unique<Tetris::Tetris>();
         }
 
         currentState_->update(controller_.state);
