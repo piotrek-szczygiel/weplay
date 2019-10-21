@@ -16,6 +16,9 @@ set(SOURCE_FILES
     console/starship/Ship.cpp
     console/starship/ShipCamera.cpp
     console/starship/Column.cpp
+    console/tetris/Matrix.cpp
+    console/tetris/Piece.cpp
+    console/tetris/Shape.cpp
     console/tetris/Tetris.cpp
     console/Util.cpp)
 

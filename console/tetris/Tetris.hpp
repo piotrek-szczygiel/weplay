@@ -1,4 +1,6 @@
 #include "../State.hpp"
+#include "Matrix.hpp"
+#include "Piece.hpp"
 #include <raylib.h>
 
 namespace Tetris {
@@ -7,6 +9,7 @@ class Tetris final : public State {
 public:
     Tetris()
         : framebuffer_ { LoadRenderTexture(320, 240) }
+        , piece_ { SHAPE_T }
     {
     }
 
@@ -21,6 +24,9 @@ public:
 
 private:
     RenderTexture2D framebuffer_;
+
+    Matrix matrix_;
+    Piece piece_;
 };
 
 }

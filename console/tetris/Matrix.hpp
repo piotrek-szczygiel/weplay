@@ -1,23 +1,32 @@
 #pragma once
 #include "Shape.hpp"
 
-namespace Tetris {
+constexpr int HEIGHT { 20 };
+constexpr int VANISH { 20 };
+constexpr int WIDTH { 10 };
 
-constexpr int HEIGHT = 20;
-constexpr int VANISH = 20;
-constexpr int WIDTH = 20;
+constexpr int BLOCK_SIZE { 8 };
+
+namespace Tetris {
+class Piece;
 
 using MatrixGrid = std::array<std::array<ShapeType, WIDTH>, HEIGHT + VANISH>;
 
 class Matrix {
-private:
-    MatrixGrid grid;
-
 public:
     Matrix()
-        : grid {}
+        : grid_ {}
     {
     }
+
+    ShapeType get(int x, int y);
+
+    bool lock(const Piece& piece);
+
+    void draw(int drawX, int drawY) const;
+
+private:
+    MatrixGrid grid_;
 };
 
 }

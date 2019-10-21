@@ -1,7 +1,18 @@
 #pragma once
 #include <array>
+#include <raylib.h>
 
 namespace Tetris {
+
+using ShapeType = int;
+
+constexpr ShapeType I = 1;
+constexpr ShapeType J = 2;
+constexpr ShapeType L = 3;
+constexpr ShapeType O = 4;
+constexpr ShapeType S = 5;
+constexpr ShapeType T = 6;
+constexpr ShapeType Z = 7;
 
 struct Kick {
     int x;
@@ -15,7 +26,7 @@ struct RotationKick {
 
 using ShapeKicks = std::array<RotationKick, 4>;
 
-using SingleGrid = std::array<std::array<int, 4>, 4>;
+using SingleGrid = std::array<std::array<ShapeType, 4>, 4>;
 
 struct ShapeGrid {
     int offsetX;
@@ -25,23 +36,15 @@ struct ShapeGrid {
     SingleGrid grid;
 };
 
-enum ShapeType {
-    I = 1,
-    J,
-    L,
-    O,
-    S,
-    T,
-    Z,
-};
-
 struct Shape {
     ShapeType type;
     ShapeKicks kicks;
     std::array<ShapeGrid, 4> grids;
+
+    void draw(int drawX, int drawY, int rotation) const;
 };
 
-constexpr ShapeKicks kicksJLOSTZ { {
+constexpr ShapeKicks KICKS_JLOSTZ { {
     {
         { { { -1, 0 }, { -1, -1 }, { 0, 2 }, { -1, 2 } } },
         { { { 1, 0 }, { 1, -1 }, { 0, 2 }, { 1, 2 } } },
@@ -60,7 +63,7 @@ constexpr ShapeKicks kicksJLOSTZ { {
     },
 } };
 
-constexpr ShapeKicks kicksI { {
+constexpr ShapeKicks KICKS_I { {
     {
         { { { -2, 0 }, { 1, 0 }, { -2, 1 }, { 1, -2 } } },
         { { { -1, 0 }, { 2, 0 }, { -1, -2 }, { 2, 1 } } },
@@ -79,9 +82,9 @@ constexpr ShapeKicks kicksI { {
     },
 } };
 
-constexpr Shape shapeI {
+constexpr Shape SHAPE_I {
     I,
-    kicksI,
+    KICKS_I,
     { {
         { 0, 1, 4, 1, { { { { 0, 0, 0, 0 } }, { { I, I, I, I } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 2, 0, 1, 4, { { { { 0, 0, I, 0 } }, { { 0, 0, I, 0 } }, { { 0, 0, I, 0 } }, { { 0, 0, I, 0 } } } } },
@@ -90,9 +93,9 @@ constexpr Shape shapeI {
     } },
 };
 
-constexpr Shape shapeJ {
+constexpr Shape SHAPE_J {
     J,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 3, 2, { { { { J, 0, 0, 0 } }, { { J, J, J, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 1, 0, 2, 3, { { { { 0, J, J, 0 } }, { { 0, J, 0, 0 } }, { { 0, J, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -101,9 +104,9 @@ constexpr Shape shapeJ {
     } },
 };
 
-constexpr Shape shapeL {
+constexpr Shape SHAPE_L {
     L,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 3, 2, { { { { 0, 0, L, 0 } }, { { L, L, L, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 1, 0, 2, 3, { { { { 0, L, 0, 0 } }, { { 0, L, 0, 0 } }, { { 0, L, L, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -112,9 +115,9 @@ constexpr Shape shapeL {
     } },
 };
 
-constexpr Shape shapeO {
+constexpr Shape SHAPE_O {
     O,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 2, 2, { { { { O, O, 0, 0 } }, { { O, O, 0, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 0, 0, 2, 2, { { { { O, O, 0, 0 } }, { { O, O, 0, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -123,9 +126,9 @@ constexpr Shape shapeO {
     } },
 };
 
-constexpr Shape shapeS {
+constexpr Shape SHAPE_S {
     S,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 3, 2, { { { { 0, S, S, 0 } }, { { S, S, 0, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 1, 0, 2, 3, { { { { 0, S, 0, 0 } }, { { 0, S, S, 0 } }, { { 0, 0, S, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -134,9 +137,9 @@ constexpr Shape shapeS {
     } },
 };
 
-constexpr Shape shapeT {
+constexpr Shape SHAPE_T {
     T,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 3, 2, { { { { 0, T, 0, 0 } }, { { T, T, T, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 1, 0, 2, 3, { { { { 0, T, 0, 0 } }, { { 0, T, T, 0 } }, { { 0, T, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -145,9 +148,9 @@ constexpr Shape shapeT {
     } },
 };
 
-constexpr Shape shapeZ {
+constexpr Shape SHAPE_Z {
     Z,
-    kicksJLOSTZ,
+    KICKS_JLOSTZ,
     { {
         { 0, 0, 3, 2, { { { { Z, Z, 0, 0 } }, { { 0, Z, Z, 0 } }, { { 0, 0, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
         { 1, 0, 2, 3, { { { { 0, 0, Z, 0 } }, { { 0, Z, Z, 0 } }, { { 0, Z, 0, 0 } }, { { 0, 0, 0, 0 } } } } },
@@ -156,6 +159,17 @@ constexpr Shape shapeZ {
     } },
 };
 
-constexpr std::array<Shape, 7> allShapes { { shapeI, shapeJ, shapeL, shapeO, shapeS, shapeT, shapeZ } };
+constexpr std::array<Shape, 7> SHAPES_ALL { { SHAPE_I, SHAPE_J, SHAPE_L, SHAPE_O, SHAPE_S, SHAPE_T, SHAPE_Z } };
+
+constexpr std::array<Color, 8> SHAPE_COLORS { {
+    BLACK,
+    SKYBLUE,
+    BLUE,
+    ORANGE,
+    YELLOW,
+    GREEN,
+    PURPLE,
+    RED,
+} };
 
 }
