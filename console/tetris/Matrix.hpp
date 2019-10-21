@@ -23,6 +23,8 @@ public:
 
     bool lock(const Piece& piece);
 
+    bool collision(const Piece& piece);
+
     void draw(int drawX, int drawY) const;
 
 private:

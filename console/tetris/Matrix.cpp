@@ -11,7 +11,9 @@ ShapeType Matrix::get(int x, int y)
 
 bool Matrix::lock(const Piece& piece)
 {
-    // TODO: check collision
+    if (collision(piece)) {
+        return false;
+    }
 
     auto grid = piece.grid();
     int x = piece.x() + grid.offsetX;
@@ -32,6 +34,28 @@ bool Matrix::lock(const Piece& piece)
     }
 
     return true;
+}
+
+bool Matrix::collision(const Piece& piece)
+{
+    auto grid = piece.grid();
+    int x = piece.x() + grid.offsetX;
+    int y = piece.y() + grid.offsetY;
+
+    if (x < 0 || x + grid.width > WIDTH || y < 0 || y + grid.height > HEIGHT + VANISH) {
+        return true;
+    }
+
+    for (int my = 0; my < grid.height; ++my) {
+        for (int mx = 0; mx < grid.width; ++mx) {
+            auto s = grid.grid[my + grid.offsetY][mx + grid.offsetX];
+            if (s != 0 && grid_[y + my][x + mx] != 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void Matrix::draw(int drawX, int drawY) const

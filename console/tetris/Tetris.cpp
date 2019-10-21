@@ -6,17 +6,24 @@ namespace Tetris {
 
 void Tetris::update(std::shared_ptr<Controller::State> state)
 {
-    if (IsKeyPressed(KEY_A)) {
-        matrix_.lock(piece_);
+    auto collision = std::bind(&Matrix::collision, matrix_, std::placeholders::_1);
+    if (IsKeyPressed(KEY_LEFT)) {
+        piece_.move(-1, 0, collision);
+    } else if (IsKeyPressed(KEY_RIGHT)) {
+        piece_.move(1, 0, collision);
     }
 
-    if (IsKeyPressed(KEY_B)) {
-        for (int y = 0; y < HEIGHT + VANISH; ++y) {
-            for (int x = 0; x < WIDTH; ++x) {
-                std::cout << matrix_.get(x, y) << " ";
-            }
-            std::cout << std::endl;
-        }
+    if (IsKeyPressed(KEY_DOWN)) {
+        piece_.move(0, 1, collision);
+    }
+
+    if (IsKeyPressed(KEY_UP)) {
+        piece_.move(0, -1, collision);
+    }
+
+    if (IsKeyPressed(KEY_SPACE)) {
+        matrix_.lock(piece_);
+        piece_ = Piece { SHAPE_J };
     }
 }
 

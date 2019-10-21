@@ -1,6 +1,7 @@
 #include "../State.hpp"
 #include "Matrix.hpp"
 #include "Piece.hpp"
+#include <memory>
 #include <raylib.h>
 
 namespace Tetris {
