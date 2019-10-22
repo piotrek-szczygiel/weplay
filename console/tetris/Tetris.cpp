@@ -30,6 +30,10 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
         p1.push_back(Action::ROTATE_RIGHT);
     }
 
+    if (IsKeyDown(KEY_C)) {
+        p1.push_back(Action::HOLD);
+    }
+
     float dt = GetFrameTime();
     m_player_1.update(dt, p1);
     m_player_2.update(dt, {});

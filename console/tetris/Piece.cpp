@@ -79,7 +79,7 @@ void Piece::draw(int draw_x, int draw_y, bool ghost) const
     int x = draw_x + m_x * BLOCK_SIZE;
     int y = draw_y + (m_y - VANISH) * BLOCK_SIZE;
 
-    m_shape.draw(x, y, m_rotation, ghost);
+    m_shape.draw(x, y, m_rotation, BLOCK_SIZE, ghost);
 }
 
 bool Piece::collision(int x, int y, const CollisionFunction& collision_fun)

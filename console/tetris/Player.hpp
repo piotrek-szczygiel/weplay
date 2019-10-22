@@ -6,6 +6,7 @@
 #include "Piece.hpp"
 #include "Score.hpp"
 #include <memory>
+#include <optional>
 
 namespace Tetris {
 
@@ -31,6 +32,9 @@ private:
     Bag m_bag {};
     Input m_input {};
     Score m_score {};
+
+    std::optional<ShapeType> m_hold {};
+    bool m_hold_lock {};
 
     float m_falling {};
     float m_falling_interval { 1.0F };

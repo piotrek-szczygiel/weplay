@@ -12,7 +12,8 @@ Player::Player()
         .bind(Action::SOFT_DROP, false)
         .bind(Action::HARD_DROP, false)
         .bind(Action::ROTATE_RIGHT, false)
-        .bind(Action::ROTATE_LEFT, false);
+        .bind(Action::ROTATE_LEFT, false)
+        .bind(Action::HOLD, false);
 }
 
 void Player::action(Action a)
@@ -62,6 +63,25 @@ void Player::action(Action a)
         }
         break;
     }
+    case Action::HOLD: {
+        if (m_hold_lock) {
+            break;
+        }
+
+        m_hold_lock = true;
+
+        if (m_hold) {
+            ShapeType hold = m_hold.value();
+            ShapeType current = m_piece.type();
+
+            m_piece = { hold };
+            m_hold = { current };
+        } else {
+            m_hold = { m_piece.type() };
+            new_piece();
+        }
+        break;
+    }
     case Action::FALL: {
         if (!m_piece.move(0, 1, collision())) {
             action(Action::LOCK);
@@ -73,11 +93,12 @@ void Player::action(Action a)
             action(Action::GAME_OVER);
         } else {
             new_piece();
+            m_hold_lock = false;
 
             auto rows = m_matrix.get_full_rows();
             if (!rows.empty()) {
                 m_state = CLEARING;
-                int count = rows.size();
+                int count = static_cast<int>(rows.size());
                 m_clearing_rows = std::move(rows);
                 m_clearing_duration = {};
                 m_score.update_clear(count, false);
@@ -173,7 +194,14 @@ void Player::draw(int draw_x, int draw_y)
 
     m_score.draw(draw_x, draw_y - 2 * BLOCK_SIZE, BLOCK_SIZE);
 
-    shape_from_type(m_bag.peek()).draw(draw_x + WIDTH * BLOCK_SIZE + BLOCK_SIZE, draw_y, 0);
+    shape_from_type(m_bag.peek())
+        .draw(
+            draw_x + WIDTH * BLOCK_SIZE + BLOCK_SIZE / 4 * 3, draw_y, 0, BLOCK_SIZE / 4 * 3, false);
+
+    if (m_hold) {
+        shape_from_type(m_hold.value())
+            .draw(draw_x - (5 * BLOCK_SIZE / 4 * 3), draw_y, 0, BLOCK_SIZE / 4 * 3, false);
+    }
 }
 
 void Player::new_piece()

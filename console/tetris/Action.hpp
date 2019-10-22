@@ -10,6 +10,7 @@ enum class Action {
     ROTATE_LEFT,
     SOFT_DROP,
     HARD_DROP,
+    HOLD,
     FALL,
     LOCK,
     GAME_OVER,

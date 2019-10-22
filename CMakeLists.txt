@@ -1,16 +1,14 @@
 cmake_minimum_required(VERSION 3.11)
 project(raspberry_console)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
     console/controller/Controller.cpp
     console/controller/TcpSession.cpp
-    console/controller/TcpSession.hpp
     console/controller/TcpServer.cpp
-    console/controller/TcpServer.hpp
     console/menu/Menu.cpp
     console/starship/Starship.cpp
     console/starship/Ship.cpp

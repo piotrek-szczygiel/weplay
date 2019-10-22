@@ -1,10 +1,9 @@
 #include "Shape.hpp"
-#include "Matrix.hpp"
 #include <raylib.h>
 
 namespace Tetris {
 
-void Shape::draw(int draw_x, int draw_y, int rotation, bool ghost) const
+void Shape::draw(int draw_x, int draw_y, int rotation, int size, bool ghost) const
 {
     const auto& grid { grids[rotation] };
 
@@ -20,8 +19,7 @@ void Shape::draw(int draw_x, int draw_y, int rotation, bool ghost) const
                 color.a = 64;
             }
 
-            DrawRectangle(
-                draw_x + x * BLOCK_SIZE, draw_y + y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, color);
+            DrawRectangle(draw_x + x * size, draw_y + y * size, size, size, color);
         }
     }
 }
