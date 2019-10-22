@@ -6,32 +6,32 @@ namespace Tetris {
 
 void Tetris::update(std::shared_ptr<ControllerState> state)
 {
-    std::vector<Action> player_1_actions {};
+    std::vector<Action> p1 {};
 
     if (IsKeyDown(KEY_LEFT)) {
-        player_1_actions.push_back(Action::MOVE_LEFT);
+        p1.push_back(Action::MOVE_LEFT);
     } else if (IsKeyDown(KEY_RIGHT)) {
-        player_1_actions.push_back(Action::MOVE_RIGHT);
+        p1.push_back(Action::MOVE_RIGHT);
     }
 
     if (IsKeyDown(KEY_DOWN)) {
-        player_1_actions.push_back(Action::MOVE_DOWN);
+        p1.push_back(Action::MOVE_DOWN);
     }
 
     if (IsKeyDown(KEY_SPACE)) {
-        player_1_actions.push_back(Action::HARD_DROP);
+        p1.push_back(Action::HARD_DROP);
     } else if (IsKeyDown(KEY_LEFT_SHIFT)) {
-        player_1_actions.push_back(Action::SOFT_DROP);
+        p1.push_back(Action::SOFT_DROP);
     }
 
     if (IsKeyDown(KEY_Z)) {
-        player_1_actions.push_back(Action::ROTATE_COUNTER_CLOCKWISE);
+        p1.push_back(Action::ROTATE_LEFT);
     } else if (IsKeyDown(KEY_X)) {
-        player_1_actions.push_back(Action::ROTATE_CLOCKWISE);
+        p1.push_back(Action::ROTATE_RIGHT);
     }
 
     float dt = GetFrameTime();
-    m_player_1.update(dt, std::move(player_1_actions));
+    m_player_1.update(dt, p1);
 }
 
 void Tetris::draw()

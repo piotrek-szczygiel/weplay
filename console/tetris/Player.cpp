@@ -12,8 +12,8 @@ Player::Player()
         .bind(Action::MOVE_DOWN, true)
         .bind(Action::SOFT_DROP, false)
         .bind(Action::HARD_DROP, false)
-        .bind(Action::ROTATE_CLOCKWISE, false)
-        .bind(Action::ROTATE_COUNTER_CLOCKWISE, false);
+        .bind(Action::ROTATE_RIGHT, false)
+        .bind(Action::ROTATE_LEFT, false);
 }
 
 void Player::action(Action a)
@@ -22,10 +22,14 @@ void Player::action(Action a)
 
     switch (a) {
     case Action::MOVE_LEFT:
-        m_piece.move(-1, 0, collision);
+        if (m_piece.move(-1, 0, collision) && m_piece.touching_floor(collision)) {
+            reset_fall();
+        }
         break;
     case Action::MOVE_RIGHT:
-        m_piece.move(1, 0, collision);
+        if (m_piece.move(1, 0, collision) && m_piece.touching_floor(collision)) {
+            reset_fall();
+        }
         break;
     case Action::MOVE_DOWN:
         if (m_piece.move(0, 1, collision)) {
@@ -41,11 +45,15 @@ void Player::action(Action a)
         m_piece.fall(collision);
         action(Action::LOCK);
         break;
-    case Action::ROTATE_CLOCKWISE:
-        m_piece.rotate(true, collision);
+    case Action::ROTATE_RIGHT:
+        if (m_piece.rotate(true, collision) && m_piece.touching_floor(collision)) {
+            reset_fall();
+        }
         break;
-    case Action::ROTATE_COUNTER_CLOCKWISE:
-        m_piece.rotate(false, collision);
+    case Action::ROTATE_LEFT:
+        if (m_piece.rotate(false, collision) && m_piece.touching_floor(collision)) {
+            reset_fall();
+        }
         break;
     case Action::FALL:
         if (!m_piece.move(0, 1, collision)) {

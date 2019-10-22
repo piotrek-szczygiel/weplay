@@ -5,6 +5,12 @@
 
 namespace Tetris {
 
+enum class Movement {
+    NONE,
+    MOVE,
+    ROTATE,
+};
+
 class Piece {
 public:
     using CollisionFunction = std::function<bool(const Piece&)>;
@@ -26,6 +32,7 @@ public:
     bool move(int x, int y, const CollisionFunction& collision_fun);
     bool rotate(bool right, const CollisionFunction& collision_fun);
     int fall(const CollisionFunction& collision_fun);
+    bool touching_floor(const CollisionFunction& collision_fun);
     void draw(int draw_x, int draw_y) const;
 
 private:
@@ -33,6 +40,8 @@ private:
     int m_x;
     int m_y;
     int m_rotation { 0 };
+
+    Movement m_last_movement { Movement::NONE };
 
     bool collision(int x, int y, const CollisionFunction& collision_fun);
 };

@@ -11,6 +11,7 @@ bool Piece::move(int x, int y, const CollisionFunction& collision_fun)
 
     m_x += x;
     m_y += y;
+    m_last_movement = Movement::MOVE;
 
     return true;
 }
@@ -50,7 +51,9 @@ bool Piece::rotate(bool right, const CollisionFunction& collision_fun)
         }
     }
 
-    if (!rotated) {
+    if (rotated) {
+        m_last_movement = Movement::ROTATE;
+    } else {
         m_rotation = lastRotation;
     }
 
@@ -62,6 +65,10 @@ int Piece::fall(const CollisionFunction& collision_fun)
     int rows = 0;
     while (move(0, 1, collision_fun)) {
         rows += 1;
+    }
+
+    if (rows > 0) {
+        m_last_movement = Movement::MOVE;
     }
 
     return rows;
@@ -86,6 +93,11 @@ bool Piece::collision(int x, int y, const CollisionFunction& collision_fun)
     m_y -= y;
 
     return colliding;
+}
+
+bool Piece::touching_floor(const CollisionFunction& collision_fun)
+{
+    return collision(0, 1, collision_fun);
 }
 
 }
