@@ -74,7 +74,8 @@ void Score::update_clear(int rows, bool t_spin)
 
 void Score::draw(int draw_x, int draw_y, int size)
 {
-    RlDrawText(std::to_string(m_score).c_str(), draw_x, draw_y, size, RAYWHITE);
+    RlDrawText(
+        (std::string("SCORE: ") + std::to_string(m_score)).c_str(), draw_x, draw_y, size, RAYWHITE);
 }
 
 }

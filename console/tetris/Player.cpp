@@ -192,15 +192,19 @@ void Player::draw(int draw_x, int draw_y)
 
     m_matrix.draw_outline(draw_x, draw_y);
 
-    m_score.draw(draw_x, draw_y - 2 * BLOCK_SIZE, BLOCK_SIZE);
+    m_score.draw(draw_x, draw_y - 5 * BLOCK_SIZE / 2, BLOCK_SIZE);
 
+    int small_size { BLOCK_SIZE / 4 * 3 };
+
+    RlDrawText("next", draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y, small_size, RAYWHITE);
     shape_from_type(m_bag.peek())
-        .draw(
-            draw_x + WIDTH * BLOCK_SIZE + BLOCK_SIZE / 4 * 3, draw_y, 0, BLOCK_SIZE / 4 * 3, false);
+        .draw(draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y + 2 * small_size, 0, small_size,
+            false);
 
+    RlDrawText("hold", draw_x - 5 * small_size, draw_y, small_size, RAYWHITE);
     if (m_hold) {
         shape_from_type(m_hold.value())
-            .draw(draw_x - (5 * BLOCK_SIZE / 4 * 3), draw_y, 0, BLOCK_SIZE / 4 * 3, false);
+            .draw(draw_x - 5 * small_size, draw_y + 2 * small_size, 0, small_size, false);
     }
 }
 
