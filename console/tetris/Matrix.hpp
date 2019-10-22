@@ -18,13 +18,12 @@ class Matrix {
 public:
     bool lock(const Piece& piece);
     bool collision(const Piece& piece);
+    void clear_rows(const std::vector<int>& rows);
+    std::vector<int> get_full_rows();
     void draw(int draw_x, int draw_y) const;
 
 private:
     MatrixGrid m_grid {};
-
-    std::vector<int> get_full_rows();
-    void clear_rows(const std::vector<int>& rows);
 };
 
 }

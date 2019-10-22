@@ -28,9 +28,6 @@ bool Matrix::lock(const Piece& piece)
         }
     }
 
-    auto rows = get_full_rows();
-    clear_rows(rows);
-
     return true;
 }
 

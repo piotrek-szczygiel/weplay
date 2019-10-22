@@ -17,10 +17,6 @@ Player::Player()
 
 void Player::action(Action a)
 {
-    if (m_game_over) {
-        return;
-    }
-
     auto collision = std::bind(&Matrix::collision, m_matrix, std::placeholders::_1);
 
     switch (a) {
@@ -55,10 +51,17 @@ void Player::action(Action a)
             action(Action::GAME_OVER);
         } else {
             new_piece();
+
+            auto rows = m_matrix.get_full_rows();
+            if (!rows.empty()) {
+                m_state = CLEARING;
+                m_clearing_rows = std::move(rows);
+                m_clearing_start = GetTime();
+            }
         }
         break;
     case Action::GAME_OVER:
-        m_game_over = true;
+        m_state = GAME_OVER;
         break;
     default:
         break;
@@ -67,20 +70,31 @@ void Player::action(Action a)
 
 void Player::update(float dt, std::vector<Action> actions)
 {
-    if (m_game_over) {
+    double now = GetTime();
+
+    if (m_state == GAME_OVER) {
         return;
     }
 
-    for (Action a : m_input.update(std::move(actions))) {
-        action(a);
+    if (m_state == CLEARING) {
+        if (now - m_clearing_start > 0.5) {
+            m_state = PLAYING;
+            m_matrix.clear_rows(m_clearing_rows);
+        }
     }
 
-    m_falling += dt;
+    if (m_state == PLAYING) {
+        for (Action a : m_input.update(std::move(actions))) {
+            action(a);
+        }
 
-    if (m_falling > 1.0F) {
-        m_falling -= 1.0F;
+        m_falling += dt;
 
-        action(Action::FALL);
+        if (m_falling > 1.0F) {
+            m_falling -= 1.0F;
+
+            action(Action::FALL);
+        }
     }
 }
 
@@ -88,6 +102,23 @@ void Player::draw(int draw_x, int draw_y)
 {
     m_piece.draw(draw_x, draw_y);
     m_matrix.draw(draw_x, draw_y);
+
+    if (m_state == CLEARING) {
+        float cover = static_cast<float>((GetTime() - m_clearing_start) / 0.5)
+            * static_cast<float>(WIDTH * BLOCK_SIZE);
+
+        for (int row : m_clearing_rows) {
+            RlRectangle rect {
+                static_cast<float>(draw_x) + static_cast<float>(WIDTH * BLOCK_SIZE) / 2.0F,
+                static_cast<float>(draw_y + (row - VANISH) * BLOCK_SIZE)
+                    + static_cast<float>(BLOCK_SIZE) / 2.0F,
+                cover,
+                static_cast<float>(BLOCK_SIZE),
+            };
+
+            DrawRectanglePro(rect, { rect.width / 2.0F, rect.height / 2.0F }, {}, BLACK);
+        }
+    }
 }
 
 void Player::new_piece()
