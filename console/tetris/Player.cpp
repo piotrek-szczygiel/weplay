@@ -18,45 +18,43 @@ Player::Player()
 
 void Player::action(Action a)
 {
-    auto collision = std::bind(&Matrix::collision, m_matrix, std::placeholders::_1);
-
     switch (a) {
     case Action::MOVE_LEFT:
-        if (m_piece.move(-1, 0, collision) && m_piece.touching_floor(collision)) {
+        if (m_piece.move(-1, 0, m_collision) && m_piece.touching_floor(m_collision)) {
             reset_fall();
         }
         break;
     case Action::MOVE_RIGHT:
-        if (m_piece.move(1, 0, collision) && m_piece.touching_floor(collision)) {
+        if (m_piece.move(1, 0, m_collision) && m_piece.touching_floor(m_collision)) {
             reset_fall();
         }
         break;
     case Action::MOVE_DOWN:
-        if (m_piece.move(0, 1, collision)) {
+        if (m_piece.move(0, 1, m_collision)) {
             reset_fall();
         }
         break;
     case Action::SOFT_DROP:
-        if (m_piece.fall(collision) > 0) {
+        if (m_piece.fall(m_collision) > 0) {
             reset_fall();
         }
         break;
     case Action::HARD_DROP:
-        m_piece.fall(collision);
+        m_piece.fall(m_collision);
         action(Action::LOCK);
         break;
     case Action::ROTATE_RIGHT:
-        if (m_piece.rotate(true, collision) && m_piece.touching_floor(collision)) {
+        if (m_piece.rotate(true, m_collision) && m_piece.touching_floor(m_collision)) {
             reset_fall();
         }
         break;
     case Action::ROTATE_LEFT:
-        if (m_piece.rotate(false, collision) && m_piece.touching_floor(collision)) {
+        if (m_piece.rotate(false, m_collision) && m_piece.touching_floor(m_collision)) {
             reset_fall();
         }
         break;
     case Action::FALL:
-        if (!m_piece.move(0, 1, collision)) {
+        if (!m_piece.move(0, 1, m_collision)) {
             action(Action::LOCK);
         }
         break;
@@ -96,6 +94,8 @@ void Player::update(float dt, const std::vector<Action>& actions)
         }
     }
 
+    m_collision = std::bind(&Matrix::collision, m_matrix, std::placeholders::_1);
+
     if (m_state == PLAYING) {
         for (Action a : m_input.update(dt, actions)) {
             action(a);
@@ -108,12 +108,20 @@ void Player::update(float dt, const std::vector<Action>& actions)
 
             action(Action::FALL);
         }
+
+        m_ghost = m_piece;
+        m_ghost.fall(m_collision);
     }
 }
 
 void Player::draw(int draw_x, int draw_y)
 {
     m_piece.draw(draw_x, draw_y);
+
+    if (m_state == PLAYING) {
+        m_ghost.draw(draw_x, draw_y, true);
+    }
+
     m_matrix.draw(draw_x, draw_y);
 
     if (m_state == CLEARING) {

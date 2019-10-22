@@ -24,6 +24,7 @@ private:
 
     State m_state { PLAYING };
     Piece m_piece { O };
+    Piece m_ghost { O };
     Matrix m_matrix {};
     Bag m_bag {};
     Input m_input {};
@@ -32,6 +33,8 @@ private:
 
     std::vector<int> m_clearing_rows {};
     float m_clearing_duration {};
+
+    Piece::CollisionFunction m_collision {};
 
     void action(Action action);
 

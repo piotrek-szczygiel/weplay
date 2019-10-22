@@ -28,12 +28,13 @@ public:
     int y() const { return m_y; }
 
     const ShapeGrid& grid() const { return m_shape.grids[m_rotation]; }
+    ShapeType type() const { return m_shape.type; };
 
     bool move(int x, int y, const CollisionFunction& collision_fun);
     bool rotate(bool right, const CollisionFunction& collision_fun);
     int fall(const CollisionFunction& collision_fun);
     bool touching_floor(const CollisionFunction& collision_fun);
-    void draw(int draw_x, int draw_y) const;
+    void draw(int draw_x, int draw_y, bool ghost = false) const;
 
 private:
     Shape m_shape;
