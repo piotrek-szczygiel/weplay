@@ -3,3 +3,4 @@
 .idea
 out
 CMakeSettings.json
+CMakeLists.txt.user
