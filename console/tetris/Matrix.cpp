@@ -28,6 +28,9 @@ bool Matrix::lock(const Piece& piece)
         }
     }
 
+    auto rows = get_full_rows();
+    clear_rows(rows);
+
     return true;
 }
 
@@ -78,6 +81,39 @@ void Matrix::draw(int draw_x, int draw_y) const
 
             DrawRectangle(draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, BLOCK_SIZE,
                 BLOCK_SIZE, SHAPE_COLORS[s]);
+        }
+    }
+}
+
+std::vector<int> Matrix::get_full_rows()
+{
+    std::vector<int> rows {};
+
+    for (int y = 0; y < HEIGHT + VANISH; ++y) {
+        bool full { true };
+
+        for (int x = 0; x < WIDTH; ++x) {
+            if (m_grid[y][x] == 0) {
+                full = false;
+                break;
+            }
+        }
+
+        if (full) {
+            rows.push_back(y);
+        }
+    }
+
+    return rows;
+}
+
+void Matrix::clear_rows(const std::vector<int>& rows)
+{
+    for (int row : rows) {
+        for (int y = row; y > 0; --y) {
+            for (int x = 0; x < WIDTH; ++x) {
+                m_grid[y][x] = m_grid[y - 1][x];
+            }
         }
     }
 }

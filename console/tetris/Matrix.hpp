@@ -1,5 +1,6 @@
 #pragma once
 #include "Shape.hpp"
+#include <vector>
 
 constexpr int HEIGHT { 20 };
 constexpr int VANISH { 20 };
@@ -21,6 +22,9 @@ public:
 
 private:
     MatrixGrid m_grid {};
+
+    std::vector<int> get_full_rows();
+    void clear_rows(const std::vector<int>& rows);
 };
 
 }
