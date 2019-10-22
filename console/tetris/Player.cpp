@@ -9,7 +9,8 @@ Player::Player()
 
     m_input.bind(Action::MOVE_LEFT, true)
         .bind(Action::MOVE_RIGHT, true)
-        .bind(Action::SOFT_DROP, true)
+        .bind(Action::MOVE_DOWN, true)
+        .bind(Action::SOFT_DROP, false)
         .bind(Action::HARD_DROP, false)
         .bind(Action::ROTATE_CLOCKWISE, false)
         .bind(Action::ROTATE_COUNTER_CLOCKWISE, false);
@@ -26,8 +27,13 @@ void Player::action(Action a)
     case Action::MOVE_RIGHT:
         m_piece.move(1, 0, collision);
         break;
-    case Action::SOFT_DROP:
+    case Action::MOVE_DOWN:
         if (m_piece.move(0, 1, collision)) {
+            reset_fall();
+        }
+        break;
+    case Action::SOFT_DROP:
+        if (m_piece.fall(collision) > 0) {
             reset_fall();
         }
         break;
@@ -56,7 +62,7 @@ void Player::action(Action a)
             if (!rows.empty()) {
                 m_state = CLEARING;
                 m_clearing_rows = std::move(rows);
-                m_clearing_start = GetTime();
+                m_clearing_duration = {};
             }
         }
         break;
@@ -68,29 +74,28 @@ void Player::action(Action a)
     }
 }
 
-void Player::update(float dt, std::vector<Action> actions)
+void Player::update(float dt, const std::vector<Action>& actions)
 {
-    double now = GetTime();
-
     if (m_state == GAME_OVER) {
         return;
     }
 
     if (m_state == CLEARING) {
-        if (now - m_clearing_start > 0.5) {
+        m_clearing_duration += dt;
+        if (m_clearing_duration >= 0.5F) {
             m_state = PLAYING;
             m_matrix.clear_rows(m_clearing_rows);
         }
     }
 
     if (m_state == PLAYING) {
-        for (Action a : m_input.update(std::move(actions))) {
+        for (Action a : m_input.update(dt, actions)) {
             action(a);
         }
 
         m_falling += dt;
 
-        if (m_falling > 1.0F) {
+        if (m_falling >= 1.0F) {
             m_falling -= 1.0F;
 
             action(Action::FALL);
@@ -104,8 +109,7 @@ void Player::draw(int draw_x, int draw_y)
     m_matrix.draw(draw_x, draw_y);
 
     if (m_state == CLEARING) {
-        float cover = static_cast<float>((GetTime() - m_clearing_start) / 0.5)
-            * static_cast<float>(WIDTH * BLOCK_SIZE);
+        float cover = m_clearing_duration / 0.5F * static_cast<float>(WIDTH * BLOCK_SIZE);
 
         for (int row : m_clearing_rows) {
             RlRectangle rect {

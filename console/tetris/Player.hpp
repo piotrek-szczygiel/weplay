@@ -12,7 +12,7 @@ class Player {
 public:
     Player();
 
-    void update(float dt, std::vector<Action> actions);
+    void update(float dt, const std::vector<Action>& actions);
     void draw(int draw_x, int draw_y);
 
 private:
@@ -28,10 +28,10 @@ private:
     Bag m_bag {};
     Input m_input {};
 
-    float m_falling { 0.0F };
+    float m_falling {};
 
     std::vector<int> m_clearing_rows {};
-    double m_clearing_start {};
+    float m_clearing_duration {};
 
     void action(Action action);
 

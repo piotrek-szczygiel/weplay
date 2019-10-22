@@ -10,10 +10,9 @@ Input& Input::bind(KeyBind bind)
     return *this;
 }
 
-std::vector<Action> Input::update(std::vector<Action> wanted)
+std::vector<Action> Input::update(float dt, std::vector<Action> wanted)
 {
     std::vector<Action> result {};
-    double now = GetTime();
 
     for (KeyBind bind : m_binds) {
         if (std::find(wanted.begin(), wanted.end(), bind.action) == wanted.end()) {
@@ -28,15 +27,21 @@ std::vector<Action> Input::update(std::vector<Action> wanted)
         auto repeated = m_action_repeated.find(bind.action);
 
         if (activated == m_action_activated.end()) {
-            m_action_activated.emplace(bind.action, now);
+            m_action_activated.emplace(bind.action, 0.0F);
             active = true;
-        } else if (bind.repeat && (now - activated->second > DELAY)) {
-            if (repeated == m_action_repeated.end()) {
-                m_action_repeated.emplace(bind.action, now);
-                active = true;
-            } else if (now - repeated->second > REPEAT) {
-                m_action_repeated[bind.action] = now;
-                active = true;
+        } else {
+            activated->second += dt;
+            if (bind.repeat && activated->second > DELAY) {
+                if (repeated == m_action_repeated.end()) {
+                    m_action_repeated.emplace(bind.action, 0.0F);
+                    active = true;
+                } else {
+                    repeated->second += dt;
+                    if (repeated->second > REPEAT) {
+                        m_action_repeated[bind.action] = 0.0F;
+                        active = true;
+                    }
+                }
             }
         }
 

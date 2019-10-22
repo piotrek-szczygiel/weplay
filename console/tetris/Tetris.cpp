@@ -14,9 +14,13 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
         player_1_actions.push_back(Action::MOVE_RIGHT);
     }
 
-    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_SPACE)) {
+    if (IsKeyDown(KEY_DOWN)) {
+        player_1_actions.push_back(Action::MOVE_DOWN);
+    }
+
+    if (IsKeyDown(KEY_SPACE)) {
         player_1_actions.push_back(Action::HARD_DROP);
-    } else if (IsKeyDown(KEY_DOWN)) {
+    } else if (IsKeyDown(KEY_LEFT_SHIFT)) {
         player_1_actions.push_back(Action::SOFT_DROP);
     }
 

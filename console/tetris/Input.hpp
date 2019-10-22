@@ -23,12 +23,12 @@ public:
     Input& bind(KeyBind bind);
     Input& bind(Action action, bool repeat) { return bind({ action, repeat }); }
 
-    std::vector<Action> update(std::vector<Action> wanted);
+    std::vector<Action> update(float dt, std::vector<Action> wanted);
 
 private:
     std::vector<KeyBind> m_binds {};
-    std::unordered_map<Action, double> m_action_activated {};
-    std::unordered_map<Action, double> m_action_repeated {};
+    std::unordered_map<Action, float> m_action_activated {};
+    std::unordered_map<Action, float> m_action_repeated {};
 };
 
 }
