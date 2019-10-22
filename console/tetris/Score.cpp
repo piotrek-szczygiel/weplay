@@ -4,8 +4,10 @@
 
 namespace Tetris {
 
-void Score::update_clear(int level, int rows, bool t_spin)
+void Score::update_clear(int rows, bool t_spin)
 {
+    constexpr int level { 1 };
+
     int lines {};
     int duel_lines {};
 

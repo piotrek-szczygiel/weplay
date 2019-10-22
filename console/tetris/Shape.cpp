@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 namespace Tetris {
+
 void Shape::draw(int draw_x, int draw_y, int rotation, bool ghost) const
 {
     const auto& grid { grids[rotation] };
@@ -24,4 +25,5 @@ void Shape::draw(int draw_x, int draw_y, int rotation, bool ghost) const
         }
     }
 }
+
 }

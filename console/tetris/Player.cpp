@@ -1,5 +1,4 @@
 #include "Player.hpp"
-#include <boost/log/trivial.hpp>
 
 namespace Tetris {
 
@@ -81,7 +80,7 @@ void Player::action(Action a)
                 int count = rows.size();
                 m_clearing_rows = std::move(rows);
                 m_clearing_duration = {};
-                m_score.update_clear(1, count, false);
+                m_score.update_clear(count, false);
             } else {
                 m_score.reset_combo();
             }
@@ -128,8 +127,8 @@ void Player::update(float dt, const std::vector<Action>& actions)
 
         m_falling += dt;
 
-        if (m_falling >= 1.0F) {
-            m_falling -= 1.0F;
+        if (m_falling >= m_falling_interval) {
+            m_falling -= m_falling_interval;
 
             action(Action::FALL);
         }
@@ -143,7 +142,7 @@ void Player::draw(int draw_x, int draw_y)
 {
     m_matrix.draw(draw_x, draw_y);
 
-    if (m_state == PLAYING) {
+    if (m_state == PLAYING || m_state == CLEARING) {
         m_ghost.draw(draw_x, draw_y, true);
         m_piece.draw(draw_x, draw_y);
     }
@@ -173,6 +172,8 @@ void Player::draw(int draw_x, int draw_y)
     m_matrix.draw_outline(draw_x, draw_y);
 
     m_score.draw(draw_x, draw_y - 2 * BLOCK_SIZE, BLOCK_SIZE);
+
+    shape_from_type(m_bag.peek()).draw(draw_x + WIDTH * BLOCK_SIZE + BLOCK_SIZE, draw_y, 0);
 }
 
 void Player::new_piece()

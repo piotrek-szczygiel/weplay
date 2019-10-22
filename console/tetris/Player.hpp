@@ -33,6 +33,7 @@ private:
     Score m_score {};
 
     float m_falling {};
+    float m_falling_interval { 1.0F };
 
     std::vector<int> m_clearing_rows {};
     float m_clearing_duration {};

@@ -38,8 +38,8 @@ public:
 
 private:
     Shape m_shape;
-    int m_x;
-    int m_y;
+    int m_x {};
+    int m_y {};
     int m_rotation { 0 };
 
     Movement m_last_movement { Movement::NONE };
