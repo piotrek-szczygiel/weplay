@@ -32,6 +32,7 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
 
     float dt = GetFrameTime();
     m_player_1.update(dt, p1);
+    m_player_2.update(dt, {});
 }
 
 void Tetris::draw()
@@ -39,8 +40,8 @@ void Tetris::draw()
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
-    m_player_1.draw(30, 30);
-    m_player_2.draw(m_width - 30 - WIDTH * BLOCK_SIZE, 30);
+    m_player_1.draw(30, 50);
+    m_player_2.draw(m_width - 30 - WIDTH * BLOCK_SIZE, 50);
 
     EndTextureMode();
 }

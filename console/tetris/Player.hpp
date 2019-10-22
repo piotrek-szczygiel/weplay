@@ -4,6 +4,7 @@
 #include "Input.hpp"
 #include "Matrix.hpp"
 #include "Piece.hpp"
+#include "Score.hpp"
 #include <memory>
 
 namespace Tetris {
@@ -29,6 +30,7 @@ private:
     Matrix m_matrix {};
     Bag m_bag {};
     Input m_input {};
+    Score m_score {};
 
     float m_falling {};
 

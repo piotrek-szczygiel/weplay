@@ -21,6 +21,7 @@ set(SOURCE_FILES
     console/tetris/Matrix.cpp
     console/tetris/Piece.cpp
     console/tetris/Player.cpp
+    console/tetris/Score.cpp
     console/tetris/Shape.cpp
     console/tetris/Tetris.cpp
     console/Util.cpp)

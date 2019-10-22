@@ -19,7 +19,7 @@ void Console::run()
         m_current_state->draw();
 
         BeginDrawing();
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
 
         auto width { static_cast<float>(m_current_state->framebuffer().texture.width) };
         auto height { static_cast<float>(m_current_state->framebuffer().texture.height) };

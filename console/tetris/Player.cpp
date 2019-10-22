@@ -19,46 +19,57 @@ Player::Player()
 void Player::action(Action a)
 {
     switch (a) {
-    case Action::MOVE_LEFT:
+    case Action::MOVE_LEFT: {
         if (m_piece.move(-1, 0, collision()) && m_piece.touching_floor(collision())) {
             reset_fall();
         }
         break;
-    case Action::MOVE_RIGHT:
+    }
+    case Action::MOVE_RIGHT: {
         if (m_piece.move(1, 0, collision()) && m_piece.touching_floor(collision())) {
             reset_fall();
         }
         break;
-    case Action::MOVE_DOWN:
+    }
+    case Action::MOVE_DOWN: {
         if (m_piece.move(0, 1, collision())) {
             reset_fall();
         }
         break;
-    case Action::SOFT_DROP:
-        if (m_piece.fall(collision()) > 0) {
+    }
+    case Action::SOFT_DROP: {
+        int rows = m_piece.fall(collision());
+        if (rows > 0) {
+            m_score.soft_drop(rows);
             reset_fall();
         }
         break;
-    case Action::HARD_DROP:
-        m_piece.fall(collision());
+    }
+    case Action::HARD_DROP: {
+        int rows = m_piece.fall(collision());
+        m_score.hard_drop(rows);
         action(Action::LOCK);
         break;
-    case Action::ROTATE_RIGHT:
+    }
+    case Action::ROTATE_RIGHT: {
         if (m_piece.rotate(true, collision()) && m_piece.touching_floor(collision())) {
             reset_fall();
         }
         break;
-    case Action::ROTATE_LEFT:
+    }
+    case Action::ROTATE_LEFT: {
         if (m_piece.rotate(false, collision()) && m_piece.touching_floor(collision())) {
             reset_fall();
         }
         break;
-    case Action::FALL:
+    }
+    case Action::FALL: {
         if (!m_piece.move(0, 1, collision())) {
             action(Action::LOCK);
         }
         break;
-    case Action::LOCK:
+    }
+    case Action::LOCK: {
         if (!m_matrix.lock(m_piece)) {
             action(Action::GAME_OVER);
         } else {
@@ -67,12 +78,17 @@ void Player::action(Action a)
             auto rows = m_matrix.get_full_rows();
             if (!rows.empty()) {
                 m_state = CLEARING;
+                int count = rows.size();
                 m_clearing_rows = std::move(rows);
                 m_clearing_duration = {};
+                m_score.update_clear(1, count, false);
+            } else {
+                m_score.reset_combo();
             }
         }
         break;
-    case Action::GAME_OVER:
+    }
+    case Action::GAME_OVER: {
         m_state = GAME_OVER_ANIMATION;
         for (int y = VANISH - 1; y < VANISH + HEIGHT; ++y) {
             m_clearing_rows.push_back(y);
@@ -80,6 +96,7 @@ void Player::action(Action a)
         m_clearing_duration = {};
         m_clearing_max_duration = 1.0F;
         break;
+    }
     default:
         break;
     }
@@ -127,8 +144,8 @@ void Player::draw(int draw_x, int draw_y)
     m_matrix.draw(draw_x, draw_y);
 
     if (m_state == PLAYING) {
-        m_piece.draw(draw_x, draw_y);
         m_ghost.draw(draw_x, draw_y, true);
+        m_piece.draw(draw_x, draw_y);
     }
 
     if (m_state == GAME_OVER) {
@@ -154,11 +171,17 @@ void Player::draw(int draw_x, int draw_y)
     }
 
     m_matrix.draw_outline(draw_x, draw_y);
+
+    m_score.draw(draw_x, draw_y - 2 * BLOCK_SIZE, BLOCK_SIZE);
 }
 
 void Player::new_piece()
 {
     m_piece = { m_bag.pop() };
+    if (m_matrix.collision(m_piece)) {
+        action(Action::GAME_OVER);
+    }
+
     reset_fall();
 }
 
