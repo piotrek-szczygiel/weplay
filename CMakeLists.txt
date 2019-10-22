@@ -28,7 +28,8 @@ set(SOURCE_FILES
 find_package(Threads)
 
 if(NOT WIN32)
-    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED -DBOOST_ERROR_CODE_HEADER_ONLY)
+    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED
+                    -DBOOST_ERROR_CODE_HEADER_ONLY)
 endif()
 
 find_package(
@@ -46,7 +47,8 @@ if(NOT RASPBERRY_PI)
         include(FetchContent)
 
         # My fork of original library that fixes symbol collisions on Windows
-        FetchContent_Declare(raylib URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
+        FetchContent_Declare(raylib
+                             URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
 
         FetchContent_GetProperties(raylib)
         if(NOT raylib_POPULATED)

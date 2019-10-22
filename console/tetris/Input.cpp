@@ -3,47 +3,49 @@
 #include <raylib.h>
 
 namespace Tetris {
+
 Input& Input::bind(KeyBind bind)
 {
-    binds_.push_back(bind);
+    m_binds.push_back(bind);
     return *this;
 }
 
 std::vector<Action> Input::update(std::vector<Action> wanted)
 {
-    std::vector<Action> activated {};
+    std::vector<Action> result {};
     double now = GetTime();
 
-    for (KeyBind bind : binds_) {
+    for (KeyBind bind : m_binds) {
         if (std::find(wanted.begin(), wanted.end(), bind.action) == wanted.end()) {
-            actionActivated_.erase(bind.action);
-            actionRepeated_.erase(bind.action);
+            m_action_activated.erase(bind.action);
+            m_action_repeated.erase(bind.action);
             continue;
         }
 
         bool active = false;
 
-        auto actionActivated = actionActivated_.find(bind.action);
-        auto actionRepeated = actionRepeated_.find(bind.action);
+        auto activated = m_action_activated.find(bind.action);
+        auto repeated = m_action_repeated.find(bind.action);
 
-        if (actionActivated == actionActivated_.end()) {
-            actionActivated_.emplace(bind.action, now);
+        if (activated == m_action_activated.end()) {
+            m_action_activated.emplace(bind.action, now);
             active = true;
-        } else if (bind.repeat && (now - actionActivated->second > DELAY)) {
-            if (actionRepeated == actionRepeated_.end()) {
-                actionRepeated_.emplace(bind.action, now);
+        } else if (bind.repeat && (now - activated->second > DELAY)) {
+            if (repeated == m_action_repeated.end()) {
+                m_action_repeated.emplace(bind.action, now);
                 active = true;
-            } else if (now - actionRepeated->second > REPEAT) {
-                actionRepeated_[bind.action] = now;
+            } else if (now - repeated->second > REPEAT) {
+                m_action_repeated[bind.action] = now;
                 active = true;
             }
         }
 
         if (active) {
-            activated.push_back(bind.action);
+            result.push_back(bind.action);
         }
     }
 
-    return activated;
+    return result;
 }
+
 }

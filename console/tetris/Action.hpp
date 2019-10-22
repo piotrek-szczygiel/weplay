@@ -1,6 +1,7 @@
 #pragma once
 
 namespace Tetris {
+
 enum class Action {
     MOVE_LEFT,
     MOVE_RIGHT,
@@ -12,4 +13,5 @@ enum class Action {
     LOCK,
     GAME_OVER,
 };
+
 }

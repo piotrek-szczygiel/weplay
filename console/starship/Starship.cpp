@@ -2,71 +2,71 @@
 
 namespace Starship {
 
-void Starship::update(std::shared_ptr<Controller::State> state)
+void Starship::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
-    ship_.controls = {
+    m_ship.set_controls({
         IsKeyDown(KEY_W) || state->forward.load(),
         IsKeyDown(KEY_S),
         IsKeyDown(KEY_A) || state->left.load(),
         IsKeyDown(KEY_D) || state->right.load(),
         IsKeyDown(KEY_P),
         IsKeyDown(KEY_L),
-    };
+    });
 
-    ship_.update(dt, mapSize_, columns_);
+    m_ship.update(dt, m_map_size, m_columns);
 }
 
 void Starship::draw()
 {
-    BeginTextureMode(framebuffer_);
+    constexpr float RENDER_DISTANCE { 300.0F };
+
+    BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
-    BeginMode3D(ship_.camera.camera);
+    BeginMode3D(m_ship.camera());
 
     DrawPlane(
         {
             0.0F,
             0.0F,
-            mapSize_.z / 2.0F,
+            m_map_size.z / 2.0F,
         },
         {
-            mapSize_.x,
-            mapSize_.z,
+            m_map_size.x,
+            m_map_size.z,
         },
         DARKBROWN);
 
-    size_t columnsDrawn {};
-    bool firstColumnDrawn {};
+    size_t columns_drawn {};
+    bool drawn_first_column {};
 
-    const float renderDistance { 300.0F };
-
-    for (auto& column : columns_) {
-        float distance = column.position.z - ship_.position.z;
+    for (auto& column : m_columns) {
+        float distance = column.position().z - m_ship.position().z;
 
         if (distance < 0.0F) {
             continue;
         }
 
-        if (distance < renderDistance) {
+        if (distance < RENDER_DISTANCE) {
 
-            if (distance > renderDistance * 0.5F) {
-                column.color.a
-                    = static_cast<unsigned char>((1.0F - ((distance / renderDistance) - 0.5F) * 2.0F) * 255.0F);
+            if (distance > RENDER_DISTANCE * 0.5F) {
+                column.set_alpha(static_cast<unsigned char>(
+                    (1.0F - ((distance / RENDER_DISTANCE) - 0.5F) * 2.0F) * 255.0F));
             } else {
-                column.color.a = 255;
+                column.set_alpha(255);
             }
 
             column.draw();
 
-            ++columnsDrawn;
-            firstColumnDrawn = true;
+            ++columns_drawn;
+            drawn_first_column = true;
 
-            if (columnsDrawn % 100 == 0) {
+            if (columns_drawn % 100 == 0) {
                 EndMode3D();
-                BeginMode3D(ship_.camera.camera);
+                BeginMode3D(m_ship.camera());
             }
-        } else if (firstColumnDrawn) {
+        } else if (drawn_first_column) {
             break;
         }
     }
@@ -75,9 +75,6 @@ void Starship::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Starship::getFramebuffer()
-{
-    return framebuffer_;
-}
+RenderTexture2D Starship::framebuffer() { return m_framebuffer; }
 
 }

@@ -1,49 +1,49 @@
 #include "Piece.hpp"
 #include "Matrix.hpp"
-#include <raylib.h>
 
 namespace Tetris {
-bool Piece::move(int x, int y, CollisionFunction collision)
+
+bool Piece::move(int x, int y, const CollisionFunction& collision_fun)
 {
-    if (collision_(x, y, collision)) {
+    if (collision(x, y, collision_fun)) {
         return false;
     }
 
-    x_ += x;
-    y_ += y;
+    m_x += x;
+    m_y += y;
 
     return true;
 }
 
-bool Piece::rotate(bool clockwise, CollisionFunction collision)
+bool Piece::rotate(bool right, const CollisionFunction& collision_fun)
 {
-    if (shape_.type == O) {
+    if (m_shape.type == O) {
         return false;
     }
 
-    const auto& rotationKick = shape_.kicks[rotation_];
-    int lastRotation = rotation_;
+    const auto& rotationKick = m_shape.kicks[m_rotation];
+    int lastRotation = m_rotation;
     bool rotated = false;
 
-    const auto& kicks = clockwise ? rotationKick.clockwise : rotationKick.counterClockwise;
+    const auto& kicks = right ? rotationKick.right : rotationKick.left;
 
-    if (clockwise) {
-        rotation_ += 1;
+    if (right) {
+        m_rotation += 1;
     } else {
-        rotation_ -= 1;
+        m_rotation -= 1;
     }
 
-    if (rotation_ == -1) {
-        rotation_ = 3;
-    } else if (rotation_ == 4) {
-        rotation_ = 0;
+    if (m_rotation == -1) {
+        m_rotation = 3;
+    } else if (m_rotation == 4) {
+        m_rotation = 0;
     }
 
-    if (!collision(*this)) {
+    if (!collision_fun(*this)) {
         rotated = true;
     } else {
         for (const auto& kick : kicks) {
-            if (move(kick.x, kick.y, collision)) {
+            if (move(kick.x, kick.y, collision_fun)) {
                 rotated = true;
                 break;
             }
@@ -51,40 +51,41 @@ bool Piece::rotate(bool clockwise, CollisionFunction collision)
     }
 
     if (!rotated) {
-        rotation_ = lastRotation;
+        m_rotation = lastRotation;
     }
 
     return rotated;
 }
 
-int Piece::fall(CollisionFunction collision)
+int Piece::fall(const CollisionFunction& collision_fun)
 {
     int rows = 0;
-    while (move(0, 1, collision)) {
+    while (move(0, 1, collision_fun)) {
         rows += 1;
     }
 
     return rows;
 }
 
-void Piece::draw(int drawX, int drawY) const
+void Piece::draw(int draw_x, int draw_y) const
 {
-    int x = drawX + x_ * BLOCK_SIZE;
-    int y = drawY + (y_ - VANISH) * BLOCK_SIZE;
+    int x = draw_x + m_x * BLOCK_SIZE;
+    int y = draw_y + (m_y - VANISH) * BLOCK_SIZE;
 
-    shape_.draw(x, y, rotation_);
+    m_shape.draw(x, y, m_rotation);
 }
 
-bool Piece::collision_(int x, int y, CollisionFunction collision)
+bool Piece::collision(int x, int y, const CollisionFunction& collision_fun)
 {
-    x_ += x;
-    y_ += y;
+    m_x += x;
+    m_y += y;
 
-    bool colliding = collision(*this);
+    bool colliding = collision_fun(*this);
 
-    x_ -= x;
-    y_ -= y;
+    m_x -= x;
+    m_y -= y;
 
     return colliding;
 }
+
 }

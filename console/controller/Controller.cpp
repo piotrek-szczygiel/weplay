@@ -7,8 +7,8 @@ void Controller::worker()
     BOOST_LOG_TRIVIAL(info) << "Starting controller worker";
 
     try {
-        TcpServer server { ctx_, 1984, state };
-        ctx_.run();
+        TcpServer server { m_ctx, 1984, state };
+        m_ctx.run();
     } catch (std::exception& e) {
         BOOST_LOG_TRIVIAL(error) << "Exception while running TCP server: " << e.what();
     }

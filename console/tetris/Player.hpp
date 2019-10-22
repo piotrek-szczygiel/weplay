@@ -14,19 +14,19 @@ public:
 
     void action(Action action);
     void update(float dt, std::vector<Action> actions);
-    void draw(int drawX, int drawY);
+    void draw(int draw_x, int draw_y);
 
 private:
-    Piece piece_ { O };
-    Matrix matrix_ {};
-    Bag bag_ {};
-    Input input_ {};
+    Piece m_piece { O };
+    Matrix m_matrix {};
+    Bag m_bag {};
+    Input m_input {};
 
-    float falling_ { 0.0F };
-    bool gameOver_ { false };
+    float m_falling { 0.0F };
+    bool m_game_over { false };
 
-    void newPiece_();
-    void resetFall_();
+    void new_piece();
+    void reset_fall();
 };
 
 }

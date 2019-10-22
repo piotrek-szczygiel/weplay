@@ -1,34 +1,33 @@
 #include "Bag.hpp"
 
 namespace Tetris {
+
 ShapeType Bag::pop()
 {
-    ShapeType shape = bag_.front();
-    bag_.pop_front();
-    fill_();
+    ShapeType shape = m_bag.front();
+    m_bag.pop_front();
+    fill_all();
     return shape;
 }
 
-ShapeType Bag::peek()
-{
-    return bag_.front();
-}
+ShapeType Bag::peek() { return m_bag.front(); }
 
-void Bag::fill_()
+void Bag::fill_all()
 {
-    if (bag_.size() == 0) {
-        fill7_();
-        fill7_();
-    } else if (bag_.size() == 7) {
-        fill7_();
+    if (m_bag.empty()) {
+        fill_7();
+        fill_7();
+    } else if (m_bag.size() == 7) {
+        fill_7();
     }
 }
 
-void Bag::fill7_()
+void Bag::fill_7()
 {
     std::vector<ShapeType> temp;
     std::copy(SHAPES_ALL.begin(), SHAPES_ALL.end(), std::back_inserter(temp));
-    std::random_shuffle(temp.begin(), temp.end());
-    std::copy(temp.begin(), temp.end(), std::back_inserter(bag_));
+    std::shuffle(temp.begin(), temp.end(), m_generator);
+    std::copy(temp.begin(), temp.end(), std::back_inserter(m_bag));
 }
+
 }

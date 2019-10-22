@@ -21,17 +21,14 @@ struct KeyBind {
 class Input {
 public:
     Input& bind(KeyBind bind);
-    Input& bind(Action action, bool repeat)
-    {
-        return bind({ action, repeat });
-    }
+    Input& bind(Action action, bool repeat) { return bind({ action, repeat }); }
 
     std::vector<Action> update(std::vector<Action> wanted);
 
 private:
-    std::vector<KeyBind> binds_ {};
-    std::unordered_map<Action, double> actionActivated_ {};
-    std::unordered_map<Action, double> actionRepeated_ {};
+    std::vector<KeyBind> m_binds {};
+    std::unordered_map<Action, double> m_action_activated {};
+    std::unordered_map<Action, double> m_action_repeated {};
 };
 
 }

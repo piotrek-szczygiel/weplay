@@ -3,8 +3,7 @@
 
 namespace Starship {
 
-class ShipCamera {
-public:
+struct ShipCamera {
     Camera camera;
     Vector3 angle;
 

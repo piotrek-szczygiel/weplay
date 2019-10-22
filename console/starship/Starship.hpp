@@ -10,29 +10,25 @@ namespace Starship {
 class Starship final : public State {
 public:
     Starship()
-        : framebuffer_ { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
-        , ship_ { { 0.0, 5.0, 5.0 }, 50.0F }
-        , mapSize_ { 40.0F, 30.0F, 10'000.0F }
-        , columns_ { Column::generateRandomColumns(static_cast<size_t>(mapSize_.z / 10.0F), mapSize_, true) }
+        : m_framebuffer { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
+        , m_columns { Column::generate_random_columns(
+              static_cast<size_t>(m_map_size.z / 10.0F), m_map_size, true) }
     {
     }
 
-    ~Starship() override
-    {
-        UnloadRenderTexture(framebuffer_);
-    }
+    ~Starship() override { UnloadRenderTexture(m_framebuffer); }
 
-    void update(std::shared_ptr<Controller::State> state) override;
+    void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
-    RenderTexture2D getFramebuffer() override;
+    RenderTexture2D framebuffer() override;
 
 private:
-    RenderTexture2D framebuffer_;
+    RenderTexture2D m_framebuffer;
 
-    Ship ship_;
-    Vector3 mapSize_;
+    Ship m_ship { { 0.0, 5.0, 5.0 }, 50.0F };
+    Vector3 m_map_size { 40.0F, 30.0F, 10'000.0F };
 
-    std::vector<Column> columns_;
+    std::vector<Column> m_columns;
 };
 
 }

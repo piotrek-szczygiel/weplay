@@ -3,108 +3,108 @@
 
 namespace Starship {
 
-void Ship::update(float dt, Vector3 mapSize, const std::vector<Column>& columns)
+void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns)
 {
     double now { GetTime() };
 
-    if (now - lastCollision_ < 0.75) {
-        speed_ = {
-            fade(speed_.x, 0.0F, dt * strength_ / 4.0F),
-            speed_.y = fade(speed_.y, 0.0F, dt * strength_ / 4.0F),
-            speed_.z = fade(speed_.z, 0.0F, dt * strength_ / 4.0F),
+    if (now - m_last_collision < 0.75) {
+        m_speed = {
+            fade(m_speed.x, 0.0F, dt * m_strength / 4.0F),
+            m_speed.y = fade(m_speed.y, 0.0F, dt * m_strength / 4.0F),
+            m_speed.z = fade(m_speed.z, 0.0F, dt * m_strength / 4.0F),
         };
     } else {
 
-        if (controls.forward && !controls.back) {
-            speed_.z += dt * strength_ * 2.0F;
-        } else if (controls.back && !controls.forward) {
-            if (speed_.z > 0.0F) {
-                speed_.z -= dt * strength_ * 2.0F;
+        if (m_controls.forward && !m_controls.back) {
+            m_speed.z += dt * m_strength * 2.0F;
+        } else if (m_controls.back && !m_controls.forward) {
+            if (m_speed.z > 0.0F) {
+                m_speed.z -= dt * m_strength * 2.0F;
             } else {
-                speed_.z -= dt * strength_;
+                m_speed.z -= dt * m_strength;
             }
         } else {
-            speed_.z = fade(speed_.z, 0.0F, dt * strength_ / 2.0F);
+            m_speed.z = fade(m_speed.z, 0.0F, dt * m_strength / 2.0F);
         }
 
-        if (controls.left && !controls.right) {
-            if (speed_.x > 0.0F) {
-                speed_.x += dt * strength_ * 4.0F;
+        if (m_controls.left && !m_controls.right) {
+            if (m_speed.x > 0.0F) {
+                m_speed.x += dt * m_strength * 4.0F;
             } else {
-                speed_.x += dt * strength_ * 8.0F;
+                m_speed.x += dt * m_strength * 8.0F;
             }
-        } else if (controls.right && !controls.left) {
-            if (speed_.x < 0.0F) {
-                speed_.x -= dt * strength_ * 4.0F;
+        } else if (m_controls.right && !m_controls.left) {
+            if (m_speed.x < 0.0F) {
+                m_speed.x -= dt * m_strength * 4.0F;
             } else {
-                speed_.x -= dt * strength_ * 8.0F;
+                m_speed.x -= dt * m_strength * 8.0F;
             }
         } else {
-            speed_.x = fade(speed_.x, 0, dt * strength_ * 2.0F);
+            m_speed.x = fade(m_speed.x, 0, dt * m_strength * 2.0F);
         }
 
-        if (controls.up && !controls.down) {
-            speed_.y += dt * strength_ * 2.0F;
-        } else if (controls.down && !controls.up) {
-            speed_.y -= dt * strength_ * 2.0F;
+        if (m_controls.up && !m_controls.down) {
+            m_speed.y += dt * m_strength * 2.0F;
+        } else if (m_controls.down && !m_controls.up) {
+            m_speed.y -= dt * m_strength * 2.0F;
         } else {
-            speed_.y = fade(speed_.y, 0, dt * strength_ * 4.0F);
+            m_speed.y = fade(m_speed.y, 0, dt * m_strength * 4.0F);
         }
     }
 
-    speed_ = {
-        clamp(speed_.x, -strength_ / 2.0F, strength_ / 2.0F),
-        clamp(speed_.y, -strength_, strength_),
-        clamp(speed_.z, -strength_ / 4.0F, strength_ * 2.0F),
+    m_speed = {
+        clamp(m_speed.x, -m_strength / 2.0F, m_strength / 2.0F),
+        clamp(m_speed.y, -m_strength, m_strength),
+        clamp(m_speed.z, -m_strength / 4.0F, m_strength * 2.0F),
     };
 
-    camera.angle.z = speed_.x / strength_ * -PI / 8.0F;
+    m_camera.angle.z = m_speed.x / m_strength * -PI / 8.0F;
 
     Vector3 offset {
-        speed_.x * dt,
-        speed_.y * dt,
-        speed_.z * dt,
+        m_speed.x * dt,
+        m_speed.y * dt,
+        m_speed.z * dt,
     };
 
-    Vector3 newPosition {
-        clamp(position.x + offset.x, -mapSize.x / 2.0F + 1.0F, mapSize.x / 2.0F - 1.0F),
-        clamp(position.y + offset.y, 1.0F, mapSize.y),
-        clamp(position.z + offset.z, 0.0F, mapSize.z),
+    Vector3 new_position {
+        clamp(m_position.x + offset.x, -map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F),
+        clamp(m_position.y + offset.y, 1.0F, map_size.y),
+        clamp(m_position.z + offset.z, 0.0F, map_size.z),
     };
 
     bool colliding { false };
 
     for (const auto& column : columns) {
-        if (column.position.z < newPosition.z) {
+        if (column.position().z < new_position.z) {
             continue;
         }
 
-        if (column.checkCollision(newPosition)) {
+        if (column.collision(new_position)) {
             colliding = true;
             break;
         }
 
-        if (column.position.z > newPosition.z + 10.0F) {
+        if (column.position().z > new_position.z + 10.0F) {
             break;
         }
     }
 
     if (colliding) {
-        if (speed_.z > strength_) {
-            lastCollision_ = now;
+        if (m_speed.z > m_strength) {
+            m_last_collision = now;
         }
 
-        speed_ = {
-            -speed_.x / 10.0F,
-            -speed_.y / 10.0F,
-            -speed_.z / 10.0F,
+        m_speed = {
+            -m_speed.x / 10.0F,
+            -m_speed.y / 10.0F,
+            -m_speed.z / 10.0F,
         };
     } else {
-        position = newPosition;
+        m_position = new_position;
     }
 
-    camera.camera.position = position;
-    camera.update();
+    m_camera.camera.position = m_position;
+    m_camera.update();
 }
 
 }

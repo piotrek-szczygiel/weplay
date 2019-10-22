@@ -6,7 +6,7 @@ namespace Starship {
 
 void ShipCamera::update()
 {
-    static const float focusDistance { 25.0F };
+    constexpr float FOCUS_DISTANCE { 25.0F };
 
     angle.y = clamp(angle.y, -1.48F, 1.48F);
     if (angle.x > 2.0F * PI) {
@@ -16,15 +16,15 @@ void ShipCamera::update()
     }
 
     camera.target = {
-        camera.position.x - std::sin(angle.x) * focusDistance,
-        camera.position.y + std::sin(angle.y) * focusDistance,
-        camera.position.z - std::cos(angle.x) * focusDistance,
+        camera.position.x - std::sin(angle.x) * FOCUS_DISTANCE,
+        camera.position.y + std::sin(angle.y) * FOCUS_DISTANCE,
+        camera.position.z - std::cos(angle.x) * FOCUS_DISTANCE,
     };
 
     Vector3 direction {
-        (camera.target.x - camera.position.x) / focusDistance,
-        (camera.target.y - camera.position.y) / focusDistance,
-        (camera.target.z - camera.position.z) / focusDistance,
+        (camera.target.x - camera.position.x) / FOCUS_DISTANCE,
+        (camera.target.y - camera.position.y) / FOCUS_DISTANCE,
+        (camera.target.z - camera.position.z) / FOCUS_DISTANCE,
     };
 
     float alpha { angle.z * -PI / 8 };

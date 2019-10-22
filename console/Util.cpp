@@ -1,11 +1,6 @@
 #include "Util.hpp"
 
-thread_local std::mt19937 randomGenerator { std::random_device {}() }; // NOLINT
-
-bool threshold(float x, float y, float threshold)
-{
-    return std::fabs(x - y) < threshold;
-}
+bool threshold(float x, float y, float threshold) { return std::fabs(x - y) < threshold; }
 
 float fade(float x, float y, float offset)
 {

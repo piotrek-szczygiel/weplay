@@ -2,11 +2,11 @@
 
 namespace Menu {
 
-void Menu::update(std::shared_ptr<Controller::State> state) { }
+void Menu::update(std::shared_ptr<ControllerState> state) {}
 
 void Menu::draw()
 {
-    BeginTextureMode(framebuffer_);
+    BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
     RlDrawText("Main Menu", 100, 100, 12, MAROON);
@@ -14,9 +14,6 @@ void Menu::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Menu::getFramebuffer()
-{
-    return framebuffer_;
-}
+RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
 
 }

@@ -8,26 +8,25 @@ namespace Tetris {
 class Tetris final : public State {
 public:
     Tetris()
-        : framebuffer_ { LoadRenderTexture(width_, height_) }
+        : m_width { 320 }
+        , m_height { 240 }
+        , m_framebuffer { LoadRenderTexture(m_width, m_height) }
     {
     }
 
-    ~Tetris() override
-    {
-        UnloadRenderTexture(framebuffer_);
-    }
+    ~Tetris() override { UnloadRenderTexture(m_framebuffer); }
 
-    void update(std::shared_ptr<Controller::State> state) override;
+    void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
-    RenderTexture2D getFramebuffer() override;
+    RenderTexture2D framebuffer() override;
 
 private:
-    const int width_ { 320 };
-    const int height_ { 240 };
-    RenderTexture2D framebuffer_;
+    int m_width;
+    int m_height;
+    RenderTexture2D m_framebuffer;
 
-    Player player1 {};
-    Player player2 {};
+    Player m_player_1 {};
+    Player m_player_2 {};
 };
 
 }

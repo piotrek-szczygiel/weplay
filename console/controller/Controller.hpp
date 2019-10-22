@@ -3,31 +3,31 @@
 #include <boost/asio/io_context.hpp>
 #include <thread>
 
+struct ControllerState {
+    std::atomic_bool left;
+    std::atomic_bool forward;
+    std::atomic_bool right;
+};
+
 class Controller {
 public:
-    struct State {
-        std::atomic_bool left;
-        std::atomic_bool forward;
-        std::atomic_bool right;
-    };
-
-    std::shared_ptr<State> state;
+    std::shared_ptr<ControllerState> state;
 
     Controller()
-        : state(std::make_shared<State>())
-        , thread_ { std::thread(&Controller::worker, this) }
+        : state(std::make_shared<ControllerState>())
+        , m_thread { std::thread(&Controller::worker, this) }
     {
     }
 
     ~Controller()
     {
-        ctx_.stop();
-        thread_.join();
+        m_ctx.stop();
+        m_thread.join();
     }
 
 private:
-    boost::asio::io_context ctx_;
-    std::thread thread_;
+    boost::asio::io_context m_ctx;
+    std::thread m_thread;
 
     void worker();
 };

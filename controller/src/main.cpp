@@ -10,10 +10,7 @@ std::array<Button, 3> buttons = {
 
 Connection conn("RaspberryConsole", "Korobeiniki1984", "192.168.12.1", 1984);
 
-void setup()
-{
-    Serial.begin(115200);
-}
+void setup() { Serial.begin(115200); }
 
 void loop()
 {

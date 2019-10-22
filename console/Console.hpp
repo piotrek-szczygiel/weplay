@@ -7,13 +7,13 @@
 class Console {
 public:
     Console()
-        : currentState_ { std::make_unique<Menu::Menu>() }
+        : m_current_state { std::make_unique<Menu::Menu>() }
     {
     }
 
     void run();
 
 private:
-    std::unique_ptr<State> currentState_;
-    Controller controller_;
+    std::unique_ptr<State> m_current_state;
+    Controller m_controller;
 };

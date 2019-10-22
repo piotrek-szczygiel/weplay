@@ -48,7 +48,7 @@ if __name__ == "__main__":
                 "cmake-format",
                 "-i",
                 "--line-width",
-                "120",
+                "100",
                 "--tab-size",
                 "4",
                 "CMakeLists.txt",

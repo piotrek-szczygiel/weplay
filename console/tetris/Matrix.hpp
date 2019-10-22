@@ -8,22 +8,19 @@ constexpr int WIDTH { 10 };
 constexpr int BLOCK_SIZE { 8 };
 
 namespace Tetris {
+
 class Piece;
 
 using MatrixGrid = std::array<std::array<ShapeType, WIDTH>, HEIGHT + VANISH>;
 
 class Matrix {
 public:
-    ShapeType get(int x, int y);
-
     bool lock(const Piece& piece);
-
     bool collision(const Piece& piece);
-
-    void draw(int drawX, int drawY) const;
+    void draw(int draw_x, int draw_y) const;
 
 private:
-    MatrixGrid grid_ {};
+    MatrixGrid m_grid {};
 };
 
 }

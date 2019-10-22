@@ -6,21 +6,18 @@ namespace Menu {
 class Menu final : public State {
 public:
     Menu()
-        : framebuffer_ { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
+        : m_framebuffer { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
     {
     }
 
-    ~Menu() override
-    {
-        UnloadRenderTexture(framebuffer_);
-    }
+    ~Menu() override { UnloadRenderTexture(m_framebuffer); }
 
-    void update(std::shared_ptr<Controller::State> state) override;
+    void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
-    RenderTexture2D getFramebuffer() override;
+    RenderTexture2D framebuffer() override;
 
 private:
-    RenderTexture2D framebuffer_;
+    RenderTexture2D m_framebuffer;
 };
 
 }

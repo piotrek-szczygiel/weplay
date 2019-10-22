@@ -3,7 +3,7 @@
 #include <raylib.h>
 
 namespace Tetris {
-void Shape::draw(int drawX, int drawY, int rotation) const
+void Shape::draw(int draw_x, int draw_y, int rotation) const
 {
     const auto& grid { grids[rotation] };
 
@@ -14,7 +14,8 @@ void Shape::draw(int drawX, int drawY, int rotation) const
                 continue;
             }
 
-            DrawRectangle(drawX + x * BLOCK_SIZE, drawY + y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, SHAPE_COLORS[s]);
+            DrawRectangle(draw_x + x * BLOCK_SIZE, draw_y + y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE,
+                SHAPE_COLORS[s]);
         }
     }
 }
