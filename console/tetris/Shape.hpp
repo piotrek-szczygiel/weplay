@@ -178,6 +178,8 @@ constexpr Shape shapeFromType(ShapeType type)
         return SHAPE_T;
     case Z:
         return SHAPE_Z;
+    default:
+        return SHAPE_O;
     }
 }
 

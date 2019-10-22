@@ -3,6 +3,18 @@
 
 namespace Tetris {
 
+Player::Player()
+{
+    piece_ = { bag_.pop() };
+
+    input_.bind(Action::MOVE_LEFT, true)
+        .bind(Action::MOVE_RIGHT, true)
+        .bind(Action::SOFT_DROP, true)
+        .bind(Action::HARD_DROP, false)
+        .bind(Action::ROTATE_CLOCKWISE, false)
+        .bind(Action::ROTATE_COUNTER_CLOCKWISE, false);
+}
+
 void Player::action(Action a)
 {
     if (gameOver_) {
@@ -53,11 +65,14 @@ void Player::action(Action a)
     }
 }
 
-void Player::update(float dt)
+void Player::update(float dt, std::vector<Action> actions)
 {
     if (gameOver_) {
-        BOOST_LOG_TRIVIAL(debug) << "game over";
         return;
+    }
+
+    for (Action a : input_.update(std::move(actions))) {
+        action(a);
     }
 
     falling_ += dt;

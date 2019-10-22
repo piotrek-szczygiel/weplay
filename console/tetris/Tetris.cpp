@@ -6,21 +6,28 @@ namespace Tetris {
 
 void Tetris::update(std::shared_ptr<Controller::State> state)
 {
-    if (IsKeyPressed(KEY_LEFT))
-        player1.action(Action::MOVE_LEFT);
-    if (IsKeyPressed(KEY_RIGHT))
-        player1.action(Action::MOVE_RIGHT);
-    if (IsKeyPressed(KEY_DOWN))
-        player1.action(Action::SOFT_DROP);
-    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))
-        player1.action(Action::HARD_DROP);
-    if (IsKeyPressed(KEY_Z))
-        player1.action(Action::ROTATE_COUNTER_CLOCKWISE);
-    if (IsKeyPressed(KEY_X))
-        player1.action(Action::ROTATE_CLOCKWISE);
+    std::vector<Action> player1Actions {};
+
+    if (IsKeyDown(KEY_LEFT)) {
+        player1Actions.push_back(Action::MOVE_LEFT);
+    } else if (IsKeyDown(KEY_RIGHT)) {
+        player1Actions.push_back(Action::MOVE_RIGHT);
+    }
+
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_SPACE)) {
+        player1Actions.push_back(Action::HARD_DROP);
+    } else if (IsKeyDown(KEY_DOWN)) {
+        player1Actions.push_back(Action::SOFT_DROP);
+    }
+
+    if (IsKeyDown(KEY_Z)) {
+        player1Actions.push_back(Action::ROTATE_COUNTER_CLOCKWISE);
+    } else if (IsKeyDown(KEY_X)) {
+        player1Actions.push_back(Action::ROTATE_CLOCKWISE);
+    }
 
     float dt = GetFrameTime();
-    player1.update(dt);
+    player1.update(dt, std::move(player1Actions));
 }
 
 void Tetris::draw()
@@ -38,5 +45,4 @@ RenderTexture2D Tetris::getFramebuffer()
 {
     return framebuffer_;
 }
-
 }
