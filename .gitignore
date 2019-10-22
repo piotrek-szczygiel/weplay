@@ -1,6 +1,6 @@
-.vs/*
-!.vs/launch.vs.json
+.vs
 .idea
 out
+cmake-build-debug
 CMakeSettings.json
 CMakeLists.txt.user
