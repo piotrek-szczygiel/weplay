@@ -55,19 +55,6 @@ bool Matrix::collision(const Piece& piece)
 
 void Matrix::draw(int draw_x, int draw_y) const
 {
-    constexpr int outline = 2;
-
-    RlRectangle outlineRect {
-        static_cast<float>(draw_x - outline),
-        static_cast<float>(draw_y - BLOCK_SIZE / 2 - outline),
-        static_cast<float>(WIDTH * BLOCK_SIZE + outline * 2),
-        static_cast<float>(HEIGHT * BLOCK_SIZE + outline * 2 + BLOCK_SIZE / 2),
-    };
-
-    DrawRectangleLinesEx(outlineRect, outline, GRAY);
-    DrawRectangle(draw_x, draw_y - BLOCK_SIZE * 2 - BLOCK_SIZE / 2 - outline, WIDTH * BLOCK_SIZE,
-        BLOCK_SIZE * 2, BLACK);
-
     for (int y = 0; y <= HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             auto s = m_grid[VANISH + y - 1][x];
@@ -80,6 +67,22 @@ void Matrix::draw(int draw_x, int draw_y) const
                 BLOCK_SIZE, SHAPE_COLORS[s]);
         }
     }
+}
+
+void Matrix::draw_outline(int draw_x, int draw_y) const
+{
+    constexpr int outline = 2;
+
+    RlRectangle outlineRect {
+        static_cast<float>(draw_x - outline),
+        static_cast<float>(draw_y - BLOCK_SIZE / 2 - outline),
+        static_cast<float>(WIDTH * BLOCK_SIZE + outline * 2),
+        static_cast<float>(HEIGHT * BLOCK_SIZE + outline * 2 + BLOCK_SIZE / 2),
+    };
+
+    DrawRectangleLinesEx(outlineRect, outline, GRAY);
+    DrawRectangle(draw_x, draw_y - BLOCK_SIZE * 2 - BLOCK_SIZE / 2 - outline, WIDTH * BLOCK_SIZE,
+        BLOCK_SIZE * 2, BLACK);
 }
 
 std::vector<int> Matrix::get_full_rows()

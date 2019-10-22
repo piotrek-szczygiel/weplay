@@ -19,6 +19,7 @@ private:
     enum State {
         PLAYING,
         CLEARING,
+        GAME_OVER_ANIMATION,
         GAME_OVER,
     };
 
@@ -33,13 +34,13 @@ private:
 
     std::vector<int> m_clearing_rows {};
     float m_clearing_duration {};
-
-    Piece::CollisionFunction m_collision {};
+    float m_clearing_max_duration { 0.3F };
 
     void action(Action action);
 
     void new_piece();
     void reset_fall();
+    Piece::CollisionFunction collision();
 };
 
 }

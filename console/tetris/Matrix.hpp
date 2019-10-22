@@ -21,6 +21,7 @@ public:
     void clear_rows(const std::vector<int>& rows);
     std::vector<int> get_full_rows();
     void draw(int draw_x, int draw_y) const;
+    void draw_outline(int draw_x, int draw_y) const;
 
 private:
     MatrixGrid m_grid {};
