@@ -109,7 +109,7 @@ void Matrix::add_garbage_line(int hole)
 void Matrix::add_garbage_lines(int rows)
 {
     static auto hole_rand
-        = std::bind(std::uniform_int_distribution<int>(0, WIDTH - 1), Context::instance().rng());
+        = std::bind(std::uniform_int_distribution<int>(0, WIDTH - 1), Context::instance().rng);
 
     for (int row = 0; row < rows; ++row) {
         int hole = hole_rand();

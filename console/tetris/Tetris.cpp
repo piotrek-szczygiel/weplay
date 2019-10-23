@@ -58,12 +58,12 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
 void Tetris::draw()
 {
     BeginTextureMode(m_framebuffer);
-    ClearBackground(BLACK);
+    DrawTexture(Context::instance().texture_bg, 0, 0, WHITE);
 
-    m_player_1.draw(57, 71, true);
-    m_player_2.draw(m_width - 56 - WIDTH * TILE_SIZE, 71, false);
+    m_player_1.draw(57, 57, true);
+    m_player_2.draw(m_width - 56 - WIDTH * TILE_SIZE, 57, false);
 
-    DrawTexture(Context::instance().texture_ui(), 0, 0, WHITE);
+    DrawTexture(Context::instance().texture_ui, 0, 0, WHITE);
     EndTextureMode();
 }
 

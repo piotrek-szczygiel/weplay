@@ -26,7 +26,7 @@ void Bag::fill_7()
 {
     std::vector<ShapeType> temp;
     std::copy(SHAPES_ALL.begin(), SHAPES_ALL.end(), std::back_inserter(temp));
-    std::shuffle(temp.begin(), temp.end(), Context::instance().rng());
+    std::shuffle(temp.begin(), temp.end(), Context::instance().rng);
     std::copy(temp.begin(), temp.end(), std::back_inserter(m_bag));
 }
 

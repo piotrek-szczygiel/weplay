@@ -84,7 +84,7 @@ void Score::draw(int draw_x, int draw_y)
     };
 
     RlDrawTextEx(
-        Context::instance().font(), std::to_string(m_score).c_str(), position, 12.0F, 1.0F, WHITE);
+        Context::instance().font, std::to_string(m_score).c_str(), position, 12.0F, 1.0F, WHITE);
 }
 
 }
