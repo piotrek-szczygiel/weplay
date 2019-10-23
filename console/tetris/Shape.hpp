@@ -13,6 +13,7 @@ constexpr ShapeType O = 4;
 constexpr ShapeType S = 5;
 constexpr ShapeType T = 6;
 constexpr ShapeType Z = 7;
+constexpr ShapeType GARBAGE = 8;
 
 struct Kick {
     int x;
@@ -41,7 +42,7 @@ struct Shape {
     ShapeKicks kicks;
     std::array<ShapeGrid, 4> grids;
 
-    void draw(int draw_x, int draw_y, int rotation, int size, bool ghost) const;
+    void draw(int draw_x, int draw_y, int rotation, int size, bool small, bool ghost) const;
 };
 
 constexpr ShapeKicks KICKS_JLOSTZ { {

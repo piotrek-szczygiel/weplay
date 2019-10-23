@@ -164,8 +164,8 @@ void Player::draw(int draw_x, int draw_y)
     m_matrix.draw(draw_x, draw_y);
 
     if (m_state == PLAYING || m_state == CLEARING) {
-        m_ghost.draw(draw_x, draw_y, true);
-        m_piece.draw(draw_x, draw_y);
+        m_ghost.draw(draw_x, draw_y, false, true);
+        m_piece.draw(draw_x, draw_y, false, false);
     }
 
     if (m_state == GAME_OVER) {
@@ -199,12 +199,12 @@ void Player::draw(int draw_x, int draw_y)
     RlDrawText("next", draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y, small_size, RAYWHITE);
     shape_from_type(m_bag.peek())
         .draw(draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y + 2 * small_size, 0, small_size,
-            false);
+            true, false);
 
     RlDrawText("hold", draw_x - 5 * small_size, draw_y, small_size, RAYWHITE);
     if (m_hold) {
         shape_from_type(m_hold.value())
-            .draw(draw_x - 5 * small_size, draw_y + 2 * small_size, 0, small_size, false);
+            .draw(draw_x - 5 * small_size, draw_y + 2 * small_size, 0, small_size, true, false);
     }
 }
 

@@ -1,4 +1,5 @@
 #include "Matrix.hpp"
+#include "DrawBlock.hpp"
 #include "Piece.hpp"
 #include <raylib.h>
 
@@ -57,14 +58,16 @@ void Matrix::draw(int draw_x, int draw_y) const
 {
     for (int y = 0; y <= HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
-            auto s = m_grid[VANISH + y - 1][x];
+            auto t = m_grid[VANISH + y - 1][x];
 
-            if (s == 0) {
+            if (t == 0) {
                 continue;
             }
 
-            DrawRectangle(draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, BLOCK_SIZE,
-                BLOCK_SIZE, SHAPE_COLORS[s]);
+            // DrawRectangle(draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, BLOCK_SIZE,
+            //     BLOCK_SIZE, SHAPE_COLORS[t]);
+
+            DrawBlock(t, draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, 220, false);
         }
     }
 }
