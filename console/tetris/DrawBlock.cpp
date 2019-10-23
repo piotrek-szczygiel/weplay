@@ -10,7 +10,7 @@ void DrawBlock(ShapeType type, int game_level, int x, int y, unsigned char alpha
     int tile_size_int = small ? TILE_SIZE_SMALL : TILE_SIZE;
 
     if (type == 0) {
-        DrawRectangle(x - 1, y, tile_size_int + 1, tile_size_int, BLACK);
+        //        DrawRectangle(x - 1, y, tile_size_int + 1, tile_size_int, BLACK);
         return;
     }
 

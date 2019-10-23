@@ -1,4 +1,5 @@
 #include "Tetris.hpp"
+#include "Context.hpp"
 #include "DrawBlock.hpp"
 #include "Piece.hpp"
 #include <iostream>
@@ -51,7 +52,7 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
 
     float dt = GetFrameTime();
     m_player_1.update(dt, p1);
-    m_player_2.update(dt, p2);
+    m_player_2.update(dt, p1);
 }
 
 void Tetris::draw()
@@ -59,9 +60,10 @@ void Tetris::draw()
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
-    m_player_1.draw(35, 50);
-    m_player_2.draw(m_width - 35 - WIDTH * TILE_SIZE, 50);
+    m_player_1.draw(57, 71, true);
+    m_player_2.draw(m_width - 56 - WIDTH * TILE_SIZE, 71, false);
 
+    DrawTexture(Context::instance().texture_ui(), 0, 0, WHITE);
     EndTextureMode();
 }
 

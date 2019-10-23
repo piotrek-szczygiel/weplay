@@ -128,20 +128,4 @@ void Matrix::draw(int level, int draw_x, int draw_y) const
     }
 }
 
-void Matrix::draw_outline(int draw_x, int draw_y) const
-{
-    constexpr int outline = 2;
-
-    RlRectangle outlineRect {
-        static_cast<float>(draw_x - outline),
-        static_cast<float>(draw_y - outline) - static_cast<float>(TILE_SIZE) / 2.0F,
-        static_cast<float>(WIDTH * TILE_SIZE + outline * 2),
-        static_cast<float>(HEIGHT * TILE_SIZE + outline * 2) + static_cast<float>(TILE_SIZE) / 2.0F,
-    };
-
-    DrawRectangleLinesEx(outlineRect, outline, GRAY);
-    DrawRectangle(draw_x, draw_y - TILE_SIZE * 2 - TILE_SIZE / 2 - outline, WIDTH * TILE_SIZE,
-        TILE_SIZE * 2, BLACK);
-}
-
 }

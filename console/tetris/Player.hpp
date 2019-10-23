@@ -15,7 +15,7 @@ public:
     Player();
 
     void update(float dt, const std::vector<Action>& actions);
-    void draw(int draw_x, int draw_y);
+    void draw(int draw_x, int draw_y, bool left);
 
     bool enough_lines() { return m_lines >= 5 * m_level; }
     void reset_lines() { m_lines = 0; }

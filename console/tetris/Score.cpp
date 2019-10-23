@@ -1,4 +1,5 @@
 #include "Score.hpp"
+#include "Context.hpp"
 #include <boost/format.hpp>
 #include <raylib.h>
 #include <string>
@@ -71,10 +72,19 @@ void Score::update_clear(int level, int rows, bool t_spin)
     }
 }
 
-void Score::draw(int draw_x, int draw_y, int size)
+void Score::draw(int draw_x, int draw_y)
 {
-    std::string str = boost::str(boost::format("Score: %1%") % m_score);
-    RlDrawText(str.c_str(), draw_x, draw_y, size, RAYWHITE);
+    if (m_score > 999'999) {
+        m_score = 999'999;
+    }
+
+    Vector2 position {
+        static_cast<float>(draw_x),
+        static_cast<float>(draw_y),
+    };
+
+    RlDrawTextEx(
+        Context::instance().font(), std::to_string(m_score).c_str(), position, 12.0F, 1.0F, WHITE);
 }
 
 }

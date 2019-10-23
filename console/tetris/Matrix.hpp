@@ -22,7 +22,6 @@ public:
     void add_garbage_lines(int count);
 
     void draw(int level, int draw_x, int draw_y) const;
-    void draw_outline(int draw_x, int draw_y) const;
 
 private:
     MatrixGrid m_grid {};

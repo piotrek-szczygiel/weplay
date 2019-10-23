@@ -12,7 +12,7 @@ public:
     int lines() { return m_lines; }
     int duel_lines() { return m_duel_lines; }
 
-    void draw(int draw_x, int draw_y, int size);
+    void draw(int draw_x, int draw_y);
 
 private:
     int m_score { 0 };

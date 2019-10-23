@@ -209,7 +209,7 @@ void Player::update(float dt, const std::vector<Action>& actions)
     }
 }
 
-void Player::draw(int draw_x, int draw_y)
+void Player::draw(int draw_x, int draw_y, bool left)
 {
     m_matrix.draw(m_level, draw_x, draw_y);
 
@@ -248,24 +248,42 @@ void Player::draw(int draw_x, int draw_y)
             = static_cast<int>(m_changing_level_duration / m_changing_level_max_duration * 10.0F);
 
         if (expected_flash % 2 == 0) {
-            DrawRectangle(draw_x, draw_y - TILE_SIZE / 2, WIDTH * TILE_SIZE,
-                HEIGHT * TILE_SIZE + TILE_SIZE / 2, RAYWHITE);
+            DrawRectangle(
+                draw_x - 1, draw_y - 2, WIDTH * TILE_SIZE + 1, HEIGHT * TILE_SIZE + 2, RAYWHITE);
         }
     }
 
-    m_matrix.draw_outline(draw_x, draw_y);
+    m_score.draw(draw_x + 1, draw_y - 26);
 
-    m_score.draw(draw_x, draw_y - 20, 8);
+    auto next = shape_from_type(m_bag.peek());
+    int next_x {};
 
-    RlDrawText("next", draw_x + WIDTH * TILE_SIZE + 6, draw_y, 6, RAYWHITE);
-    shape_from_type(m_bag.peek())
-        .draw(m_level, draw_x + WIDTH * TILE_SIZE + 6, draw_y + 12, 0, true, false);
+    int next_offset_x = (34 - next.grids[0].width * TILE_SIZE_SMALL) / 2;
+    int next_offset_y
+        = (24 - next.grids[0].height * TILE_SIZE_SMALL) / 2 - next.grids[0].y * TILE_SIZE_SMALL;
 
-    RlDrawText("hold", draw_x - 5 * TILE_SIZE_SMALL, draw_y, 6, RAYWHITE);
+    if (left) {
+        next_x = draw_x - 47 + next_offset_x;
+    } else {
+        next_x = draw_x + WIDTH * TILE_SIZE + 13 + next_offset_x;
+    }
+    next.draw(m_level, next_x, draw_y + 7 + next_offset_y, 0, true, false);
+
     if (m_hold) {
-        shape_from_type(m_hold.value())
-            .draw(m_level, draw_x - 5 * TILE_SIZE_SMALL, draw_y + 2 * TILE_SIZE_SMALL, 0, true,
-                false);
+        auto hold = shape_from_type(m_hold.value());
+        int hold_x {};
+
+        int hold_offset_x = (34 - hold.grids[0].width * TILE_SIZE_SMALL) / 2;
+        int hold_offset_y
+            = (24 - hold.grids[0].height * TILE_SIZE_SMALL) / 2 - hold.grids[0].y * TILE_SIZE_SMALL;
+
+        if (left) {
+            hold_x = draw_x - 47 + hold_offset_x;
+        } else {
+            hold_x = draw_x + WIDTH * TILE_SIZE + 13 + hold_offset_x;
+        }
+
+        hold.draw(m_level, hold_x, draw_y + 53 + hold_offset_y, 0, true, false);
     }
 }
 
