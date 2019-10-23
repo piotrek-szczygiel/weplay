@@ -14,20 +14,22 @@ class Player {
 public:
     Player();
 
-    void increase_level();
-
     void update(float dt, const std::vector<Action>& actions);
     void draw(int draw_x, int draw_y);
+
+    bool enough_lines() { return m_lines >= 5 * m_level; }
+    void reset_lines() { m_lines = 0; }
+    void increase_level();
 
 private:
     enum State {
         PLAYING,
         CLEARING,
+        CHANGING_LEVEL,
         GAME_OVER_ANIMATION,
         GAME_OVER,
     };
 
-    State m_state { PLAYING };
     Piece m_piece { O };
     Piece m_ghost { O };
     Matrix m_matrix {};
@@ -44,7 +46,14 @@ private:
 
     float m_falling {};
     int m_level { 1 };
-    int m_level_increased { 1 };
+    float m_changing_level_duration {};
+    float m_changing_level_max_duration { 1.0F };
+
+    float m_game_over_duration {};
+    float m_game_over_max_duration { 1.5F };
+    int m_game_over_row {};
+
+    int m_lines {};
 
     static constexpr int m_max_level { 10 };
     static constexpr std::array<float, m_max_level> m_gravity { {
@@ -60,7 +69,11 @@ private:
         0.06415F,
     } };
 
+    State m_state { PLAYING };
+    State m_last_state = { GAME_OVER };
+
     void action(Action action);
+    void change_state(State state);
 
     void new_piece();
     void reset_fall();

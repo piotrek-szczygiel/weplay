@@ -8,6 +8,7 @@ namespace Tetris {
 void Tetris::update(std::shared_ptr<ControllerState> state)
 {
     std::vector<Action> p1 {};
+    std::vector<Action> p2 {};
 
     if (IsKeyDown(KEY_LEFT)) {
         p1.push_back(Action::MOVE_LEFT);
@@ -40,9 +41,17 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
         m_player_2.increase_level();
     }
 
+    if (m_player_1.enough_lines() || m_player_2.enough_lines()) {
+        m_player_1.reset_lines();
+        m_player_2.reset_lines();
+
+        m_player_1.increase_level();
+        m_player_2.increase_level();
+    }
+
     float dt = GetFrameTime();
     m_player_1.update(dt, p1);
-    m_player_2.update(dt, {});
+    m_player_2.update(dt, p2);
 }
 
 void Tetris::draw()

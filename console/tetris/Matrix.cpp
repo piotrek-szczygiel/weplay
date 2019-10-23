@@ -89,6 +89,23 @@ void Matrix::clear_rows(const std::vector<int>& rows)
     }
 }
 
+void Matrix::add_garbage_line(int hole)
+{
+    for (int y = 0; y < HEIGHT + VANISH - 1; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            m_grid[y][x] = m_grid[y + 1][x];
+        }
+    }
+
+    for (int x = 0; x < WIDTH; ++x) {
+        if (x == hole) {
+            m_grid[HEIGHT + VANISH - 1][x] = 0;
+        } else {
+            m_grid[HEIGHT + VANISH - 1][x] = GARBAGE;
+        }
+    }
+}
+
 void Matrix::add_garbage_lines(int rows)
 {
     static auto hole_rand
@@ -96,19 +113,7 @@ void Matrix::add_garbage_lines(int rows)
 
     for (int row = 0; row < rows; ++row) {
         int hole = hole_rand();
-        for (int y = 0; y < HEIGHT + VANISH - 1; ++y) {
-            for (int x = 0; x < WIDTH; ++x) {
-                m_grid[y][x] = m_grid[y + 1][x];
-            }
-        }
-
-        for (int x = 0; x < WIDTH; ++x) {
-            if (x == hole) {
-                m_grid[HEIGHT + VANISH - 1][x] = 0;
-            } else {
-                m_grid[HEIGHT + VANISH - 1][x] = GARBAGE;
-            }
-        }
+        add_garbage_line(hole);
     }
 }
 

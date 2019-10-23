@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     RlCloseWindow();
 
     BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
-    // SetConfigFlags(FLAG_FULLSCREEN_MODE);
+    SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(width, height, "Raspberry Console");
 
     BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";

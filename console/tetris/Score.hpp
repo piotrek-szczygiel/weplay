@@ -9,6 +9,9 @@ public:
     void reset_combo() { m_combo = -1; }
     void update_clear(int level, int rows, bool t_spin);
 
+    int lines() { return m_lines; }
+    int duel_lines() { return m_duel_lines; }
+
     void draw(int draw_x, int draw_y, int size);
 
 private:

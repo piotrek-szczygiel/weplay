@@ -19,9 +19,16 @@ Player::Player()
 
 void Player::increase_level()
 {
-    m_level_increased += 1;
-    if (m_level_increased > m_max_level) {
-        m_level_increased = m_max_level;
+    if (m_state == GAME_OVER) {
+        return;
+    }
+
+    change_state(CHANGING_LEVEL);
+    m_changing_level_duration = {};
+
+    m_level += 1;
+    if (m_level > m_max_level) {
+        m_level = m_max_level;
     }
 }
 
@@ -106,31 +113,37 @@ void Player::action(Action a)
 
             auto rows = m_matrix.get_full_rows();
             if (!rows.empty()) {
-                m_state = CLEARING;
+                change_state(CLEARING);
                 int count = static_cast<int>(rows.size());
                 m_clearing_rows = std::move(rows);
                 m_clearing_duration = {};
                 m_score.update_clear(m_level, count, false);
+                m_lines += m_score.lines();
             } else {
                 m_score.reset_combo();
             }
-
-            m_level = m_level_increased;
         }
         break;
     }
     case Action::GAME_OVER: {
-        m_state = GAME_OVER_ANIMATION;
-        for (int y = VANISH - 1; y < VANISH + HEIGHT; ++y) {
-            m_clearing_rows.push_back(y);
-        }
-        m_clearing_duration = {};
-        m_clearing_max_duration = 0.75F;
+        change_state(GAME_OVER_ANIMATION);
+        m_game_over_duration = {};
+        m_game_over_row = {};
         break;
     }
     default:
         break;
     }
+}
+
+void Player::change_state(State state)
+{
+    if (m_state == GAME_OVER) {
+        return;
+    }
+
+    m_last_state = m_state;
+    m_state = state;
 }
 
 void Player::update(float dt, const std::vector<Action>& actions)
@@ -139,15 +152,40 @@ void Player::update(float dt, const std::vector<Action>& actions)
         return;
     }
 
-    if (m_state == CLEARING || m_state == GAME_OVER_ANIMATION) {
+    if (m_state == GAME_OVER_ANIMATION) {
+        m_game_over_duration += dt;
+        if (m_game_over_duration >= m_game_over_max_duration) {
+            change_state(GAME_OVER);
+        } else {
+            int expected_row = static_cast<int>(
+                m_game_over_duration / m_game_over_max_duration * static_cast<float>(HEIGHT + 2));
+
+            int rows = expected_row - m_game_over_row;
+
+            for (int i = 0; i < rows; ++i) {
+                m_matrix.add_garbage_line(-1);
+            }
+
+            m_game_over_row = expected_row;
+        }
+    }
+
+    if (m_state == CLEARING) {
         m_clearing_duration += dt;
         if (m_clearing_duration >= m_clearing_max_duration) {
             m_matrix.clear_rows(m_clearing_rows);
 
-            if (m_state == CLEARING) {
-                m_state = PLAYING;
-            } else if (m_state == GAME_OVER_ANIMATION) {
-                m_state = GAME_OVER;
+            change_state(PLAYING);
+        }
+    }
+
+    if (m_state == CHANGING_LEVEL) {
+        m_changing_level_duration += dt;
+        if (m_changing_level_duration >= m_changing_level_max_duration) {
+            if (m_last_state == CHANGING_LEVEL) {
+                change_state(PLAYING);
+            } else {
+                change_state(m_last_state);
             }
         }
     }
@@ -175,16 +213,20 @@ void Player::draw(int draw_x, int draw_y)
 {
     m_matrix.draw(m_level, draw_x, draw_y);
 
-    if (m_state == PLAYING || m_state == CLEARING) {
+    if (m_state == PLAYING || m_state == CLEARING || m_state == CHANGING_LEVEL) {
         m_ghost.draw(m_level, draw_x, draw_y, false, true);
         m_piece.draw(m_level, draw_x, draw_y, false, false);
     }
 
     if (m_state == GAME_OVER) {
-        RlDrawText("Game Over", draw_x + 10, draw_y + 72, 12, MAROON);
+        RlDrawText("Game", draw_x + 4, draw_y + 34, 30, BLACK);
+        RlDrawText("Game", draw_x + 5, draw_y + 35, 30, MAROON);
+
+        RlDrawText("Over", draw_x + 4, draw_y + 70, 30, BLACK);
+        RlDrawText("Over", draw_x + 5, draw_y + 71, 30, MAROON);
     }
 
-    if (m_state == CLEARING || m_state == GAME_OVER_ANIMATION) {
+    if (m_state == CLEARING || (m_state == CHANGING_LEVEL && m_last_state == CLEARING)) {
         float cover
             = m_clearing_duration / m_clearing_max_duration * static_cast<float>(WIDTH * TILE_SIZE);
 
@@ -198,6 +240,16 @@ void Player::draw(int draw_x, int draw_y)
             };
 
             DrawRectanglePro(rect, { rect.width / 2.0F, rect.height / 2.0F }, {}, BLACK);
+        }
+    }
+
+    if (m_state == CHANGING_LEVEL) {
+        int expected_flash
+            = static_cast<int>(m_changing_level_duration / m_changing_level_max_duration * 10.0F);
+
+        if (expected_flash % 2 == 0) {
+            DrawRectangle(draw_x, draw_y - TILE_SIZE / 2, WIDTH * TILE_SIZE,
+                HEIGHT * TILE_SIZE + TILE_SIZE / 2, RAYWHITE);
         }
     }
 
