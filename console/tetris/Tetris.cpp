@@ -1,4 +1,5 @@
 #include "Tetris.hpp"
+#include "DrawBlock.hpp"
 #include "Piece.hpp"
 #include <iostream>
 
@@ -45,7 +46,7 @@ void Tetris::draw()
     ClearBackground(BLACK);
 
     m_player_1.draw(35, 50);
-    m_player_2.draw(m_width - 35 - WIDTH * BLOCK_SIZE, 50);
+    m_player_2.draw(m_width - 35 - WIDTH * TILE_SIZE, 50);
 
     EndTextureMode();
 }

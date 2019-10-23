@@ -6,8 +6,6 @@ constexpr int HEIGHT { 20 };
 constexpr int VANISH { 20 };
 constexpr int WIDTH { 10 };
 
-constexpr int BLOCK_SIZE { 8 };
-
 namespace Tetris {
 
 class Piece;

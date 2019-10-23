@@ -1,4 +1,5 @@
 #include "Piece.hpp"
+#include "DrawBlock.hpp"
 #include "Matrix.hpp"
 
 namespace Tetris {
@@ -76,10 +77,10 @@ int Piece::fall(const CollisionFunction& collision_fun)
 
 void Piece::draw(int draw_x, int draw_y, bool small, bool ghost) const
 {
-    int x = draw_x + m_x * BLOCK_SIZE;
-    int y = draw_y + (m_y - VANISH) * BLOCK_SIZE;
+    int x = draw_x + m_x * TILE_SIZE;
+    int y = draw_y + (m_y - VANISH) * TILE_SIZE;
 
-    m_shape.draw(x, y, m_rotation, BLOCK_SIZE, small, ghost);
+    m_shape.draw(x, y, m_rotation, small, ghost);
 }
 
 bool Piece::collision(int x, int y, const CollisionFunction& collision_fun)

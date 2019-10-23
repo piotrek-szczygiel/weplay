@@ -7,11 +7,8 @@ namespace Tetris {
 
 void DrawBlock(ShapeType type, int x, int y, unsigned char alpha, bool small)
 {
-    constexpr float TILE_SIZE = 8.0F;
-    constexpr float TILE_SIZE_SMALL = 6.0F;
-
     auto tiles = small ? Context::instance().tiles_small() : Context::instance().tiles();
-    auto tile_size = small ? TILE_SIZE_SMALL : TILE_SIZE;
+    float tile_size = static_cast<float>(small ? TILE_SIZE_SMALL : TILE_SIZE);
 
     int index = static_cast<int>(type) - 1;
     assert(index >= 0);

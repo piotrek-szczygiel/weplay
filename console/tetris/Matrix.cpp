@@ -64,10 +64,10 @@ void Matrix::draw(int draw_x, int draw_y) const
                 continue;
             }
 
-            // DrawRectangle(draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, BLOCK_SIZE,
-            //     BLOCK_SIZE, SHAPE_COLORS[t]);
+            // DrawRectangle(draw_x + x * TILE_SIZE, draw_y + (y - 1) * TILE_SIZE, TILE_SIZE,
+            //     TILE_SIZE, SHAPE_COLORS[t]);
 
-            DrawBlock(t, draw_x + x * BLOCK_SIZE, draw_y + (y - 1) * BLOCK_SIZE, 220, false);
+            DrawBlock(t, draw_x + x * TILE_SIZE, draw_y + (y - 1) * TILE_SIZE, 220, false);
         }
     }
 }
@@ -78,14 +78,14 @@ void Matrix::draw_outline(int draw_x, int draw_y) const
 
     RlRectangle outlineRect {
         static_cast<float>(draw_x - outline),
-        static_cast<float>(draw_y - BLOCK_SIZE / 2 - outline),
-        static_cast<float>(WIDTH * BLOCK_SIZE + outline * 2),
-        static_cast<float>(HEIGHT * BLOCK_SIZE + outline * 2 + BLOCK_SIZE / 2),
+        static_cast<float>(draw_y - outline) - static_cast<float>(TILE_SIZE) / 2.0F,
+        static_cast<float>(WIDTH * TILE_SIZE + outline * 2),
+        static_cast<float>(HEIGHT * TILE_SIZE + outline * 2) + static_cast<float>(TILE_SIZE) / 2.0F,
     };
 
     DrawRectangleLinesEx(outlineRect, outline, GRAY);
-    DrawRectangle(draw_x, draw_y - BLOCK_SIZE * 2 - BLOCK_SIZE / 2 - outline, WIDTH * BLOCK_SIZE,
-        BLOCK_SIZE * 2, BLACK);
+    DrawRectangle(draw_x, draw_y - TILE_SIZE * 2 - TILE_SIZE / 2 - outline, WIDTH * TILE_SIZE,
+        TILE_SIZE * 2, BLACK);
 }
 
 std::vector<int> Matrix::get_full_rows()

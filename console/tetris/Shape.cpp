@@ -4,7 +4,7 @@
 
 namespace Tetris {
 
-void Shape::draw(int draw_x, int draw_y, int rotation, int size, bool small, bool ghost) const
+void Shape::draw(int draw_x, int draw_y, int rotation, bool small, bool ghost) const
 {
     const auto& grid { grids[rotation] };
 
@@ -15,14 +15,8 @@ void Shape::draw(int draw_x, int draw_y, int rotation, int size, bool small, boo
                 continue;
             }
 
-            // auto color = SHAPE_COLORS[s];
-            // if (ghost) {
-            //     color.a = 64;
-            // }
-            //
-            // DrawRectangle(draw_x + x * size, draw_y + y * size, size, size, color);
-
             unsigned char alpha = ghost ? 64 : 255;
+            int size = small ? TILE_SIZE_SMALL : TILE_SIZE;
             DrawBlock(t, draw_x + x * size, draw_y + y * size, alpha, small);
         }
     }

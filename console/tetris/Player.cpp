@@ -1,4 +1,5 @@
 #include "Player.hpp"
+#include "DrawBlock.hpp"
 
 namespace Tetris {
 
@@ -114,7 +115,7 @@ void Player::action(Action a)
             m_clearing_rows.push_back(y);
         }
         m_clearing_duration = {};
-        m_clearing_max_duration = 1.0F;
+        m_clearing_max_duration = 0.75F;
         break;
     }
     default:
@@ -169,21 +170,20 @@ void Player::draw(int draw_x, int draw_y)
     }
 
     if (m_state == GAME_OVER) {
-        RlDrawText("Game Over", draw_x + BLOCK_SIZE + BLOCK_SIZE / 4,
-            draw_y + BLOCK_SIZE * HEIGHT / 2 - BLOCK_SIZE, BLOCK_SIZE + BLOCK_SIZE / 2, MAROON);
+        RlDrawText("Game Over", draw_x + 10, draw_y + 72, 12, MAROON);
     }
 
     if (m_state == CLEARING || m_state == GAME_OVER_ANIMATION) {
-        float cover = m_clearing_duration / m_clearing_max_duration
-            * static_cast<float>(WIDTH * BLOCK_SIZE);
+        float cover
+            = m_clearing_duration / m_clearing_max_duration * static_cast<float>(WIDTH * TILE_SIZE);
 
         for (int row : m_clearing_rows) {
             RlRectangle rect {
-                static_cast<float>(draw_x) + static_cast<float>(WIDTH * BLOCK_SIZE) / 2.0F,
-                static_cast<float>(draw_y + (row - VANISH) * BLOCK_SIZE)
-                    + static_cast<float>(BLOCK_SIZE) / 2.0F,
+                static_cast<float>(draw_x) + static_cast<float>(WIDTH * TILE_SIZE) / 2.0F,
+                static_cast<float>(draw_y + (row - VANISH) * TILE_SIZE)
+                    + static_cast<float>(TILE_SIZE) / 2.0F,
                 cover,
-                static_cast<float>(BLOCK_SIZE),
+                static_cast<float>(TILE_SIZE),
             };
 
             DrawRectanglePro(rect, { rect.width / 2.0F, rect.height / 2.0F }, {}, BLACK);
@@ -192,19 +192,15 @@ void Player::draw(int draw_x, int draw_y)
 
     m_matrix.draw_outline(draw_x, draw_y);
 
-    m_score.draw(draw_x, draw_y - 5 * BLOCK_SIZE / 2, BLOCK_SIZE);
+    m_score.draw(draw_x, draw_y - 20, 8);
 
-    int small_size { BLOCK_SIZE / 4 * 3 };
+    RlDrawText("next", draw_x + WIDTH * TILE_SIZE + 6, draw_y, 6, RAYWHITE);
+    shape_from_type(m_bag.peek()).draw(draw_x + WIDTH * TILE_SIZE + 6, draw_y + 12, 0, true, false);
 
-    RlDrawText("next", draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y, small_size, RAYWHITE);
-    shape_from_type(m_bag.peek())
-        .draw(draw_x + WIDTH * BLOCK_SIZE + small_size, draw_y + 2 * small_size, 0, small_size,
-            true, false);
-
-    RlDrawText("hold", draw_x - 5 * small_size, draw_y, small_size, RAYWHITE);
+    RlDrawText("hold", draw_x - 5 * TILE_SIZE_SMALL, draw_y, 6, RAYWHITE);
     if (m_hold) {
         shape_from_type(m_hold.value())
-            .draw(draw_x - 5 * small_size, draw_y + 2 * small_size, 0, small_size, true, false);
+            .draw(draw_x - 5 * TILE_SIZE_SMALL, draw_y + 2 * TILE_SIZE_SMALL, 0, true, false);
     }
 }
 
