@@ -35,6 +35,11 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
         p1.push_back(Action::HOLD);
     }
 
+    if (IsKeyPressed(KEY_L)) {
+        m_player_1.increase_level();
+        m_player_2.increase_level();
+    }
+
     float dt = GetFrameTime();
     m_player_1.update(dt, p1);
     m_player_2.update(dt, {});

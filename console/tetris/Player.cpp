@@ -17,6 +17,14 @@ Player::Player()
         .bind(Action::HOLD, false);
 }
 
+void Player::increase_level()
+{
+    m_level_increased += 1;
+    if (m_level_increased > m_max_level) {
+        m_level_increased = m_max_level;
+    }
+}
+
 void Player::action(Action a)
 {
     switch (a) {
@@ -102,10 +110,12 @@ void Player::action(Action a)
                 int count = static_cast<int>(rows.size());
                 m_clearing_rows = std::move(rows);
                 m_clearing_duration = {};
-                m_score.update_clear(count, false);
+                m_score.update_clear(m_level, count, false);
             } else {
                 m_score.reset_combo();
             }
+
+            m_level = m_level_increased;
         }
         break;
     }
@@ -149,8 +159,9 @@ void Player::update(float dt, const std::vector<Action>& actions)
 
         m_falling += dt;
 
-        if (m_falling >= m_falling_interval) {
-            m_falling -= m_falling_interval;
+        auto interval = m_gravity[m_level - 1];
+        if (m_falling >= interval) {
+            m_falling -= interval;
 
             action(Action::FALL);
         }
@@ -162,11 +173,11 @@ void Player::update(float dt, const std::vector<Action>& actions)
 
 void Player::draw(int draw_x, int draw_y)
 {
-    m_matrix.draw(draw_x, draw_y);
+    m_matrix.draw(m_level, draw_x, draw_y);
 
     if (m_state == PLAYING || m_state == CLEARING) {
-        m_ghost.draw(draw_x, draw_y, false, true);
-        m_piece.draw(draw_x, draw_y, false, false);
+        m_ghost.draw(m_level, draw_x, draw_y, false, true);
+        m_piece.draw(m_level, draw_x, draw_y, false, false);
     }
 
     if (m_state == GAME_OVER) {
@@ -195,12 +206,14 @@ void Player::draw(int draw_x, int draw_y)
     m_score.draw(draw_x, draw_y - 20, 8);
 
     RlDrawText("next", draw_x + WIDTH * TILE_SIZE + 6, draw_y, 6, RAYWHITE);
-    shape_from_type(m_bag.peek()).draw(draw_x + WIDTH * TILE_SIZE + 6, draw_y + 12, 0, true, false);
+    shape_from_type(m_bag.peek())
+        .draw(m_level, draw_x + WIDTH * TILE_SIZE + 6, draw_y + 12, 0, true, false);
 
     RlDrawText("hold", draw_x - 5 * TILE_SIZE_SMALL, draw_y, 6, RAYWHITE);
     if (m_hold) {
         shape_from_type(m_hold.value())
-            .draw(draw_x - 5 * TILE_SIZE_SMALL, draw_y + 2 * TILE_SIZE_SMALL, 0, true, false);
+            .draw(m_level, draw_x - 5 * TILE_SIZE_SMALL, draw_y + 2 * TILE_SIZE_SMALL, 0, true,
+                false);
     }
 }
 

@@ -42,7 +42,7 @@ struct Shape {
     ShapeKicks kicks;
     std::array<ShapeGrid, 4> grids;
 
-    void draw(int draw_x, int draw_y, int rotation, bool small, bool ghost) const;
+    void draw(int level, int draw_x, int draw_y, int rotation, bool small, bool ghost) const;
 };
 
 constexpr ShapeKicks KICKS_JLOSTZ { {

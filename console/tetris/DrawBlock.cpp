@@ -5,18 +5,29 @@
 
 namespace Tetris {
 
-void DrawBlock(ShapeType type, int x, int y, unsigned char alpha, bool small)
+void DrawBlock(ShapeType type, int game_level, int x, int y, unsigned char alpha, bool small)
 {
+    int tile_size_int = small ? TILE_SIZE_SMALL : TILE_SIZE;
+
+    if (type == 0) {
+        DrawRectangle(x - 1, y, tile_size_int + 1, tile_size_int, BLACK);
+        return;
+    }
+
+    auto tile_size = static_cast<float>(tile_size_int);
     auto tiles = small ? Context::instance().tiles_small() : Context::instance().tiles();
-    float tile_size = static_cast<float>(small ? TILE_SIZE_SMALL : TILE_SIZE);
 
     int index = static_cast<int>(type) - 1;
     assert(index >= 0);
     assert(index <= 7);
 
+    int level = game_level - 1;
+    assert(level >= 0);
+    assert(level <= 9);
+
     RlRectangle source {
         static_cast<float>(index) * tile_size,
-        0.0F,
+        static_cast<float>(level) * tile_size,
         tile_size,
         tile_size,
     };

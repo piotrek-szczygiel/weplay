@@ -1,6 +1,8 @@
 #include "Matrix.hpp"
+#include "Context.hpp"
 #include "DrawBlock.hpp"
 #include "Piece.hpp"
+#include <random>
 #include <raylib.h>
 
 namespace Tetris {
@@ -54,40 +56,6 @@ bool Matrix::collision(const Piece& piece)
     return false;
 }
 
-void Matrix::draw(int draw_x, int draw_y) const
-{
-    for (int y = 0; y <= HEIGHT; ++y) {
-        for (int x = 0; x < WIDTH; ++x) {
-            auto t = m_grid[VANISH + y - 1][x];
-
-            if (t == 0) {
-                continue;
-            }
-
-            // DrawRectangle(draw_x + x * TILE_SIZE, draw_y + (y - 1) * TILE_SIZE, TILE_SIZE,
-            //     TILE_SIZE, SHAPE_COLORS[t]);
-
-            DrawBlock(t, draw_x + x * TILE_SIZE, draw_y + (y - 1) * TILE_SIZE, 220, false);
-        }
-    }
-}
-
-void Matrix::draw_outline(int draw_x, int draw_y) const
-{
-    constexpr int outline = 2;
-
-    RlRectangle outlineRect {
-        static_cast<float>(draw_x - outline),
-        static_cast<float>(draw_y - outline) - static_cast<float>(TILE_SIZE) / 2.0F,
-        static_cast<float>(WIDTH * TILE_SIZE + outline * 2),
-        static_cast<float>(HEIGHT * TILE_SIZE + outline * 2) + static_cast<float>(TILE_SIZE) / 2.0F,
-    };
-
-    DrawRectangleLinesEx(outlineRect, outline, GRAY);
-    DrawRectangle(draw_x, draw_y - TILE_SIZE * 2 - TILE_SIZE / 2 - outline, WIDTH * TILE_SIZE,
-        TILE_SIZE * 2, BLACK);
-}
-
 std::vector<int> Matrix::get_full_rows()
 {
     std::vector<int> rows {};
@@ -119,6 +87,56 @@ void Matrix::clear_rows(const std::vector<int>& rows)
             }
         }
     }
+}
+
+void Matrix::add_garbage_lines(int rows)
+{
+    static auto hole_rand
+        = std::bind(std::uniform_int_distribution<int>(0, WIDTH - 1), Context::instance().rng());
+
+    for (int row = 0; row < rows; ++row) {
+        int hole = hole_rand();
+        for (int y = 0; y < HEIGHT + VANISH - 1; ++y) {
+            for (int x = 0; x < WIDTH; ++x) {
+                m_grid[y][x] = m_grid[y + 1][x];
+            }
+        }
+
+        for (int x = 0; x < WIDTH; ++x) {
+            if (x == hole) {
+                m_grid[HEIGHT + VANISH - 1][x] = 0;
+            } else {
+                m_grid[HEIGHT + VANISH - 1][x] = GARBAGE;
+            }
+        }
+    }
+}
+
+void Matrix::draw(int level, int draw_x, int draw_y) const
+{
+    for (int y = 0; y <= HEIGHT; ++y) {
+        for (int x = 0; x < WIDTH; ++x) {
+            auto t = m_grid[VANISH + y - 1][x];
+
+            DrawBlock(t, level, draw_x + x * TILE_SIZE, draw_y + (y - 1) * TILE_SIZE, 220, false);
+        }
+    }
+}
+
+void Matrix::draw_outline(int draw_x, int draw_y) const
+{
+    constexpr int outline = 2;
+
+    RlRectangle outlineRect {
+        static_cast<float>(draw_x - outline),
+        static_cast<float>(draw_y - outline) - static_cast<float>(TILE_SIZE) / 2.0F,
+        static_cast<float>(WIDTH * TILE_SIZE + outline * 2),
+        static_cast<float>(HEIGHT * TILE_SIZE + outline * 2) + static_cast<float>(TILE_SIZE) / 2.0F,
+    };
+
+    DrawRectangleLinesEx(outlineRect, outline, GRAY);
+    DrawRectangle(draw_x, draw_y - TILE_SIZE * 2 - TILE_SIZE / 2 - outline, WIDTH * TILE_SIZE,
+        TILE_SIZE * 2, BLACK);
 }
 
 }

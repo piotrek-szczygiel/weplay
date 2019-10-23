@@ -1,4 +1,5 @@
 #pragma once
+#include "Context.hpp"
 #include "Shape.hpp"
 #include <deque>
 #include <random>
@@ -15,7 +16,6 @@ public:
 
 private:
     std::deque<ShapeType> m_bag {};
-    std::mt19937 m_generator { std::random_device {}() };
 
     void fill_all();
     void fill_7();

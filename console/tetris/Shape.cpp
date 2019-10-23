@@ -4,7 +4,7 @@
 
 namespace Tetris {
 
-void Shape::draw(int draw_x, int draw_y, int rotation, bool small, bool ghost) const
+void Shape::draw(int level, int draw_x, int draw_y, int rotation, bool small, bool ghost) const
 {
     const auto& grid { grids[rotation] };
 
@@ -17,7 +17,7 @@ void Shape::draw(int draw_x, int draw_y, int rotation, bool small, bool ghost) c
 
             unsigned char alpha = ghost ? 64 : 255;
             int size = small ? TILE_SIZE_SMALL : TILE_SIZE;
-            DrawBlock(t, draw_x + x * size, draw_y + y * size, alpha, small);
+            DrawBlock(t, level, draw_x + x * size, draw_y + y * size, alpha, small);
         }
     }
 }

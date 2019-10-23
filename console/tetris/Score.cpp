@@ -1,13 +1,12 @@
 #include "Score.hpp"
+#include <boost/format.hpp>
 #include <raylib.h>
 #include <string>
 
 namespace Tetris {
 
-void Score::update_clear(int rows, bool t_spin)
+void Score::update_clear(int level, int rows, bool t_spin)
 {
-    constexpr int level { 1 };
-
     int lines {};
     int duel_lines {};
 
@@ -74,8 +73,8 @@ void Score::update_clear(int rows, bool t_spin)
 
 void Score::draw(int draw_x, int draw_y, int size)
 {
-    RlDrawText(
-        (std::string("SCORE: ") + std::to_string(m_score)).c_str(), draw_x, draw_y, size, RAYWHITE);
+    std::string str = boost::str(boost::format("Score: %1%") % m_score);
+    RlDrawText(str.c_str(), draw_x, draw_y, size, RAYWHITE);
 }
 
 }

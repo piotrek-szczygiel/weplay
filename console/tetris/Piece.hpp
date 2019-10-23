@@ -34,7 +34,7 @@ public:
     bool rotate(bool right, const CollisionFunction& collision_fun);
     int fall(const CollisionFunction& collision_fun);
     bool touching_floor(const CollisionFunction& collision_fun);
-    void draw(int draw_x, int draw_y, bool small, bool ghost) const;
+    void draw(int level, int draw_x, int draw_y, bool small, bool ghost) const;
 
 private:
     Shape m_shape;

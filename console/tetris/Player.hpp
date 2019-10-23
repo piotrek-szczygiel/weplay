@@ -14,6 +14,8 @@ class Player {
 public:
     Player();
 
+    void increase_level();
+
     void update(float dt, const std::vector<Action>& actions);
     void draw(int draw_x, int draw_y);
 
@@ -36,12 +38,27 @@ private:
     std::optional<ShapeType> m_hold {};
     bool m_hold_lock {};
 
-    float m_falling {};
-    float m_falling_interval { 1.0F };
-
     std::vector<int> m_clearing_rows {};
     float m_clearing_duration {};
     float m_clearing_max_duration { 0.3F };
+
+    float m_falling {};
+    int m_level { 1 };
+    int m_level_increased { 1 };
+
+    static constexpr int m_max_level { 10 };
+    static constexpr std::array<float, m_max_level> m_gravity { {
+        1.00000F,
+        0.79300F,
+        0.61780F,
+        0.47273F,
+        0.35520F,
+        0.26200F,
+        0.18968F,
+        0.13473F,
+        0.09388F,
+        0.06415F,
+    } };
 
     void action(Action action);
 

@@ -18,7 +18,9 @@ public:
     bool collision(const Piece& piece);
     void clear_rows(const std::vector<int>& rows);
     std::vector<int> get_full_rows();
-    void draw(int draw_x, int draw_y) const;
+    void add_garbage_lines(int count);
+
+    void draw(int level, int draw_x, int draw_y) const;
     void draw_outline(int draw_x, int draw_y) const;
 
 private:
