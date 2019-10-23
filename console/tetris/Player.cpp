@@ -19,7 +19,7 @@ Player::Player()
 
 void Player::increase_level()
 {
-    if (m_state == GAME_OVER) {
+    if (m_state == GAME_OVER || m_state == GAME_OVER_ANIMATION) {
         return;
     }
 
