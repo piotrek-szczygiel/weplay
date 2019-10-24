@@ -10,8 +10,6 @@ public:
 
     Texture2D tiles;
     Texture2D tiles_small;
-
-    Texture2D texture_bg;
     Texture2D texture_ui;
 
     Font font;
@@ -26,7 +24,6 @@ public:
     {
         UnloadTexture(tiles);
         UnloadTexture(tiles_small);
-        UnloadTexture(texture_bg);
         UnloadTexture(texture_ui);
         UnloadFont(font);
     }
@@ -36,7 +33,6 @@ private:
         : rng { std::random_device {}() }
         , tiles { LoadTexture("resources/tetris/tiles.png") }
         , tiles_small { LoadTexture("resources/tetris/tiles_small.png") }
-        , texture_bg { LoadTexture("resources/tetris/background.png") }
         , texture_ui { LoadTexture("resources/tetris/ui.png") }
         , font { LoadFont("resources/tetris/font.ttf") }
     {

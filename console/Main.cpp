@@ -5,7 +5,7 @@
 int main(int argc, char* argv[])
 {
     // Travel upwards to directory containing resources
-    constexpr int max_depth = 5;
+    constexpr int max_depth { 5 };
     bool found = false;
     for (int i = 0; i < max_depth; ++i) {
         if (std::filesystem::exists("resources")) {
