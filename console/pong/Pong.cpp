@@ -52,19 +52,19 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
         = { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH, PLAYER_HEIGHT };
 
     if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
-        if (m_ball.position.x >= m_player_1.position.x) {
-            m_ball.speed = computeBallSpeed(
-                { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
-            m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
-        }
+        // if (m_ball.position.x >= m_player_1.position.x) {
+        m_ball.speed
+            = computeBallSpeed({ -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
+        m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
+        //}
     }
 
     if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_2)) {
-        if (m_ball.position.x <= m_player_2.position.x - PLAYER_WIDTH) {
-            m_ball.speed = computeBallSpeed(
-                { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
-            m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
-        }
+        // if (m_ball.position.x <= m_player_2.position.x - PLAYER_WIDTH) {
+        m_ball.speed
+            = computeBallSpeed({ -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
+        m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
+        //}
     }
 
     m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
@@ -72,8 +72,10 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
 
     if (m_ball.position.x < 0) {
         m_player_2.score += 1;
+        restart();
     } else if (m_ball.position.x > m_width) {
         m_player_1.score += 1;
+        restart();
     }
 }
 
@@ -90,15 +92,42 @@ void Pong::Pong::draw()
 
     DrawCircle(m_ball.position.x, m_ball.position.y, BALL_RADIUS, RAYWHITE);
 
+
+    char m_player_1_score_text[10];
+    sprintf(m_player_1_score_text, "%d", m_player_1.score);
+    RlDrawText(m_player_1_score_text, m_width / 2 - 100, 15, FONT_SIZE, WHITE);
+
+    char delim[2];
+    sprintf(delim, "%c", ':');
+    RlDrawText(delim, m_width / 2, 15, FONT_SIZE, WHITE);
+
+    char m_player_2_score_text[10];
+    sprintf(m_player_2_score_text, "%d", m_player_2.score);
+    RlDrawText(m_player_2_score_text, m_width / 2 + 100, 15, FONT_SIZE, WHITE);
+
     EndTextureMode();
 }
 
 RenderTexture2D Pong::Pong::framebuffer() { return m_framebuffer; }
 
+void Pong::restart()
+{
+    m_player_1.position.y = static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2);
+    m_player_2.position.y = static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(-PI / 8, PI / 8);
+    float modAngle = dis(gen);
+    float dirX = signbit(m_ball.speed.x) ? 1.0 : -1.0;
+    m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
+        { computeBallSpeed(Vector2 { cos(modAngle) * dirX, sin(modAngle) }) } };
+}
+
 Vector2 computeBallSpeed(Vector2 v)
 {
-    float vXDir = copysign(1.0F, v.x);
-    float vYDir = copysign(1.0F, v.y);
+    float vXDir = signbit(v.x) ? -1.0F : 1.0F;
+    float vYDir = signbit(v.y) ? -1.0F : 1.0F;
     float length = sqrt(v.x * v.x + v.y * v.y);
     v = { v.x / length, v.y / length };
     if (abs(v.y) >= 0.90F) {

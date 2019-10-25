@@ -4,6 +4,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdio>
+#include <random>
 
 namespace Pong {
 
@@ -25,6 +26,7 @@ const int PLAYER_WIDTH = 15;
 const int PLAYER_HEIGHT = 180;
 const int BALL_RADIUS = 15;
 const float FRICTION = 0.8F;
+const int FONT_SIZE = 24;
 
 class Pong final : public State {
 
@@ -38,13 +40,14 @@ public:
                            static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2) },
             { 0, 0 }, 0 }
         , m_ball { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
-            { 0.7F, 0.7F } } // normalized (1, 1) vector
+            { 0.9F, 0.17F } } // normalized (1, 1) vector
 
     {
     }
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
+    void restart();
 
 private:
     int m_width;
