@@ -92,7 +92,6 @@ void Pong::Pong::draw()
 
     DrawCircle(m_ball.position.x, m_ball.position.y, BALL_RADIUS, RAYWHITE);
 
-
     char m_player_1_score_text[10];
     sprintf(m_player_1_score_text, "%d", m_player_1.score);
     RlDrawText(m_player_1_score_text, m_width / 2 - 100, 15, FONT_SIZE, WHITE);
@@ -119,9 +118,9 @@ void Pong::restart()
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(-PI / 8, PI / 8);
     float modAngle = dis(gen);
-    float dirX = signbit(m_ball.speed.x) ? 1.0 : -1.0;
+    float dirX = signbit(m_ball.speed.x) ? -1.0F : 1.0F;
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
-        { computeBallSpeed(Vector2 { cos(modAngle) * dirX, sin(modAngle) }) } };
+        { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
 }
 
 Vector2 computeBallSpeed(Vector2 v)
