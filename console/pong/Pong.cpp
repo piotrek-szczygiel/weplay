@@ -84,25 +84,26 @@ void Pong::Pong::draw()
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
-    DrawRectangle(
-        m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
+    DrawRectangle(static_cast<int>(m_player_1.position.x), static_cast<int>(m_player_1.position.y),
+        PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
 
-    DrawRectangle(
-        m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
+    DrawRectangle(static_cast<int>(m_player_2.position.x), static_cast<int>(m_player_2.position.y),
+        PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
 
-    DrawCircle(m_ball.position.x, m_ball.position.y, BALL_RADIUS, RAYWHITE);
+    DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
+        BALL_RADIUS, RAYWHITE);
 
     char m_player_1_score_text[10];
     sprintf(m_player_1_score_text, "%d", m_player_1.score);
-    RlDrawText(m_player_1_score_text, m_width / 2 - 100, 15, FONT_SIZE, WHITE);
+    RlDrawText(m_player_1_score_text, static_cast<int>(m_width / 2 - 100), 15, FONT_SIZE, WHITE);
 
     char delim[2];
     sprintf(delim, "%c", ':');
-    RlDrawText(delim, m_width / 2, 15, FONT_SIZE, WHITE);
+    RlDrawText(delim, static_cast<int>(m_width / 2), 15, FONT_SIZE, WHITE);
 
     char m_player_2_score_text[10];
     sprintf(m_player_2_score_text, "%d", m_player_2.score);
-    RlDrawText(m_player_2_score_text, m_width / 2 + 100, 15, FONT_SIZE, WHITE);
+    RlDrawText(m_player_2_score_text, static_cast<int>(m_width / 2 + 100), 15, FONT_SIZE, WHITE);
 
     EndTextureMode();
 }
@@ -111,8 +112,8 @@ RenderTexture2D Pong::Pong::framebuffer() { return m_framebuffer; }
 
 void Pong::restart()
 {
-    m_player_1.position.y = static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2);
-    m_player_2.position.y = static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2);
+    m_player_1.position.y = static_cast<float>(m_height / 2 - PLAYER_HEIGHT / 2);
+    m_player_2.position.y = static_cast<float>(m_height / 2 - PLAYER_HEIGHT / 2);
 
     std::random_device rd;
     std::mt19937 gen(rd());

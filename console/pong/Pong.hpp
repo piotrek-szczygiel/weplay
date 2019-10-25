@@ -34,10 +34,13 @@ public:
     Pong()
         : m_width { 1920 }
         , m_height { 1280 }
-        , m_framebuffer { LoadRenderTexture(m_width, m_height) }
-        , m_player_1 { { 20, static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2) }, { 0, 0 }, 0 }
-        , m_player_2 { { static_cast<float>(m_width - 20 - PLAYER_WIDTH),
-                           static_cast<float>(m_height / 2 - PLAYER_WIDTH / 2) },
+        , m_framebuffer { LoadRenderTexture(static_cast<int>(m_width), static_cast<int>(m_height)) }
+        , m_player_1 { { 20,
+                           static_cast<float>(
+                               m_height / 2 - static_cast<float>(PLAYER_HEIGHT) / 2) },
+            { 0, 0 }, 0 }
+        , m_player_2 { { m_width - 20 - PLAYER_WIDTH,
+                           m_height / 2 - static_cast<float>(PLAYER_HEIGHT) / 2 },
             { 0, 0 }, 0 }
         , m_ball { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
             { 0.9F, 0.17F } } // normalized (1, 1) vector
@@ -50,8 +53,8 @@ public:
     void restart();
 
 private:
-    int m_width;
-    int m_height;
+    float m_width;
+    float m_height;
     RenderTexture2D m_framebuffer;
 
     Player m_player_1;
