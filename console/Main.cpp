@@ -23,21 +23,11 @@ int main(int argc, char* argv[])
 
     SetTraceLogLevel(LOG_WARNING);
 
-    BOOST_LOG_TRIVIAL(info) << "Initializing temporary window";
-    InitWindow(640, 480, "Temporary window");
-    int width = GetMonitorWidth(0);
-    int height = GetMonitorHeight(0);
-    RlCloseWindow();
-
-    if (width == 0 || height == 0) {
-        width = 1024;
-        height = 768;
-
-        BOOST_LOG_TRIVIAL(warning) << "Unable to query monitor resolution";
-    }
+    constexpr int width { 1024 };
+    constexpr int height { 768 };
 
     BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_FULLSCREEN_MODE);
+    SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(width, height, "Raspberry Console");
 
     BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";
