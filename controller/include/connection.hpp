@@ -1,42 +1,32 @@
-#pragma once
+#ifndef CONNECTION_HPP
+#define CONNECTION_HPP
 
-#include "button.hpp"
 #include <ESP8266WiFi.h>
-
-const uint8_t PROTOCOL_DELIMITER = '\n';
-
-const uint8_t PROTOCOL_GREETING[] = {
-    0x19, // Magic byte
-    0x84, // Magic byte
-    0x01, // Protocol version
-    PROTOCOL_DELIMITER,
-};
-
-const uint8_t PROTOCOL_BUTTON_PREFIX = 'b';
-const uint8_t PROTOCOL_BUTTON_DOWN = 'd';
-const uint8_t PROTOCOL_BUTTON_UP = 'u';
 
 class Connection {
 private:
-    const char* ssid;
-    const char* password;
-    const char* ip;
-    uint16_t port;
+    const char* m_ssid;
+    const char* m_password;
+    const char* m_ip;
+    uint16_t m_port;
 
-    WiFiClient client;
+    WiFiClient m_client;
 
-    void connectWiFi();
-    void connectServer();
+    void connect_wifi();
+    void connect_server();
 
 public:
     Connection(const char* ssid, const char* password, const char* ip, uint16_t port)
-        : ssid(ssid)
-        , password(password)
-        , ip(ip)
-        , port(port)
+        : m_ssid(ssid)
+        , m_password(password)
+        , m_ip(ip)
+        , m_port(port)
     {
     }
 
     void connect();
-    void sendButton(const Button& button);
+
+    void send_ypr(int16_t yaw, int16_t pitch, int16_t roll);
 };
+
+#endif

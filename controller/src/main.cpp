@@ -1,24 +1,29 @@
-#include "button.hpp"
-#include "connection.hpp"
+#include "Connection.hpp"
+#include "Mpu.hpp"
 #include <string>
 
-std::array<Button, 3> buttons = {
-    Button { 14, BUTTON_LEFT },
-    Button { 12, BUTTON_MIDDLE },
-    Button { 13, BUTTON_RIGHT },
-};
+Connection connection { F("RaspberryConsole"), F("Korobeiniki1984"), F("192.168.12.1"), 1984 };
 
-Connection conn("RaspberryConsole", "Korobeiniki1984", "192.168.12.1", 1984);
+Calibration calibration { 1560, 1367, 626, 62, 86, -54 };
 
-void setup() { Serial.begin(115200); }
+Mpu mpu { calibration };
+
+unsigned long last_send {};
+
+void setup()
+{
+    Serial.begin(115200);
+    while (!Serial) { };
+
+    mpu.initialize();
+}
 
 void loop()
 {
-    conn.connect();
+    connection.connect();
 
-    for (auto& button : buttons) {
-        if (button.read()) {
-            conn.sendButton(button);
-        }
+    if (mpu.update()) {
+        Serial.printf("%d\t%d\t%d\r\n", mpu.yaw(), mpu.pitch(), mpu.roll());
+        connection.send_ypr(mpu.yaw(), mpu.pitch(), mpu.roll());
     }
 }
