@@ -1,4 +1,5 @@
 #include "Console.hpp"
+#include "pong/Pong.hpp"
 #include "starship/Starship.hpp"
 #include "tetris/Tetris.hpp"
 #include <algorithm>
@@ -13,6 +14,8 @@ void Console::run()
             m_current_state = std::make_unique<Starship::Starship>();
         } else if (IsKeyPressed(KEY_F3)) {
             m_current_state = std::make_unique<Tetris::Tetris>();
+        } else if (IsKeyPressed(KEY_F4)) {
+            m_current_state = std::make_unique<Pong::Pong>();
         }
 
         m_current_state->update(m_controller.state);

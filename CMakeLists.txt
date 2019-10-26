@@ -10,6 +10,7 @@ set(SOURCE_FILES
     console/controller/TcpSession.cpp
     console/controller/TcpServer.cpp
     console/menu/Menu.cpp
+    console/pong/Pong.cpp
     console/starship/Starship.cpp
     console/starship/Ship.cpp
     console/starship/ShipCamera.cpp
