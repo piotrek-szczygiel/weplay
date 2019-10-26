@@ -29,8 +29,15 @@ int main(int argc, char* argv[])
     int height = GetMonitorHeight(0);
     RlCloseWindow();
 
+    if (width == 0 || height == 0) {
+        width = 1024;
+        height = 768;
+
+        BOOST_LOG_TRIVIAL(warning) << "Unable to query monitor resolution";
+    }
+
     BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
-    SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_FULLSCREEN_MODE);
     InitWindow(width, height, "Raspberry Console");
 
     BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";

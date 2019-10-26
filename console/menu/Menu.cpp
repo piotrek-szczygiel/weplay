@@ -2,7 +2,7 @@
 
 namespace Menu {
 
-void Menu::update(std::shared_ptr<ControllerState> state) {}
+void Menu::update(std::shared_ptr<ControllerState> state) { }
 
 void Menu::draw()
 {
