@@ -13,23 +13,29 @@ void Connection::connect()
 
 void Connection::connect_wifi()
 {
-    Serial.printf("Connecting to '%s' using password '%s' ", m_ssid, m_password);
+    Serial.print(F("Connecting to "));
+    Serial.println(m_ssid);
+
     WiFi.begin(m_ssid, m_password);
 
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
-        Serial.print("*");
+        Serial.print(F("*"));
     }
 
-    Serial.printf("\r\nConnected to %s\r\n", m_ssid);
+    Serial.print(F("\r\nConnected to "));
+    Serial.println(m_ssid);
 }
 
 void Connection::connect_server()
 {
-    Serial.printf("Connecting to %s:%d ", m_ip, m_port);
+    Serial.print(F("Connecting to "));
+    Serial.print(m_ip);
+    Serial.print(":");
+    Serial.println(m_port);
     while (!m_client.connect(m_ip, m_port)) {
         delay(500);
-        Serial.print(".");
+        Serial.print(F("."));
 
         if (WiFi.status() != WL_CONNECTED) {
             Serial.println();
@@ -37,7 +43,8 @@ void Connection::connect_server()
         }
     }
 
-    Serial.printf("\r\nConnected to %s\r\n", m_ip);
+    Serial.print(F("Connected to "));
+    Serial.println(m_ip);
     m_client.setNoDelay(true);
 }
 
