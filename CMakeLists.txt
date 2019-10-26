@@ -77,6 +77,10 @@ else()
     target_link_libraries(${PROJECT_NAME} raylib_static)
 endif()
 
+if(NOT WIN32)
+    target_link_libraries(${PROJECT_NAME} stdc++fs)
+endif()
+
 # Link against winmm.lib on Windows
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} winmm)
