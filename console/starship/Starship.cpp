@@ -7,12 +7,12 @@ void Starship::update(std::shared_ptr<ControllerState> state)
     float dt = GetFrameTime();
 
     m_ship.set_controls({
-        IsKeyDown(KEY_W) || state->forward.load(),
-        IsKeyDown(KEY_S),
-        IsKeyDown(KEY_A) || state->left.load(),
-        IsKeyDown(KEY_D) || state->right.load(),
-        IsKeyDown(KEY_P),
-        IsKeyDown(KEY_L),
+        IsKeyDown(KEY_W) || state->buttons[3].load(),
+        IsKeyDown(KEY_S) || state->buttons[4].load(),
+        IsKeyDown(KEY_A) || state->roll.load() < -20,
+        IsKeyDown(KEY_D) || state->roll.load() > 20,
+        IsKeyDown(KEY_P) || state->pitch.load() > 20,
+        IsKeyDown(KEY_L) || state->pitch.load() < -20,
     });
 
     m_ship.update(dt, m_map_size, m_columns);

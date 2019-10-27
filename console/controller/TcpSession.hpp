@@ -16,10 +16,17 @@ public:
     void start();
 
 private:
-    static const size_t MAX_LENGTH { 4 };
+    enum class NextRead {
+        None,
+        Buttons,
+        Mpu6050,
+    };
+
+    NextRead m_next_read { NextRead::None };
+    size_t m_read_size { 1 };
 
     boost::asio::ip::tcp::socket m_socket;
-    std::array<uint8_t, MAX_LENGTH> m_data;
+    std::array<uint8_t, 16> m_data;
 
     std::shared_ptr<ControllerState> m_controller_state;
 

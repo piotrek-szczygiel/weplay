@@ -1,5 +1,6 @@
 #include "Pong.hpp"
-#include <boost/log/trivial.hpp>
+#include "../Util.hpp"
+#include <boost/format.hpp>
 
 namespace Pong {
 
@@ -9,9 +10,9 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
-    if (IsKeyDown(KEY_W) || state->forward.load()) {
+    if (IsKeyDown(KEY_W) || state->pitch.load() > 20) {
         m_player_1.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_S)) {
+    } else if (IsKeyDown(KEY_S) || state->pitch.load() < -20) {
         m_player_1.speed.y = 1.0F;
     } else
         m_player_1.speed.y = 0.0F;
@@ -93,17 +94,7 @@ void Pong::Pong::draw()
     DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
         BALL_RADIUS, RAYWHITE);
 
-    char m_player_1_score_text[10];
-    sprintf(m_player_1_score_text, "%d", m_player_1.score);
-    RlDrawText(m_player_1_score_text, static_cast<int>(m_width / 2 - 100), 15, FONT_SIZE, WHITE);
-
-    char delim[2];
-    sprintf(delim, "%c", ':');
-    RlDrawText(delim, static_cast<int>(m_width / 2), 15, FONT_SIZE, WHITE);
-
-    char m_player_2_score_text[10];
-    sprintf(m_player_2_score_text, "%d", m_player_2.score);
-    RlDrawText(m_player_2_score_text, static_cast<int>(m_width / 2 + 100), 15, FONT_SIZE, WHITE);
+    RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
 
     EndTextureMode();
 }
@@ -112,16 +103,24 @@ RenderTexture2D Pong::Pong::framebuffer() { return m_framebuffer; }
 
 void Pong::restart()
 {
-    m_player_1.position.y = static_cast<float>(m_height / 2 - PLAYER_HEIGHT / 2);
-    m_player_2.position.y = static_cast<float>(m_height / 2 - PLAYER_HEIGHT / 2);
+    m_player_1.position = {
+        20,
+        m_height / 2.0F - static_cast<float>(PLAYER_HEIGHT) / 2.0F,
+    };
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(-PI / 8, PI / 8);
-    float modAngle = dis(gen);
+    m_player_2.position = {
+        m_width - 20 - PLAYER_WIDTH,
+        m_height / 2.0F - static_cast<float>(PLAYER_HEIGHT) / 2.0F,
+    };
+
+    float modAngle = random(-PI / 8.0F, PI / 8.0F, m_gen);
     float dirX = signbit(m_ball.speed.x) ? -1.0F : 1.0F;
+
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
         { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
+
+    m_score = boost::str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
+    m_score_position = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), FONT_SIZE)) / 2;
 }
 
 Vector2 computeBallSpeed(Vector2 v)

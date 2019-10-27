@@ -1,12 +1,14 @@
 #pragma once
+#include <array>
 #include <atomic>
 #include <boost/asio/io_context.hpp>
 #include <thread>
 
 struct ControllerState {
-    std::atomic_bool left;
-    std::atomic_bool forward;
-    std::atomic_bool right;
+    std::array<std::atomic_bool, 8> buttons {};
+    std::atomic_int16_t yaw {};
+    std::atomic_int16_t pitch {};
+    std::atomic_int16_t roll {};
 };
 
 class Controller {

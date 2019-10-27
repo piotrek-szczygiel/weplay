@@ -14,7 +14,7 @@ void TcpSession::start()
 void TcpSession::do_read()
 {
     auto self { shared_from_this() };
-    m_socket.async_read_some(ba::buffer(m_data, MAX_LENGTH),
+    m_socket.async_read_some(ba::buffer(m_data, m_read_size),
         [this, self](boost::system::error_code ec, std::size_t length) {
             auto address = m_socket.remote_endpoint().address().to_string();
 
@@ -26,39 +26,44 @@ void TcpSession::do_read()
 
             BOOST_LOG_TRIVIAL(info) << "Received " << length << " bytes from " << address;
 
-            if (!m_valid_controller && length == 4) {
-                if (m_data[0] == 0x19 && m_data[1] == 0x84 && m_data[2] == 0x01
-                    && m_data[3] == '\n') {
+            if (length != m_read_size) {
+                BOOST_LOG_TRIVIAL(warning) << "ERROR: expected " << m_read_size << " bytes";
+                return;
+            }
+
+            if (!m_valid_controller) {
+                if (m_data[0] == '%') {
                     m_valid_controller = true;
+                    BOOST_LOG_TRIVIAL(info) << "Controller successfully registered";
+                } else {
+                    BOOST_LOG_TRIVIAL(warning) << "Invalid data received";
                 }
-            } else if (m_valid_controller && length == 4) {
-                if (m_data[0] == 'b' && m_data[3] == '\n') {
-                    bool key_down {};
 
-                    if (m_data[2] == 'd') {
-                        key_down = true;
-                    } else if (m_data[2] == 'u') {
-                        key_down = false;
-                    } else {
-                        BOOST_LOG_TRIVIAL(error) << "Invalid EventKey.down: " << m_data[2];
-                        return;
-                    }
+                return;
+            }
 
-                    switch (m_data[1]) {
-                    case '<':
-                        m_controller_state->left.store(key_down);
-                        break;
-                    case '^':
-                        m_controller_state->forward.store(key_down);
-                        break;
-                    case '>':
-                        m_controller_state->right.store(key_down);
-                        break;
-                    default:
-                        BOOST_LOG_TRIVIAL(error) << "Invalid EventKey.key: " << m_data[1];
-                        return;
-                    }
+            if (m_next_read == NextRead::None) {
+                if (m_data[0] == 'B') {
+                    m_next_read = NextRead::Buttons;
+                    m_read_size = 1;
+                } else if (m_data[0] == 'G') {
+                    m_next_read = NextRead::Mpu6050;
+                    m_read_size = 6;
                 }
+            } else {
+                if (m_next_read == NextRead::Buttons) {
+                    for (uint8_t i = 0; i < 8; ++i) {
+                        m_controller_state->buttons[i].store((m_data[1] & (1 << i)) == 0);
+                    }
+                } else if (m_next_read == NextRead::Mpu6050) {
+                    m_controller_state->yaw.store(static_cast<int16_t>(m_data[1] | m_data[2] << 8));
+                    m_controller_state->pitch.store(
+                        static_cast<int16_t>(m_data[3] | m_data[4] << 8));
+                    m_controller_state->roll.store(
+                        static_cast<int16_t>(m_data[5] | m_data[6] << 8));
+                }
+                m_next_read = NextRead::None;
+                m_read_size = 1;
             }
 
             do_read();

@@ -17,7 +17,6 @@ struct Player {
 struct Ball {
     Vector2 position;
     Vector2 speed;
-    int score;
 };
 
 const int PLAYER_SPEED = 700;
@@ -32,21 +31,13 @@ class Pong final : public State {
 
 public:
     Pong()
-        : m_width { 1920 }
-        , m_height { 1280 }
+        : m_width { 1024 }
+        , m_height { 768 }
         , m_framebuffer { LoadRenderTexture(static_cast<int>(m_width), static_cast<int>(m_height)) }
-        , m_player_1 { { 20,
-                           static_cast<float>(
-                               m_height / 2 - static_cast<float>(PLAYER_HEIGHT) / 2) },
-            { 0, 0 }, 0 }
-        , m_player_2 { { m_width - 20 - PLAYER_WIDTH,
-                           m_height / 2 - static_cast<float>(PLAYER_HEIGHT) / 2 },
-            { 0, 0 }, 0 }
-        , m_ball { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
-            { 0.9F, 0.17F } } // normalized (1, 1) vector
-
     {
+        restart();
     }
+
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
@@ -57,8 +48,13 @@ private:
     float m_height;
     RenderTexture2D m_framebuffer;
 
-    Player m_player_1;
-    Player m_player_2;
-    Ball m_ball;
+    Player m_player_1 {};
+    Player m_player_2 {};
+    Ball m_ball {};
+
+    std::string m_score {};
+    int m_score_position {};
+
+    std::mt19937 m_gen { std::random_device {}() };
 };
 }

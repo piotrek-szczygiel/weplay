@@ -46,21 +46,8 @@ void Connection::connect_server()
     Serial.print(F("Connected to "));
     Serial.println(m_ip);
     m_client.setNoDelay(true);
-}
 
-void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
-{
-    uint8_t packet[] {
-        'M',
-        static_cast<uint8_t>((yaw & 0x00ff)),
-        static_cast<uint8_t>((yaw & 0xff00) >> 8),
-        static_cast<uint8_t>((pitch & 0x00ff)),
-        static_cast<uint8_t>((pitch & 0xff00) >> 8),
-        static_cast<uint8_t>((roll & 0xff00)),
-        static_cast<uint8_t>((roll & 0x00ff) >> 8),
-    };
-
-    m_client.write(packet, sizeof(packet));
+    m_client.write('%');
 }
 
 void Connection::send_buttons(uint8_t buttons_state)
@@ -68,6 +55,21 @@ void Connection::send_buttons(uint8_t buttons_state)
     uint8_t packet[] {
         'B',
         buttons_state,
+    };
+
+    m_client.write(packet, sizeof(packet));
+}
+
+void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
+{
+    uint8_t packet[] {
+        'G',
+        static_cast<uint8_t>((yaw & 0x00ff)),
+        static_cast<uint8_t>((yaw & 0xff00) >> 8),
+        static_cast<uint8_t>((pitch & 0x00ff)),
+        static_cast<uint8_t>((pitch & 0xff00) >> 8),
+        static_cast<uint8_t>((roll & 0xff00)),
+        static_cast<uint8_t>((roll & 0x00ff) >> 8),
     };
 
     m_client.write(packet, sizeof(packet));

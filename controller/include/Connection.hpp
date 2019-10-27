@@ -26,8 +26,8 @@ public:
 
     void connect();
 
-    void send_ypr(int16_t yaw, int16_t pitch, int16_t roll);
     void send_buttons(uint8_t buttons_state);
+    void send_ypr(int16_t yaw, int16_t pitch, int16_t roll);
 };
 
 #endif
