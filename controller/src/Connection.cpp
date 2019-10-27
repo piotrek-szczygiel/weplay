@@ -68,8 +68,8 @@ void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
         static_cast<uint8_t>((yaw & 0xff00) >> 8),
         static_cast<uint8_t>((pitch & 0x00ff)),
         static_cast<uint8_t>((pitch & 0xff00) >> 8),
-        static_cast<uint8_t>((roll & 0xff00)),
-        static_cast<uint8_t>((roll & 0x00ff) >> 8),
+        static_cast<uint8_t>((roll & 0x00ff)),
+        static_cast<uint8_t>((roll & 0xff00) >> 8),
     };
 
     m_client.write(packet, sizeof(packet));
