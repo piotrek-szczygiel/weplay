@@ -27,17 +27,17 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             m_speed.z = fade(m_speed.z, 0.0F, dt * m_strength / 2.0F);
         }
 
-        if (m_controls.left && !m_controls.right) {
+        if (m_controls.roll < 0.05F) {
             if (m_speed.x > 0.0F) {
-                m_speed.x += dt * m_strength * 4.0F;
+                m_speed.x -= dt * m_strength * 4.0F * m_controls.roll;
             } else {
-                m_speed.x += dt * m_strength * 8.0F;
+                m_speed.x -= dt * m_strength * 8.0F * m_controls.roll;
             }
-        } else if (m_controls.right && !m_controls.left) {
+        } else if (m_controls.roll > 0.05F) {
             if (m_speed.x < 0.0F) {
-                m_speed.x -= dt * m_strength * 4.0F;
+                m_speed.x -= dt * m_strength * 4.0F * m_controls.roll;
             } else {
-                m_speed.x -= dt * m_strength * 8.0F;
+                m_speed.x -= dt * m_strength * 8.0F * m_controls.roll;
             }
         } else {
             m_speed.x = fade(m_speed.x, 0, dt * m_strength * 2.0F);

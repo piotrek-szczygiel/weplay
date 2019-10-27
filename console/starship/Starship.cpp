@@ -1,4 +1,5 @@
 #include "Starship.hpp"
+#include "../Util.hpp"
 
 namespace Starship {
 
@@ -6,13 +7,22 @@ void Starship::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
+    float roll {};
+
+    if (IsKeyDown(KEY_A)) {
+        roll = -1.0F;
+    } else if (IsKeyDown(KEY_D)) {
+        roll = 1.0F;
+    } else {
+        roll = clamp(static_cast<float>(state->roll) / 10.0F, -1.0F, 1.0F);
+    }
+
     m_ship.set_controls({
         IsKeyDown(KEY_W) || state->buttons[3],
         IsKeyDown(KEY_S) || state->buttons[4],
-        IsKeyDown(KEY_A) || state->roll < -20,
-        IsKeyDown(KEY_D) || state->roll > 20,
-        IsKeyDown(KEY_P) || state->pitch > 20,
-        IsKeyDown(KEY_L) || state->pitch < -20,
+        IsKeyDown(KEY_P) || state->buttons[2],
+        IsKeyDown(KEY_L) || state->buttons[5],
+        roll,
     });
 
     m_ship.update(dt, m_map_size, m_columns);

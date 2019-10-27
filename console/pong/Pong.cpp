@@ -10,32 +10,27 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
-    if (IsKeyDown(KEY_W) || state->pitch > 20) {
+    if (IsKeyDown(KEY_W) || state->buttons[0]) {
         m_player_1.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_S) || state->pitch < -20) {
+    } else if (IsKeyDown(KEY_S) || state->buttons[1]) {
         m_player_1.speed.y = 1.0F;
-    } else
+    } else {
         m_player_1.speed.y = 0.0F;
+    }
 
-    if (IsKeyDown(KEY_UP)) {
+    if (IsKeyDown(KEY_UP) || state->buttons[7]) {
         m_player_2.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_DOWN)) {
+    } else if (IsKeyDown(KEY_DOWN) || state->buttons[6]) {
         m_player_2.speed.y = 1.0F;
-    } else
+    } else {
         m_player_2.speed.y = 0.0F;
+    }
 
     m_player_1.position.y += m_player_1.speed.y * dt * PLAYER_SPEED;
     m_player_2.position.y += m_player_2.speed.y * dt * PLAYER_SPEED;
 
-    if (m_player_1.position.y < 10)
-        m_player_1.position.y = 10;
-    if (m_player_1.position.y > m_height - PLAYER_HEIGHT - 10)
-        m_player_1.position.y = m_height - PLAYER_HEIGHT - 10;
-
-    if (m_player_2.position.y < 10)
-        m_player_2.position.y = 10;
-    if (m_player_2.position.y > m_height - PLAYER_HEIGHT - 10)
-        m_player_2.position.y = m_height - PLAYER_HEIGHT - 10;
+    m_player_1.position.y = clamp(m_player_1.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
+    m_player_2.position.y = clamp(m_player_2.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
 
     if (m_ball.position.y < BALL_RADIUS) {
         m_ball.speed.y = -m_ball.speed.y;
@@ -45,12 +40,12 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
         m_ball.position.y = m_height - BALL_RADIUS;
     }
 
-    Vector2 center = { m_ball.position.x, m_ball.position.y };
+    Vector2 center { m_ball.position.x, m_ball.position.y };
 
-    RlRectangle rect_1
-        = { m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH, PLAYER_HEIGHT };
-    RlRectangle rect_2
-        = { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH, PLAYER_HEIGHT };
+    RlRectangle rect_1 { m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH,
+        PLAYER_HEIGHT };
+    RlRectangle rect_2 { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH,
+        PLAYER_HEIGHT };
 
     if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
         // if (m_ball.position.x >= m_player_1.position.x) {
@@ -129,10 +124,13 @@ Vector2 computeBallSpeed(Vector2 v)
     float vYDir = signbit(v.y) ? -1.0F : 1.0F;
     float length = sqrt(v.x * v.x + v.y * v.y);
     v = { v.x / length, v.y / length };
+
     if (abs(v.y) >= 0.90F) {
         v.y = 0.90F * vYDir;
         v.x = sqrt(1 - v.y * v.y) * vXDir;
     }
+
     return v;
 }
+
 }

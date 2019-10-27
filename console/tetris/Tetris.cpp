@@ -11,13 +11,13 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
     std::vector<Action> p1 {};
     std::vector<Action> p2 {};
 
-    if (IsKeyDown(KEY_LEFT) || state->roll < -20 || state->buttons[0]) {
+    if (IsKeyDown(KEY_LEFT) || state->roll < -10 || state->buttons[0]) {
         p1.push_back(Action::MOVE_LEFT);
     } else if (IsKeyDown(KEY_RIGHT) || state->roll > 20 || state->buttons[1]) {
         p1.push_back(Action::MOVE_RIGHT);
     }
 
-    if (IsKeyDown(KEY_DOWN) || state->pitch > 20 || state->buttons[2]) {
+    if (IsKeyDown(KEY_DOWN) || state->pitch > 10 || state->buttons[2]) {
         p1.push_back(Action::MOVE_DOWN);
     }
 
