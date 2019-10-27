@@ -17,12 +17,12 @@ public:
 
 private:
     enum class NextRead {
-        None,
+        Mode,
         Buttons,
         Mpu6050,
     };
 
-    NextRead m_next_read { NextRead::None };
+    NextRead m_next_read { NextRead::Mode };
     size_t m_read_size { 1 };
 
     boost::asio::ip::tcp::socket m_socket;
