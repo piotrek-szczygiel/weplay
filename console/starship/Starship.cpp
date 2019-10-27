@@ -14,7 +14,15 @@ void Starship::update(std::shared_ptr<ControllerState> state)
     } else if (IsKeyDown(KEY_D)) {
         roll = 1.0F;
     } else {
-        roll = clamp(static_cast<float>(state->roll) / 10.0F, -1.0F, 1.0F);
+        if (state->roll > 5) {
+            roll = static_cast<float>((state->roll - 5)) / 10.0F;
+        } else if (state->roll < -5) {
+            roll = static_cast<float>((state->roll + 5)) / 10.0F;
+        } else {
+            roll = 0.0F;
+        }
+
+        roll = clamp(roll, -1.0F, 1.0F);
     }
 
     m_ship.set_controls({
