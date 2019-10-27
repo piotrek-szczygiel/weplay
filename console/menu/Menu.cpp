@@ -1,15 +1,33 @@
 #include "Menu.hpp"
+#include <boost/format.hpp>
+
+using boost::str, boost::format;
 
 namespace Menu {
 
-void Menu::update(std::shared_ptr<ControllerState> state) { }
+void Menu::update(std::shared_ptr<ControllerState> state)
+{
+    m_yaw = state->yaw;
+    m_pitch = state->yaw;
+    m_roll = state->roll;
+    m_buttons = state->buttons;
+}
 
 void Menu::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
-    RlDrawText("Main Menu", 100, 100, 12, MAROON);
+    RlDrawText(str(format("Yaw: %d") % m_yaw).c_str(), 10, 100, 16, RAYWHITE);
+    RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
+    RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
+
+    for (int i = 0; i < m_buttons.size(); ++i) {
+        if (m_buttons[i]) {
+            RlDrawText(
+                str(format("Button %d pressed") % i).c_str(), 10, 200 + 30 * i, 16, RAYWHITE);
+        }
+    }
 
     EndTextureMode();
 }

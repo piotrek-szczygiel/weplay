@@ -6,7 +6,7 @@ namespace Menu {
 class Menu final : public State {
 public:
     Menu()
-        : m_framebuffer { LoadRenderTexture(GetScreenWidth(), GetScreenHeight()) }
+        : m_framebuffer { LoadRenderTexture(1024, 768) }
     {
     }
 
@@ -18,6 +18,12 @@ public:
 
 private:
     RenderTexture2D m_framebuffer;
+
+    int16_t m_yaw {};
+    int16_t m_pitch {};
+    int16_t m_roll {};
+
+    std::array<bool, 8> m_buttons {};
 };
 
 }

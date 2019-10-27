@@ -10,9 +10,9 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
-    if (IsKeyDown(KEY_W) || state->pitch.load() > 20) {
+    if (IsKeyDown(KEY_W) || state->pitch > 20) {
         m_player_1.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_S) || state->pitch.load() < -20) {
+    } else if (IsKeyDown(KEY_S) || state->pitch < -20) {
         m_player_1.speed.y = 1.0F;
     } else
         m_player_1.speed.y = 0.0F;

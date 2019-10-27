@@ -11,29 +11,29 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
     std::vector<Action> p1 {};
     std::vector<Action> p2 {};
 
-    if (IsKeyDown(KEY_LEFT) || state->roll.load() < -20 || state->buttons[0].load()) {
+    if (IsKeyDown(KEY_LEFT) || state->roll < -20 || state->buttons[0]) {
         p1.push_back(Action::MOVE_LEFT);
-    } else if (IsKeyDown(KEY_RIGHT) || state->roll.load() > 20 || state->buttons[1].load()) {
+    } else if (IsKeyDown(KEY_RIGHT) || state->roll > 20 || state->buttons[1]) {
         p1.push_back(Action::MOVE_RIGHT);
     }
 
-    if (IsKeyDown(KEY_DOWN) || state->pitch.load() > 20 || state->buttons[2].load()) {
+    if (IsKeyDown(KEY_DOWN) || state->pitch > 20 || state->buttons[2]) {
         p1.push_back(Action::MOVE_DOWN);
     }
 
-    if (IsKeyDown(KEY_SPACE) || state->buttons[4].load()) {
+    if (IsKeyDown(KEY_SPACE) || state->buttons[4]) {
         p1.push_back(Action::HARD_DROP);
-    } else if (IsKeyDown(KEY_LEFT_SHIFT) || state->buttons[5].load()) {
+    } else if (IsKeyDown(KEY_LEFT_SHIFT) || state->buttons[5]) {
         p1.push_back(Action::SOFT_DROP);
     }
 
-    if (IsKeyDown(KEY_Z) || state->buttons[6].load()) {
+    if (IsKeyDown(KEY_Z) || state->buttons[6]) {
         p1.push_back(Action::ROTATE_LEFT);
-    } else if (IsKeyDown(KEY_X) || state->buttons[7].load()) {
+    } else if (IsKeyDown(KEY_X) || state->buttons[7]) {
         p1.push_back(Action::ROTATE_RIGHT);
     }
 
-    if (IsKeyDown(KEY_C) || state->buttons[3].load()) {
+    if (IsKeyDown(KEY_C) || state->buttons[3]) {
         p1.push_back(Action::HOLD);
     }
 

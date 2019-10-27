@@ -5,10 +5,10 @@
 #include <thread>
 
 struct ControllerState {
-    std::array<std::atomic_bool, 8> buttons {};
-    std::atomic_int16_t yaw {};
-    std::atomic_int16_t pitch {};
-    std::atomic_int16_t roll {};
+    std::array<bool, 8> buttons {};
+    int16_t yaw {};
+    int16_t pitch {};
+    int16_t roll {};
 };
 
 class Controller {
