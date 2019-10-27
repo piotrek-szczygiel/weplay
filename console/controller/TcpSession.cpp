@@ -50,13 +50,19 @@ void TcpSession::do_read()
             } else {
                 if (m_next_read == NextRead::Buttons) {
                     for (uint8_t i = 0; i < 8; ++i) {
-                        m_controller_state->buttons[i] = ((m_data[1] & (1 << i)) == 0);
+                        m_controller_state->buttons[i] = !(m_data[1] & (1 << i));
                     }
                 } else if (m_next_read == NextRead::Mpu6050) {
-                    m_controller_state->yaw = static_cast<int16_t>(m_data[1] | m_data[2] << 8);
-                    m_controller_state->pitch = static_cast<int16_t>(m_data[3] | m_data[4] << 8);
-                    m_controller_state->roll = static_cast<int16_t>(m_data[5] | m_data[6] << 8);
+                    m_controller_state->yaw = static_cast<int16_t>(m_data[1]);
+                    m_controller_state->yaw |= static_cast<int16_t>(m_data[2]) << 8;
+
+                    m_controller_state->pitch = static_cast<int16_t>(m_data[3]);
+                    m_controller_state->pitch |= static_cast<int16_t>(m_data[4]) << 8;
+
+                    m_controller_state->roll = static_cast<int16_t>(m_data[5]);
+                    m_controller_state->roll |= static_cast<int16_t>(m_data[6]) << 8;
                 }
+
                 m_next_read = NextRead::None;
                 m_read_size = 1;
             }
