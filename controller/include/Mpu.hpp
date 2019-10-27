@@ -1,5 +1,9 @@
-#ifndef MPU_HPP
-#define MPU_HPP
+#pragma once
+
+// Everything has to be in the header file,
+// because splitting into source and header causes comiler errors.
+// It is caused by poor implementation of MPU6050 library.
+// https://github.com/jrowberg/i2cdevlib/issues/468
 
 #include <MPU6050_6Axis_MotionApps20.h>
 
@@ -45,9 +49,9 @@ public:
     bool initialize();
     bool update();
 
-    inline int16_t yaw() const { return m_ypr[0]; }
-    inline int16_t pitch() const { return m_ypr[1]; }
-    inline int16_t roll() const { return m_ypr[2]; }
+    int16_t yaw() const { return m_ypr[0]; }
+    int16_t pitch() const { return m_ypr[1]; }
+    int16_t roll() const { return m_ypr[2]; }
 
 private:
     const int INTERRUPT_PIN { 13 };
@@ -185,5 +189,3 @@ bool Mpu::update()
 
     return false;
 }
-
-#endif
