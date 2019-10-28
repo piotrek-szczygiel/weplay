@@ -19,11 +19,11 @@ struct Ball {
     Vector2 speed;
 };
 
-const int PLAYER_SPEED = 700;
-const int BALL_SPEED = 850;
-const int PLAYER_WIDTH = 15;
-const int PLAYER_HEIGHT = 180;
-const int BALL_RADIUS = 15;
+const float PLAYER_SPEED = 700;
+const float BALL_SPEED = 850;
+const float PLAYER_WIDTH = 15;
+const float PLAYER_HEIGHT = 180;
+const float BALL_RADIUS = 15;
 const float FRICTION = 0.8F;
 const int FONT_SIZE = 24;
 

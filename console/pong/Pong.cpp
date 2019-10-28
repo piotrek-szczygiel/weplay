@@ -81,10 +81,10 @@ void Pong::Pong::draw()
     ClearBackground(BLACK);
 
     DrawRectangle(static_cast<int>(m_player_1.position.x), static_cast<int>(m_player_1.position.y),
-        PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
+        static_cast<int>(PLAYER_WIDTH), static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
 
     DrawRectangle(static_cast<int>(m_player_2.position.x), static_cast<int>(m_player_2.position.y),
-        PLAYER_WIDTH, PLAYER_HEIGHT, RAYWHITE);
+        static_cast<int>(PLAYER_WIDTH), static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
 
     DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
         BALL_RADIUS, RAYWHITE);
