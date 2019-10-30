@@ -20,7 +20,7 @@ struct Ball {
 };
 
 const float PLAYER_SPEED = 700.0F;
-const float BALL_SPEED = 850.0F;
+const float BALL_SPEED = 2000.0F;
 const float PLAYER_WIDTH = 15.0F;
 const float PLAYER_HEIGHT = 180.0F;
 const float BALL_RADIUS = 15.0F;
