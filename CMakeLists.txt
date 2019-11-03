@@ -40,8 +40,13 @@ find_package(
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-option(RASPBERRY_PI "Compile for Raspberry Pi" OFF)
-if(NOT RASPBERRY_PI)
+if(WIN32)
+    set(DOWNLOAD_RAYLIB ON)
+else()
+    option(DOWNLOAD_RAYLIB "Download Raylib" OFF)
+endif()
+
+if(DOWNLOAD_RAYLIB)
     find_package(raylib 2.5 QUIET)
 
     if(NOT raylib_FOUND)
@@ -63,6 +68,10 @@ if(NOT RASPBERRY_PI)
                 OFF
                 CACHE BOOL "" FORCE)
 
+            set(SHARED
+                ON
+                CACHE BOOL "" FORCE)
+
             add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
         endif()
     endif()
@@ -72,14 +81,10 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log)
 
-if(RASPBERRY_PI)
-    target_link_libraries(${PROJECT_NAME} raylib)
-else()
+if(WIN32)
     target_link_libraries(${PROJECT_NAME} raylib_static)
-endif()
-
-if(NOT WIN32)
-    target_link_libraries(${PROJECT_NAME} stdc++fs)
+else()
+    target_link_libraries(${PROJECT_NAME} raylib stdc++fs)
 endif()
 
 # Link against winmm.lib on Windows
