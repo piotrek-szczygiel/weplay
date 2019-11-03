@@ -7,8 +7,8 @@ class TcpSession : public std::enable_shared_from_this<TcpSession> {
 public:
     explicit TcpSession(boost::asio::ip::tcp::socket socket, std::shared_ptr<ControllerState> state)
         : m_socket(std::move(socket))
-        , m_controller_state(std::move(state))
         , m_data {}
+        , m_controller_state(std::move(state))
         , m_valid_controller { false }
     {
     }

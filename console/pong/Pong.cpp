@@ -6,7 +6,7 @@ namespace Pong {
 
 Vector2 computeBallSpeed(Vector2 v);
 
-void Pong::Pong::update(std::shared_ptr<ControllerState> state)
+void Pong::update(std::shared_ptr<ControllerState> state)
 {
     float dt = GetFrameTime();
 
@@ -75,7 +75,7 @@ void Pong::Pong::update(std::shared_ptr<ControllerState> state)
     }
 }
 
-void Pong::Pong::draw()
+void Pong::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
@@ -94,7 +94,7 @@ void Pong::Pong::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Pong::Pong::framebuffer() { return m_framebuffer; }
+RenderTexture2D Pong::framebuffer() { return m_framebuffer; }
 
 void Pong::restart()
 {
@@ -114,7 +114,7 @@ void Pong::restart()
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
         { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
 
-    m_score = boost::str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
+    m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
     m_score_position = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), FONT_SIZE)) / 2;
 }
 
