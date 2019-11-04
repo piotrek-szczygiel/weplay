@@ -42,7 +42,7 @@ void TcpSession::do_read()
             } else if (m_next_read == NextRead::Mode) {
                 if (m_data[0] == 'B') {
                     m_next_read = NextRead::Buttons;
-                    m_read_size = 1;
+                    m_read_size = 2;
                 } else if (m_data[0] == 'G') {
                     m_next_read = NextRead::Mpu6050;
                     m_read_size = 6;
@@ -52,8 +52,11 @@ void TcpSession::do_read()
                 }
             } else {
                 if (m_next_read == NextRead::Buttons) {
-                    for (uint8_t i = 0; i < 8; ++i) {
-                        m_controller_state->buttons[i] = !(m_data[0] & (1 << i));
+                    for (uint8_t i = 0; i < 16; ++i) {
+                        uint8_t byte = i / 8;
+                        uint8_t bit = i % 8;
+
+                        m_controller_state->buttons[i] = !(m_data[byte] & (1 << bit));
                     }
                 } else if (m_next_read == NextRead::Mpu6050) {
                     m_controller_state->yaw = static_cast<int16_t>(m_data[0]);

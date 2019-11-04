@@ -5,7 +5,7 @@
 #include <thread>
 
 struct ControllerState {
-    std::array<bool, 8> buttons {};
+    std::array<bool, 16> buttons {};
     int16_t yaw {};
     int16_t pitch {};
     int16_t roll {};

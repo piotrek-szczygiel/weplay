@@ -23,7 +23,7 @@ private:
     int16_t m_pitch {};
     int16_t m_roll {};
 
-    std::array<bool, 8> m_buttons {};
+    std::array<bool, 16> m_buttons {};
 };
 
 }
