@@ -23,9 +23,9 @@ void Pong::update(std::shared_ptr<ControllerState> state)
         m_player_1.speed.y = 0.0F;
     }
 
-    if (IsKeyDown(KEY_UP) || state->buttons[7]) {
+    if (IsKeyDown(KEY_UP) || state->buttons[4]) {
         m_player_2.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_DOWN) || state->buttons[6]) {
+    } else if (IsKeyDown(KEY_DOWN) || state->buttons[5]) {
         m_player_2.speed.y = 1.0F;
     } else {
         m_player_2.speed.y = 0.0F;

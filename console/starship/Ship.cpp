@@ -14,7 +14,6 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             m_speed.z = fade(m_speed.z, 0.0F, dt * m_strength / 4.0F),
         };
     } else {
-
         if (m_controls.forward && !m_controls.back) {
             m_speed.z += dt * m_strength * 2.0F;
         } else if (m_controls.back && !m_controls.forward) {
@@ -27,22 +26,6 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             m_speed.z = fade(m_speed.z, 0.0F, dt * m_strength / 2.0F);
         }
 
-        if (m_controls.roll < -0.1F) {
-            if (m_speed.x > 0.0F) {
-                m_speed.x -= dt * m_strength * 4.0F * m_controls.roll;
-            } else {
-                m_speed.x -= dt * m_strength * 8.0F * m_controls.roll;
-            }
-        } else if (m_controls.roll > 0.1F) {
-            if (m_speed.x < 0.0F) {
-                m_speed.x -= dt * m_strength * 4.0F * m_controls.roll;
-            } else {
-                m_speed.x -= dt * m_strength * 8.0F * m_controls.roll;
-            }
-        } else {
-            m_speed.x = fade(m_speed.x, 0, dt * m_strength * 2.0F);
-        }
-
         if (m_controls.up && !m_controls.down) {
             m_speed.y += dt * m_strength * 2.0F;
         } else if (m_controls.down && !m_controls.up) {
@@ -51,6 +34,8 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
             m_speed.y = fade(m_speed.y, 0, dt * m_strength * 4.0F);
         }
     }
+
+    m_speed.x = m_controls.roll * m_strength / -2.0F;
 
     m_speed = {
         clamp(m_speed.x, -m_strength / 2.0F, m_strength / 2.0F),
