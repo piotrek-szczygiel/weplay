@@ -50,11 +50,12 @@ void Connection::connect_server()
     m_client.write('%');
 }
 
-void Connection::send_buttons(uint8_t buttons_state)
+void Connection::send_buttons(uint16_t buttons_state)
 {
     uint8_t packet[] {
         'B',
-        buttons_state,
+        static_cast<uint8_t>((buttons_state & 0x00ff)),
+        static_cast<uint8_t>((buttons_state & 0xff00) >> 8),
     };
 
     m_client.write(packet, sizeof(packet));

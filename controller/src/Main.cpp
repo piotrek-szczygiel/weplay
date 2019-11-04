@@ -14,7 +14,8 @@ Mpu mpu { calibration };
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial) { };
+    while (!Serial) {
+    };
 
     buttons.initialize();
     mpu.initialize();
@@ -26,12 +27,12 @@ void loop()
 
     if (buttons.update()) {
         Serial.print("Buttons: ");
-        uint8_t state = buttons.state();
-        for (uint8_t i = 0; i < 8; ++i) {
+        uint16_t state = buttons.state();
+        for (uint8_t i = 0; i < 16; ++i) {
             if (state & (1 << i)) {
-                Serial.print(F("  "));
+                Serial.print(F(" "));
             } else {
-                Serial.print(F("X "));
+                Serial.print(F("X"));
             }
         }
         Serial.println();

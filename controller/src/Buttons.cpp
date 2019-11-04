@@ -5,7 +5,7 @@ void Buttons::initialize()
 {
     m_mcp.begin(7);
 
-    for (uint8_t i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < 16; ++i) {
         m_mcp.pinMode(i, INPUT);
         m_mcp.pullUp(i, HIGH);
     }
@@ -14,7 +14,7 @@ void Buttons::initialize()
 bool Buttons::update()
 {
     m_state = {};
-    for (uint8_t i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < 16; ++i) {
         m_state |= m_mcp.digitalRead(i) << i;
     }
 
