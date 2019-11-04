@@ -17,4 +17,5 @@ public:
     virtual void update(std::shared_ptr<ControllerState> state) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D framebuffer() = 0;
+    virtual bool exit() = 0;
 };

@@ -8,6 +8,11 @@ Vector2 computeBallSpeed(Vector2 v);
 
 void Pong::update(std::shared_ptr<ControllerState> state)
 {
+    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
+        m_exit = true;
+        return;
+    }
+
     float dt = GetFrameTime();
 
     if (IsKeyDown(KEY_W) || state->buttons[0]) {

@@ -7,6 +7,11 @@ namespace Menu {
 
 void Menu::update(std::shared_ptr<ControllerState> state)
 {
+    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
+        m_exit = true;
+        return;
+    }
+
     m_yaw = state->yaw;
     m_pitch = state->pitch;
     m_roll = state->roll;

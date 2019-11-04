@@ -18,6 +18,10 @@ void Console::run()
             m_current_state = std::make_unique<Pong::Pong>();
         }
 
+        if (m_current_state->exit()) {
+            m_current_state = std::make_unique<Menu::Menu>();
+        }
+
         m_current_state->update(m_controller.state);
         m_current_state->draw();
 

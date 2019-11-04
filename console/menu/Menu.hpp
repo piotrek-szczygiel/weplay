@@ -15,9 +15,11 @@ public:
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
+    bool exit() override { return m_exit; }
 
 private:
     RenderTexture2D m_framebuffer;
+    bool m_exit {};
 
     int16_t m_yaw {};
     int16_t m_pitch {};

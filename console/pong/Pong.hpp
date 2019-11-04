@@ -41,12 +41,13 @@ public:
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
-    void restart();
+    bool exit() override { return m_exit; }
 
 private:
     float m_width;
     float m_height;
     RenderTexture2D m_framebuffer;
+    bool m_exit {};
 
     Player m_player_1 {};
     Player m_player_2 {};
@@ -56,5 +57,8 @@ private:
     int m_score_position {};
 
     std::mt19937 m_gen { std::random_device {}() };
+
+    void restart();
 };
+
 }

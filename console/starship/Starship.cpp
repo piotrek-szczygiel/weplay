@@ -5,6 +5,11 @@ namespace Starship {
 
 void Starship::update(std::shared_ptr<ControllerState> state)
 {
+    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
+        m_exit = true;
+        return;
+    }
+
     float dt = GetFrameTime();
 
     float roll {};
@@ -14,14 +19,21 @@ void Starship::update(std::shared_ptr<ControllerState> state)
     } else if (IsKeyDown(KEY_D)) {
         roll = 1.0F;
     } else {
-        roll = static_cast<float>(state->roll) / 20.0F;
+        if (state->roll >= -10 && state->roll <= 10) {
+            roll = 0.0F;
+        } else if (state->roll < 0) {
+            roll = static_cast<float>(state->roll + 10) / 20.0F;
+        } else {
+            roll = static_cast<float>(state->roll - 10) / 20.0F;
+        }
+
         roll = clamp(roll, -1.0F, 1.0F);
     }
 
     m_ship.set_controls({
-        IsKeyDown(KEY_W) || state->buttons[3],
-        IsKeyDown(KEY_S) || state->buttons[4],
-        IsKeyDown(KEY_P) || state->buttons[2],
+        IsKeyDown(KEY_W) || state->buttons[0],
+        IsKeyDown(KEY_S) || state->buttons[1],
+        IsKeyDown(KEY_P) || state->buttons[4],
         IsKeyDown(KEY_L) || state->buttons[5],
         roll,
     });
