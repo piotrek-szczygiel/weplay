@@ -35,10 +35,10 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
         }
     }
 
-    m_speed.x = m_controls.roll * m_strength / -2.0F;
+    m_speed.x = -m_controls.roll * m_strength;
 
     m_speed = {
-        clamp(m_speed.x, -m_strength / 2.0F, m_strength / 2.0F),
+        clamp(m_speed.x, -m_strength, m_strength),
         clamp(m_speed.y, -m_strength, m_strength),
         clamp(m_speed.z, -m_strength / 4.0F, m_strength * 2.0F),
     };

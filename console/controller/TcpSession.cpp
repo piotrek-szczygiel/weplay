@@ -20,14 +20,12 @@ void TcpSession::do_read()
 
             if (ec) {
                 BOOST_LOG_TRIVIAL(error)
-                    << "Error while receiving data from " << address << ": " << ec.message();
+                    << "Unable to receive from " << address << ": " << ec.message();
                 return;
             }
 
-            BOOST_LOG_TRIVIAL(info) << "Received " << length << " bytes from " << address;
-
             if (length != m_read_size) {
-                BOOST_LOG_TRIVIAL(warning) << "ERROR: expected " << m_read_size << " bytes";
+                BOOST_LOG_TRIVIAL(error) << "Expected " << m_read_size << " bytes";
                 return;
             }
 
@@ -36,7 +34,7 @@ void TcpSession::do_read()
                     m_valid_controller = true;
                     BOOST_LOG_TRIVIAL(info) << "Controller successfully registered";
                 } else {
-                    BOOST_LOG_TRIVIAL(warning) << "Invalid data received";
+                    BOOST_LOG_TRIVIAL(error) << "Unexpected data received";
                     return;
                 }
             } else if (m_next_read == NextRead::Mode) {
