@@ -26,6 +26,7 @@ const float PLAYER_HEIGHT = 180.0F;
 const float BALL_RADIUS = 15.0F;
 const float FRICTION = 0.8F;
 const int FONT_SIZE = 24;
+const int ANIM_FONT_SIZE = 100;
 
 class Pong final : public State {
 
@@ -69,6 +70,7 @@ private:
     void restart();
     void add_score(int id);
     void change_state(State state);
+    int text_position_center(std::string& string, int font_size);
 };
 
 }

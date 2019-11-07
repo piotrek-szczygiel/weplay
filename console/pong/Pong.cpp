@@ -76,8 +76,10 @@ void Pong::update(std::shared_ptr<ControllerState> state)
 
         if (m_ball.position.x < 0) {
             add_score(1);
+            restart();
         } else if (m_ball.position.x > m_width) {
             add_score(0);
+            restart();
         }
     } else if (m_state == SCORING) {
         if (m_animation_timer >= 2.0F) {
@@ -86,7 +88,6 @@ void Pong::update(std::shared_ptr<ControllerState> state)
             change_state(PLAYING);
         } else if (m_animation_timer >= 1.0F) {
             m_anim_state = LIGHTING;
-            restart();
         }
         m_animation_timer += dt;
     }
@@ -110,21 +111,23 @@ void Pong::draw()
 
         RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
     } else if (m_state == SCORING) {
-        const int ANIM_FONT_SIZE = 100;
         int score_position_x { 0 };
-        int score_position_y { static_cast<int>(m_height / 2) };
+        int score_position_y { static_cast<int>(
+            m_height / 2 - (static_cast<float>(ANIM_FONT_SIZE) / 2)) };
+
         if (m_anim_state == SHADOWING) {
-            score_position_x
-                = (static_cast<int>(m_width) - MeasureText(m_last_score.c_str(), ANIM_FONT_SIZE))
-                / 2;
-            RlDrawText(m_last_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE,
-                { 255, 255, 255, static_cast<unsigned char>(255 - 240 * m_animation_timer) });
+            score_position_x = text_position_center(m_last_score, ANIM_FONT_SIZE);
+            Color color { 255, 255, 255,
+                static_cast<unsigned char>(255 - 240 * m_animation_timer) };
+
+            RlDrawText(
+                m_last_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         } else if (m_anim_state == LIGHTING) {
-            score_position_x
-                = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), ANIM_FONT_SIZE)) / 2;
-            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE,
-                { 255, 255, 255,
-                    static_cast<unsigned char>(0 + 240 * (m_animation_timer - 1.0F)) });
+            score_position_x = text_position_center(m_score, ANIM_FONT_SIZE);
+            Color color { 255, 255, 255,
+                static_cast<unsigned char>(0 + 240 * (m_animation_timer - 1.0F)) };
+
+            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         }
     }
 
@@ -152,7 +155,7 @@ void Pong::restart()
         { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
 
     m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
-    m_score_position = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), FONT_SIZE)) / 2;
+    m_score_position = text_position_center(m_score, FONT_SIZE);
 }
 void Pong::add_score(int id)
 {
@@ -165,6 +168,11 @@ void Pong::add_score(int id)
     change_state(SCORING);
 }
 void Pong::change_state(Pong::State state) { m_state = state; }
+
+int Pong::text_position_center(std::string& string, int font_size)
+{
+    return (static_cast<int>(m_width) - MeasureText(string.c_str(), font_size)) / 2;
+}
 
 Vector2 computeBallSpeed(Vector2 v)
 {
