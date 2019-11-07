@@ -1,5 +1,7 @@
 #include "Menu.hpp"
 #include <boost/format.hpp>
+#include <ctime>
+#include <iomanip>
 
 using boost::str, boost::format;
 
@@ -38,6 +40,13 @@ void Menu::draw()
                 str(format("Button %d pressed") % i).c_str(), 10, 200 + 30 * i, 16, RAYWHITE);
         }
     }
+
+    char time[16];
+
+    auto t = std::time(nullptr);
+    auto tm = std::localtime(&t);
+    strftime(time, sizeof(time), "%H:%M", tm);
+    RlDrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();
 }
