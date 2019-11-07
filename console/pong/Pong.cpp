@@ -50,25 +50,29 @@ void Pong::update(std::shared_ptr<ControllerState> state)
 
         Vector2 center { m_ball.position.x, m_ball.position.y };
 
-        RlRectangle rect_1 { m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH,
-            PLAYER_HEIGHT };
-        RlRectangle rect_2 { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH,
-            PLAYER_HEIGHT };
+        RlRectangle rect_1 {
+            m_player_1.position.x,
+            m_player_1.position.y,
+            PLAYER_WIDTH,
+            PLAYER_HEIGHT,
+        };
+        RlRectangle rect_2 {
+            m_player_2.position.x,
+            m_player_2.position.y,
+            PLAYER_WIDTH,
+            PLAYER_HEIGHT,
+        };
 
         if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
-            // if (m_ball.position.x >= m_player_1.position.x) {
             m_ball.speed = computeBallSpeed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
             m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
-            //}
         }
 
         if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_2)) {
-            // if (m_ball.position.x <= m_player_2.position.x - PLAYER_WIDTH) {
             m_ball.speed = computeBallSpeed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
             m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
-            //}
         }
 
         m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
