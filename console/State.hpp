@@ -2,6 +2,14 @@
 #include "controller/Controller.hpp"
 #include <raylib.h>
 
+enum class StateChange {
+    None,
+    Menu,
+    Starship,
+    Tetris,
+    Pong,
+};
+
 class State {
 public:
     State() = default;
@@ -17,5 +25,5 @@ public:
     virtual void update(std::shared_ptr<ControllerState> state) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D framebuffer() = 0;
-    virtual bool exit() = 0;
+    virtual StateChange state_change() = 0;
 };

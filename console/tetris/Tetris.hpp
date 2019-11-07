@@ -19,13 +19,13 @@ public:
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
-    bool exit() override { return m_exit; }
+    StateChange state_change() override { return m_state_change; }
 
 private:
     int m_width;
     int m_height;
     RenderTexture2D m_framebuffer;
-    bool m_exit {};
+    StateChange m_state_change { StateChange::None };
 
     Player m_player_1 {};
     Player m_player_2 {};

@@ -21,11 +21,11 @@ public:
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
-    bool exit() override { return m_exit; }
+    StateChange state_change() override { return m_state_change; }
 
 private:
     RenderTexture2D m_framebuffer;
-    bool m_exit {};
+    StateChange m_state_change { StateChange::None };
 
     Ship m_ship { { 0.0, 5.0, 5.0 }, 50.0F };
     Vector3 m_map_size { 40.0F, 30.0F, 10'000.0F };

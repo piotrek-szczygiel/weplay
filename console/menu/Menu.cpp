@@ -7,9 +7,14 @@ namespace Menu {
 
 void Menu::update(std::shared_ptr<ControllerState> state)
 {
-    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
-        m_exit = true;
-        return;
+    if (IsKeyPressed(KEY_F1) || state->buttons[8]) {
+        m_state_change = StateChange::Menu;
+    } else if (IsKeyPressed(KEY_F2) || state->buttons[0]) {
+        m_state_change = StateChange::Starship;
+    } else if (IsKeyPressed(KEY_F3) || state->buttons[1]) {
+        m_state_change = StateChange::Tetris;
+    } else if (IsKeyPressed(KEY_F4) || state->buttons[2]) {
+        m_state_change = StateChange::Pong;
     }
 
     m_yaw = state->yaw;

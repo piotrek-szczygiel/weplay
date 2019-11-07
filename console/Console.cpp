@@ -8,18 +8,27 @@
 void Console::run()
 {
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_F1)) {
-            m_current_state = std::make_unique<Menu::Menu>();
-        } else if (IsKeyPressed(KEY_F2)) {
-            m_current_state = std::make_unique<Starship::Starship>();
-        } else if (IsKeyPressed(KEY_F3)) {
-            m_current_state = std::make_unique<Tetris::Tetris>();
-        } else if (IsKeyPressed(KEY_F4)) {
-            m_current_state = std::make_unique<Pong::Pong>();
-        }
 
-        if (m_current_state->exit()) {
-            m_current_state = std::make_unique<Menu::Menu>();
+        auto state = m_current_state->state_change();
+        if (state != StateChange::None) {
+            switch (state) {
+            case StateChange::Menu: {
+                m_current_state = std::make_unique<Menu::Menu>();
+                break;
+            }
+            case StateChange::Starship: {
+                m_current_state = std::make_unique<Starship::Starship>();
+                break;
+            }
+            case StateChange::Tetris: {
+                m_current_state = std::make_unique<Tetris::Tetris>();
+                break;
+            }
+            case StateChange::Pong: {
+                m_current_state = std::make_unique<Pong::Pong>();
+                break;
+            }
+            }
         }
 
         m_current_state->update(m_controller.state);

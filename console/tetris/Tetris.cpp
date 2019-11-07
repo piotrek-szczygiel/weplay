@@ -9,7 +9,7 @@ namespace Tetris {
 void Tetris::update(std::shared_ptr<ControllerState> state)
 {
     if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
-        m_exit = true;
+        m_state_change = StateChange::Menu;
         return;
     }
 
