@@ -15,68 +15,80 @@ void Pong::update(std::shared_ptr<ControllerState> state)
 
     float dt = GetFrameTime();
 
-    if (IsKeyDown(KEY_W) || state->buttons[0]) {
-        m_player_1.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_S) || state->buttons[1]) {
-        m_player_1.speed.y = 1.0F;
-    } else {
-        m_player_1.speed.y = 0.0F;
-    }
+    if (m_state == PLAYING) {
+        if (IsKeyDown(KEY_W) || state->buttons[0]) {
+            m_player_1.speed.y = -1.0F;
+        } else if (IsKeyDown(KEY_S) || state->buttons[1]) {
+            m_player_1.speed.y = 1.0F;
+        } else {
+            m_player_1.speed.y = 0.0F;
+        }
 
-    if (IsKeyDown(KEY_UP) || state->buttons[4]) {
-        m_player_2.speed.y = -1.0F;
-    } else if (IsKeyDown(KEY_DOWN) || state->buttons[5]) {
-        m_player_2.speed.y = 1.0F;
-    } else {
-        m_player_2.speed.y = 0.0F;
-    }
+        if (IsKeyDown(KEY_UP) || state->buttons[4]) {
+            m_player_2.speed.y = -1.0F;
+        } else if (IsKeyDown(KEY_DOWN) || state->buttons[5]) {
+            m_player_2.speed.y = 1.0F;
+        } else {
+            m_player_2.speed.y = 0.0F;
+        }
 
-    m_player_1.position.y += m_player_1.speed.y * dt * PLAYER_SPEED;
-    m_player_2.position.y += m_player_2.speed.y * dt * PLAYER_SPEED;
+        m_player_1.position.y += m_player_1.speed.y * dt * PLAYER_SPEED;
+        m_player_2.position.y += m_player_2.speed.y * dt * PLAYER_SPEED;
 
-    m_player_1.position.y = clamp(m_player_1.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
-    m_player_2.position.y = clamp(m_player_2.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
+        m_player_1.position.y
+            = clamp(m_player_1.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
+        m_player_2.position.y
+            = clamp(m_player_2.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
 
-    if (m_ball.position.y < BALL_RADIUS) {
-        m_ball.speed.y = -m_ball.speed.y;
-        m_ball.position.y = BALL_RADIUS;
-    } else if (m_ball.position.y > m_height - BALL_RADIUS) {
-        m_ball.speed.y = -m_ball.speed.y;
-        m_ball.position.y = m_height - BALL_RADIUS;
-    }
+        if (m_ball.position.y < BALL_RADIUS) {
+            m_ball.speed.y = -m_ball.speed.y;
+            m_ball.position.y = BALL_RADIUS;
+        } else if (m_ball.position.y > m_height - BALL_RADIUS) {
+            m_ball.speed.y = -m_ball.speed.y;
+            m_ball.position.y = m_height - BALL_RADIUS;
+        }
 
-    Vector2 center { m_ball.position.x, m_ball.position.y };
+        Vector2 center { m_ball.position.x, m_ball.position.y };
 
-    RlRectangle rect_1 { m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH,
-        PLAYER_HEIGHT };
-    RlRectangle rect_2 { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH,
-        PLAYER_HEIGHT };
+        RlRectangle rect_1 { m_player_1.position.x, m_player_1.position.y, PLAYER_WIDTH,
+            PLAYER_HEIGHT };
+        RlRectangle rect_2 { m_player_2.position.x, m_player_2.position.y, PLAYER_WIDTH,
+            PLAYER_HEIGHT };
 
-    if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
-        // if (m_ball.position.x >= m_player_1.position.x) {
-        m_ball.speed
-            = computeBallSpeed({ -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
-        m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
-        //}
-    }
+        if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
+            // if (m_ball.position.x >= m_player_1.position.x) {
+            m_ball.speed = computeBallSpeed(
+                { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
+            m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
+            //}
+        }
 
-    if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_2)) {
-        // if (m_ball.position.x <= m_player_2.position.x - PLAYER_WIDTH) {
-        m_ball.speed
-            = computeBallSpeed({ -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
-        m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
-        //}
-    }
+        if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_2)) {
+            // if (m_ball.position.x <= m_player_2.position.x - PLAYER_WIDTH) {
+            m_ball.speed = computeBallSpeed(
+                { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
+            m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
+            //}
+        }
 
-    m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
-    m_ball.position.y += m_ball.speed.y * dt * BALL_SPEED;
+        m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
+        m_ball.position.y += m_ball.speed.y * dt * BALL_SPEED;
 
-    if (m_ball.position.x < 0) {
-        m_player_2.score += 1;
-        restart();
-    } else if (m_ball.position.x > m_width) {
-        m_player_1.score += 1;
-        restart();
+        if (m_ball.position.x < 0) {
+            add_score(1);
+        } else if (m_ball.position.x > m_width) {
+            add_score(0);
+        }
+    } else if (m_state == SCORING) {
+        if (m_animation_timer >= 2.0F) {
+            m_anim_state = SHADOWING;
+            m_animation_timer = 0.0F;
+            change_state(PLAYING);
+        } else if (m_animation_timer >= 1.0F) {
+            m_anim_state = LIGHTING;
+            restart();
+        }
+        m_animation_timer += dt;
     }
 }
 
@@ -84,17 +96,37 @@ void Pong::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
+    if (m_state == PLAYING) {
+        DrawRectangle(static_cast<int>(m_player_1.position.x),
+            static_cast<int>(m_player_1.position.y), static_cast<int>(PLAYER_WIDTH),
+            static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
 
-    DrawRectangle(static_cast<int>(m_player_1.position.x), static_cast<int>(m_player_1.position.y),
-        static_cast<int>(PLAYER_WIDTH), static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
+        DrawRectangle(static_cast<int>(m_player_2.position.x),
+            static_cast<int>(m_player_2.position.y), static_cast<int>(PLAYER_WIDTH),
+            static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
 
-    DrawRectangle(static_cast<int>(m_player_2.position.x), static_cast<int>(m_player_2.position.y),
-        static_cast<int>(PLAYER_WIDTH), static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
+        DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
+            BALL_RADIUS, RAYWHITE);
 
-    DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
-        BALL_RADIUS, RAYWHITE);
-
-    RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
+        RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
+    } else if (m_state == SCORING) {
+        const int ANIM_FONT_SIZE = 100;
+        int score_position_x { 0 };
+        int score_position_y { static_cast<int>(m_height / 2) };
+        if (m_anim_state == SHADOWING) {
+            score_position_x
+                = (static_cast<int>(m_width) - MeasureText(m_last_score.c_str(), ANIM_FONT_SIZE))
+                / 2;
+            RlDrawText(m_last_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE,
+                { 255, 255, 255, static_cast<unsigned char>(255 - 240 * m_animation_timer) });
+        } else if (m_anim_state == LIGHTING) {
+            score_position_x
+                = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), ANIM_FONT_SIZE)) / 2;
+            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE,
+                { 255, 255, 255,
+                    static_cast<unsigned char>(0 + 240 * (m_animation_timer - 1.0F)) });
+        }
+    }
 
     EndTextureMode();
 }
@@ -122,6 +154,17 @@ void Pong::restart()
     m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
     m_score_position = (static_cast<int>(m_width) - MeasureText(m_score.c_str(), FONT_SIZE)) / 2;
 }
+void Pong::add_score(int id)
+{
+    if (id == 0) {
+        m_player_1.score += 1;
+    } else if (id == 1) {
+        m_player_2.score += 1;
+    }
+    m_last_score = m_score;
+    change_state(SCORING);
+}
+void Pong::change_state(Pong::State state) { m_state = state; }
 
 Vector2 computeBallSpeed(Vector2 v)
 {

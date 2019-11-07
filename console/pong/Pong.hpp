@@ -20,7 +20,7 @@ struct Ball {
 };
 
 const float PLAYER_SPEED = 700.0F;
-const float BALL_SPEED = 2000.0F;
+const float BALL_SPEED = 850.0F;
 const float PLAYER_WIDTH = 15.0F;
 const float PLAYER_HEIGHT = 180.0F;
 const float BALL_RADIUS = 15.0F;
@@ -44,21 +44,31 @@ public:
     bool exit() override { return m_exit; }
 
 private:
+    enum State { PLAYING, SCORING };
+    enum AnimationState { SHADOWING, LIGHTING };
+
     float m_width;
     float m_height;
     RenderTexture2D m_framebuffer;
     bool m_exit {};
+
+    State m_state { PLAYING };
+    AnimationState m_anim_state { SHADOWING };
+    float m_animation_timer { 0.0F };
 
     Player m_player_1 {};
     Player m_player_2 {};
     Ball m_ball {};
 
     std::string m_score {};
+    std::string m_last_score {};
     int m_score_position {};
 
     std::mt19937 m_gen { std::random_device {}() };
 
     void restart();
+    void add_score(int id);
+    void change_state(State state);
 };
 
 }
