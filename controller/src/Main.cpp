@@ -14,8 +14,7 @@ Mpu mpu { calibration };
 void setup()
 {
     Serial.begin(115200);
-    while (!Serial) {
-    };
+    while (!Serial) { };
 
     buttons.initialize();
     mpu.initialize();
