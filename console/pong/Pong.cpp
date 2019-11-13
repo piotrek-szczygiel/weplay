@@ -5,6 +5,7 @@
 namespace Pong {
 
 Vector2 computeBallSpeed(Vector2 v);
+float tween(float value, float x);
 
 void Pong::update(std::shared_ptr<ControllerState> state)
 {
@@ -36,43 +37,43 @@ void Pong::update(std::shared_ptr<ControllerState> state)
         m_player_2.position.y += m_player_2.speed.y * dt * PLAYER_SPEED;
 
         m_player_1.position.y
-            = clamp(m_player_1.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
+            = clamp(m_player_1.position.y, 10.0F, m_height - m_racket_height - 10.0F);
         m_player_2.position.y
-            = clamp(m_player_2.position.y, 10.0F, m_height - PLAYER_HEIGHT - 10.0F);
+            = clamp(m_player_2.position.y, 10.0F, m_height - m_racket_height - 10.0F);
 
-        if (m_ball.position.y < BALL_RADIUS) {
+        if (m_ball.position.y < m_ball_radius) {
             m_ball.speed.y = -m_ball.speed.y;
-            m_ball.position.y = BALL_RADIUS;
-        } else if (m_ball.position.y > m_height - BALL_RADIUS) {
+            m_ball.position.y = m_ball_radius;
+        } else if (m_ball.position.y > m_height - m_ball_radius) {
             m_ball.speed.y = -m_ball.speed.y;
-            m_ball.position.y = m_height - BALL_RADIUS;
+            m_ball.position.y = m_height - m_ball_radius;
         }
 
         Vector2 center { m_ball.position.x, m_ball.position.y };
 
         RlRectangle rect_1 {
             m_player_1.position.x,
-            m_player_1.position.y,
-            PLAYER_WIDTH,
-            PLAYER_HEIGHT,
+            m_player_1.position.y - COLLISION_SHIFT,
+            m_racket_width,
+            m_racket_height + COLLISION_SHIFT,
         };
         RlRectangle rect_2 {
             m_player_2.position.x,
-            m_player_2.position.y,
-            PLAYER_WIDTH,
-            PLAYER_HEIGHT,
+            m_player_2.position.y - COLLISION_SHIFT,
+            m_racket_width,
+            m_racket_height + COLLISION_SHIFT,
         };
 
-        if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_1)) {
+        if (CheckCollisionCircleRec(center, m_ball_radius, rect_1)) {
             m_ball.speed = computeBallSpeed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
-            m_ball.position.x = m_player_1.position.x + PLAYER_WIDTH + BALL_RADIUS + 1;
+            m_ball.position.x = m_player_1.position.x + m_racket_width + m_ball_radius + 1;
         }
 
-        if (CheckCollisionCircleRec(center, BALL_RADIUS, rect_2)) {
+        if (CheckCollisionCircleRec(center, m_ball_radius, rect_2)) {
             m_ball.speed = computeBallSpeed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
-            m_ball.position.x = m_player_2.position.x - BALL_RADIUS - 1;
+            m_ball.position.x = m_player_2.position.x - m_ball_radius - 1;
         }
 
         m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
@@ -80,18 +81,26 @@ void Pong::update(std::shared_ptr<ControllerState> state)
 
         if (m_ball.position.x < 0) {
             add_score(1);
-            restart();
+            // restart();
         } else if (m_ball.position.x > m_width) {
             add_score(0);
-            restart();
+            // restart();
         }
     } else if (m_state == SCORING) {
-        if (m_animation_timer >= 2.0F) {
+        if (m_animation_timer >= 3.2F) {
+            m_state = PLAYING;
             m_anim_state = SHADOWING;
             m_animation_timer = 0.0F;
-            change_state(PLAYING);
+            m_animation_timer_shift = 0.0F;
+        } else if (m_animation_timer >= 3.0F) {
+            m_anim_state = NONE;
+        } else if (m_animation_timer >= 2.0F) {
+            m_anim_state = SHADOWING;
+            m_animation_timer_shift = 2.0F;
         } else if (m_animation_timer >= 1.0F) {
             m_anim_state = LIGHTING;
+            m_animation_timer_shift = 1.0F;
+            restart();
         }
         m_animation_timer += dt;
     }
@@ -103,33 +112,32 @@ void Pong::draw()
     ClearBackground(BLACK);
     if (m_state == PLAYING) {
         DrawRectangle(static_cast<int>(m_player_1.position.x),
-            static_cast<int>(m_player_1.position.y), static_cast<int>(PLAYER_WIDTH),
-            static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
+            static_cast<int>(m_player_1.position.y), static_cast<int>(m_racket_width),
+            static_cast<int>(m_racket_height), RAYWHITE);
 
         DrawRectangle(static_cast<int>(m_player_2.position.x),
-            static_cast<int>(m_player_2.position.y), static_cast<int>(PLAYER_WIDTH),
-            static_cast<int>(PLAYER_HEIGHT), RAYWHITE);
+            static_cast<int>(m_player_2.position.y), static_cast<int>(m_racket_width),
+            static_cast<int>(m_racket_height), RAYWHITE);
 
         DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
-            BALL_RADIUS, RAYWHITE);
+            m_ball_radius, RAYWHITE);
 
         RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
     } else if (m_state == SCORING) {
-        int score_position_x { 0 };
+        int score_position_x { text_position_center(m_score, ANIM_FONT_SIZE) };
         int score_position_y { static_cast<int>(
             m_height / 2 - (static_cast<float>(ANIM_FONT_SIZE) / 2)) };
 
         if (m_anim_state == SHADOWING) {
-            score_position_x = text_position_center(m_last_score, ANIM_FONT_SIZE);
             Color color { 255, 255, 255,
-                static_cast<unsigned char>(255 - 240 * m_animation_timer) };
+                static_cast<unsigned char>(
+                    255 - tween(240.0F, m_animation_timer - m_animation_timer_shift)) };
 
-            RlDrawText(
-                m_last_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
+            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         } else if (m_anim_state == LIGHTING) {
-            score_position_x = text_position_center(m_score, ANIM_FONT_SIZE);
             Color color { 255, 255, 255,
-                static_cast<unsigned char>(0 + 240 * (m_animation_timer - 1.0F)) };
+                static_cast<unsigned char>(
+                    0 + tween(240.0F, (m_animation_timer - m_animation_timer_shift))) };
 
             RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         }
@@ -144,12 +152,12 @@ void Pong::restart()
 {
     m_player_1.position = {
         20,
-        m_height / 2.0F - static_cast<float>(PLAYER_HEIGHT) / 2.0F,
+        m_height / 2.0F - static_cast<float>(m_racket_height) / 2.0F,
     };
 
     m_player_2.position = {
-        m_width - 20 - PLAYER_WIDTH,
-        m_height / 2.0F - static_cast<float>(PLAYER_HEIGHT) / 2.0F,
+        m_width - 20 - m_racket_width,
+        m_height / 2.0F - static_cast<float>(m_racket_height) / 2.0F,
     };
 
     float modAngle = random(-PI / 8.0F, PI / 8.0F, m_gen);
@@ -161,6 +169,7 @@ void Pong::restart()
     m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
     m_score_position = text_position_center(m_score, FONT_SIZE);
 }
+
 void Pong::add_score(int id)
 {
     if (id == 0) {
@@ -168,10 +177,8 @@ void Pong::add_score(int id)
     } else if (id == 1) {
         m_player_2.score += 1;
     }
-    m_last_score = m_score;
-    change_state(SCORING);
+    m_state = SCORING;
 }
-void Pong::change_state(Pong::State state) { m_state = state; }
 
 int Pong::text_position_center(std::string& string, int font_size)
 {
@@ -192,5 +199,7 @@ Vector2 computeBallSpeed(Vector2 v)
 
     return v;
 }
+
+float tween(float value, float x) { return value * (x * x * x); }
 
 }
