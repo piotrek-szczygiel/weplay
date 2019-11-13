@@ -36,16 +36,17 @@ void Menu::draw()
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
-            RlDrawText(
-                str(format("Button %d pressed") % i).c_str(), 10, 200 + 30 * i, 16, RAYWHITE);
+            RlDrawText(str(format("Button %d pressed") % i).c_str(), 10,
+                200 + 30 * static_cast<int>(i), 16, RAYWHITE);
         }
     }
 
     char time[16];
 
-    auto t = std::time(nullptr);
-    auto tm = std::localtime(&t);
-    strftime(time, sizeof(time), "%H:%M", tm);
+    auto rawtime = std::time(nullptr);
+    std::tm timeinfo;
+    localtime_s(&timeinfo, &rawtime);
+    strftime(time, sizeof(time), "%H:%M", &timeinfo);
     RlDrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();
