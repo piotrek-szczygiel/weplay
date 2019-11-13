@@ -79,27 +79,25 @@ void Pong::update(std::shared_ptr<ControllerState> state)
         m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
         m_ball.position.y += m_ball.speed.y * dt * BALL_SPEED;
 
-        if (m_ball.position.x < 0) {
+        if (m_ball.position.x < 0)
             add_score(1);
-            // restart();
-        } else if (m_ball.position.x > m_width) {
+        else if (m_ball.position.x > m_width)
             add_score(0);
-            // restart();
-        }
+
     } else if (m_state == SCORING) {
-        if (m_animation_timer >= 3.2F) {
+        if (m_animation_timer >= 1.8F) {
             m_state = PLAYING;
             m_anim_state = SHADOWING;
             m_animation_timer = 0.0F;
             m_animation_timer_shift = 0.0F;
-        } else if (m_animation_timer >= 3.0F) {
+        } else if (m_animation_timer >= 1.5F) {
             m_anim_state = NONE;
-        } else if (m_animation_timer >= 2.0F) {
-            m_anim_state = SHADOWING;
-            m_animation_timer_shift = 2.0F;
         } else if (m_animation_timer >= 1.0F) {
-            m_anim_state = LIGHTING;
+            m_anim_state = SHADOWING;
             m_animation_timer_shift = 1.0F;
+        } else if (m_animation_timer >= 0.5F) {
+            m_anim_state = LIGHTING;
+            m_animation_timer_shift = 0.5F;
             restart();
         }
         m_animation_timer += dt;
@@ -131,13 +129,13 @@ void Pong::draw()
         if (m_anim_state == SHADOWING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
-                    255 - tween(240.0F, m_animation_timer - m_animation_timer_shift)) };
+                    255 - tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
             RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         } else if (m_anim_state == LIGHTING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
-                    0 + tween(240.0F, (m_animation_timer - m_animation_timer_shift))) };
+                    0 + tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
             RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
         }
