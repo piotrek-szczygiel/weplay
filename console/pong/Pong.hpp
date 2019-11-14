@@ -19,12 +19,8 @@ struct Ball {
     Vector2 speed;
 };
 
-const float PLAYER_SPEED = 700.0F;
-const float BALL_SPEED = 850.0F;
 const float FRICTION = 0.8F;
 const float COLLISION_SHIFT = 10.0F;
-const int FONT_SIZE = 24;
-const int ANIM_FONT_SIZE = 100;
 
 class Pong final : public State {
 
@@ -37,6 +33,10 @@ public:
         m_racket_height = 0.25F * m_height;
         m_racket_width = 0.1F * m_racket_height;
         m_ball_radius = 0.65F * m_racket_width;
+        m_player_speed_factor = 0.75F * m_height;
+        m_ball_speed_factor = 0.65F * sqrt(m_width * m_width + m_height * m_width);
+        m_font_size = static_cast<int>(0.05F * m_height);
+        m_animation_font_size = static_cast<int>(0.15F * m_height);
         restart();
     }
 
@@ -47,6 +47,7 @@ public:
 
 private:
     enum State { PLAYING, SCORING };
+
     enum AnimationState { SHADOWING, LIGHTING, NONE };
 
     float m_width;
@@ -54,20 +55,29 @@ private:
     float m_racket_width;
     float m_racket_height;
     float m_ball_radius;
-    RenderTexture2D m_framebuffer;
-    StateChange m_state_change { StateChange::None };
-
-    State m_state { PLAYING };
-    AnimationState m_anim_state { SHADOWING };
+    float m_player_speed_factor;
+    float m_ball_speed_factor;
     float m_animation_timer { 0.0F };
     float m_animation_timer_shift { 0.0F };
 
+    int m_font_size;
+    int m_animation_font_size;
+    int m_score_position {};
+
+    RenderTexture2D m_framebuffer;
+
+    StateChange m_state_change { StateChange::None };
+
+    State m_game_state { PLAYING };
+
+    AnimationState m_anim_state { SHADOWING };
+
     Player m_player_1 {};
     Player m_player_2 {};
+
     Ball m_ball {};
 
     std::string m_score {};
-    int m_score_position {};
 
     std::mt19937 m_gen { std::random_device {}() };
 

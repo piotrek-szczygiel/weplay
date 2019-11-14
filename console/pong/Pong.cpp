@@ -16,7 +16,7 @@ void Pong::update(std::shared_ptr<ControllerState> state)
 
     float dt = GetFrameTime();
 
-    if (m_state == PLAYING) {
+    if (m_game_state == PLAYING) {
         if (IsKeyDown(KEY_W) || state->buttons[0]) {
             m_player_1.speed.y = -1.0F;
         } else if (IsKeyDown(KEY_S) || state->buttons[1]) {
@@ -33,8 +33,8 @@ void Pong::update(std::shared_ptr<ControllerState> state)
             m_player_2.speed.y = 0.0F;
         }
 
-        m_player_1.position.y += m_player_1.speed.y * dt * PLAYER_SPEED;
-        m_player_2.position.y += m_player_2.speed.y * dt * PLAYER_SPEED;
+        m_player_1.position.y += m_player_1.speed.y * m_player_speed_factor * dt;
+        m_player_2.position.y += m_player_2.speed.y * m_player_speed_factor * dt;
 
         m_player_1.position.y
             = clamp(m_player_1.position.y, 10.0F, m_height - m_racket_height - 10.0F);
@@ -76,17 +76,17 @@ void Pong::update(std::shared_ptr<ControllerState> state)
             m_ball.position.x = m_player_2.position.x - m_ball_radius - 1;
         }
 
-        m_ball.position.x += m_ball.speed.x * dt * BALL_SPEED;
-        m_ball.position.y += m_ball.speed.y * dt * BALL_SPEED;
+        m_ball.position.x += m_ball.speed.x * m_ball_speed_factor * dt;
+        m_ball.position.y += m_ball.speed.y * m_ball_speed_factor * dt;
 
         if (m_ball.position.x < 0)
             add_score(1);
         else if (m_ball.position.x > m_width)
             add_score(0);
 
-    } else if (m_state == SCORING) {
+    } else if (m_game_state == SCORING) {
         if (m_animation_timer >= 1.8F) {
-            m_state = PLAYING;
+            m_game_state = PLAYING;
             m_anim_state = SHADOWING;
             m_animation_timer = 0.0F;
             m_animation_timer_shift = 0.0F;
@@ -108,7 +108,7 @@ void Pong::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
-    if (m_state == PLAYING) {
+    if (m_game_state == PLAYING) {
         DrawRectangle(static_cast<int>(m_player_1.position.x),
             static_cast<int>(m_player_1.position.y), static_cast<int>(m_racket_width),
             static_cast<int>(m_racket_height), RAYWHITE);
@@ -120,24 +120,24 @@ void Pong::draw()
         DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
             m_ball_radius, RAYWHITE);
 
-        RlDrawText(m_score.c_str(), m_score_position, 15, FONT_SIZE, WHITE);
-    } else if (m_state == SCORING) {
-        int score_position_x { text_position_center(m_score, ANIM_FONT_SIZE) };
+        RlDrawText(m_score.c_str(), m_score_position, 15, m_font_size, WHITE);
+    } else if (m_game_state == SCORING) {
+        int score_position_x { text_position_center(m_score, m_animation_font_size) };
         int score_position_y { static_cast<int>(
-            m_height / 2 - (static_cast<float>(ANIM_FONT_SIZE) / 2)) };
+            m_height / 2 - (static_cast<float>(m_animation_font_size) / 2)) };
 
         if (m_anim_state == SHADOWING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     255 - tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
+            RlDrawText(m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
         } else if (m_anim_state == LIGHTING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     0 + tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(m_score.c_str(), score_position_x, score_position_y, ANIM_FONT_SIZE, color);
+            RlDrawText(m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
         }
     }
 
@@ -165,7 +165,7 @@ void Pong::restart()
         { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
 
     m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
-    m_score_position = text_position_center(m_score, FONT_SIZE);
+    m_score_position = text_position_center(m_score, m_font_size);
 }
 
 void Pong::add_score(int id)
@@ -175,7 +175,7 @@ void Pong::add_score(int id)
     } else if (id == 1) {
         m_player_2.score += 1;
     }
-    m_state = SCORING;
+    m_game_state = SCORING;
 }
 
 int Pong::text_position_center(std::string& string, int font_size)
