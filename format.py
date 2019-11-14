@@ -29,14 +29,14 @@ def format(file):
 
 
 if __name__ == "__main__":
-    extensions = [".cpp", ".hpp"]
+    extensions = [".cpp", ".hpp", ".frag", ".vert"]
 
     try:
         if len(sys.argv) > 1:
             for f in sys.argv[1:]:
                 format(f)
         else:
-            for f in collect_files(["console", "controller"], extensions):
+            for f in collect_files(["console", "controller", "resources"], extensions):
                 format(f)
     except OSError as e:
         if e.errno == errno.ENOENT:

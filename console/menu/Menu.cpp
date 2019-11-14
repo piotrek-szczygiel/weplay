@@ -23,12 +23,19 @@ void Menu::update(std::shared_ptr<ControllerState> state)
     m_pitch = state->pitch;
     m_roll = state->roll;
     m_buttons = state->buttons;
+
+    m_seconds += GetFrameTime();
+    SetShaderValue(m_shader, m_seconds_loc, &m_seconds, UNIFORM_FLOAT);
 }
 
 void Menu::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
+
+    BeginShaderMode(m_shader);
+    DrawTexture(m_bg, 0, 0, WHITE);
+    EndShaderMode();
 
     RlDrawText(str(format("Yaw: %d") % m_yaw).c_str(), 10, 100, 16, RAYWHITE);
     RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);

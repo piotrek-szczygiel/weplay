@@ -7,10 +7,23 @@ class Menu final : public State {
 public:
     Menu()
         : m_framebuffer { LoadRenderTexture(1024, 768) }
+        , m_bg { LoadTexture("resources/bg.png") }
+        , m_shader { LoadShader(nullptr, "resources/wave.frag") }
     {
+        m_seconds_loc = GetShaderLocation(m_shader, "seconds");
+
+        float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+        SetShaderValue(m_shader, GetShaderLocation(m_shader, "size"), &screenSize, UNIFORM_VEC2);
+
+        m_seconds = 0.0F;
     }
 
-    ~Menu() override { UnloadRenderTexture(m_framebuffer); }
+    ~Menu() override
+    {
+        UnloadRenderTexture(m_framebuffer);
+        UnloadTexture(m_bg);
+        UnloadShader(m_shader);
+    }
 
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
@@ -26,6 +39,11 @@ private:
     int16_t m_roll {};
 
     std::array<bool, 16> m_buttons {};
+
+    Texture2D m_bg;
+    Shader m_shader;
+    int m_seconds_loc;
+    float m_seconds;
 };
 
 }
