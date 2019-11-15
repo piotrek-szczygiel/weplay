@@ -30,17 +30,27 @@ public:
         , m_animation_timer { 0.0F }
         , m_animation_timer_shift { 0.0F }
         , m_framebuffer { LoadRenderTexture(static_cast<int>(m_width), static_cast<int>(m_height)) }
+        , m_shader { LoadShader(nullptr, "resources/pong/light_and_shadow.frag") }
+        , m_score_position {}
     {
         m_racket_height = 0.25F * m_height;
         m_racket_width = 0.1F * m_racket_height;
         m_ball_radius = 0.65F * m_racket_width;
         m_player_speed_factor = 0.75F * m_height;
-        m_ball_speed_factor = 0.65F * sqrt(m_width * m_width + m_height * m_width);
+        m_ball_speed_factor = 0.35F * sqrt(m_width * m_width + m_height * m_width); // should be 0.65
         m_collision_shift = 0.5F * m_ball_radius;
         m_font_size = static_cast<int>(0.05F * m_height);
         m_animation_font_size = static_cast<int>(0.15F * m_height);
+
+        m_light_pos_loc = GetShaderLocation(m_shader, "lightPos");
+
+        float screenSize[2] = { m_width, m_height };
+        SetShaderValue(m_shader, GetShaderLocation(m_shader, "size"), &screenSize, UNIFORM_VEC2);
+
         restart();
     }
+
+    ~Pong() override { UnloadShader(m_shader); }
 
     void update(std::shared_ptr<ControllerState> state) override;
     void draw() override;
@@ -65,7 +75,8 @@ private:
 
     int m_font_size;
     int m_animation_font_size;
-    int m_score_position {};
+    int m_score_position;
+    int m_light_pos_loc;
 
     RenderTexture2D m_framebuffer;
 
@@ -83,6 +94,8 @@ private:
     std::string m_score {};
 
     std::mt19937 m_gen { std::random_device {}() };
+
+    Shader m_shader;
 
     void restart();
     void add_score(int id);

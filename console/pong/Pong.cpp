@@ -102,6 +102,8 @@ void Pong::update(std::shared_ptr<ControllerState> state)
         }
         m_animation_timer += dt;
     }
+
+    SetShaderValue(m_shader, m_light_pos_loc, &m_ball.position, UNIFORM_VEC2);
 }
 
 void Pong::draw()
@@ -109,6 +111,10 @@ void Pong::draw()
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
     if (m_game_state == PLAYING) {
+        BeginShaderMode(m_shader);
+
+        DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), BLACK);
+
         DrawRectangle(static_cast<int>(m_player_1.position.x),
             static_cast<int>(m_player_1.position.y), static_cast<int>(m_racket_width),
             static_cast<int>(m_racket_height), RAYWHITE);
@@ -119,6 +125,8 @@ void Pong::draw()
 
         DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
             m_ball_radius, RAYWHITE);
+
+        EndShaderMode();
 
         RlDrawText(m_score.c_str(), m_score_position, 15, m_font_size, WHITE);
     } else if (m_game_state == SCORING) {
