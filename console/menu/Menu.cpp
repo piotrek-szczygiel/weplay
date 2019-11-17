@@ -1,7 +1,6 @@
 #include "Menu.hpp"
 #include <boost/format.hpp>
 #include <ctime>
-#include <iomanip>
 
 using boost::str, boost::format;
 
@@ -50,10 +49,9 @@ void Menu::draw()
 
     char time[16];
 
-    auto rawtime = std::time(nullptr);
-    std::tm timeinfo;
-    localtime_s(&timeinfo, &rawtime);
-    strftime(time, sizeof(time), "%H:%M", &timeinfo);
+    const auto raw_time = std::time(nullptr);
+    const auto time_info = localtime(&raw_time);
+    strftime(time, sizeof(time), "%H:%M", time_info);
     RlDrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();

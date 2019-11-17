@@ -119,5 +119,5 @@ if(WIN32)
     endmacro(get_win32_winnt)
 
     get_win32_winnt(ver)
-    add_definitions(-D_WIN32_WINNT=${ver})
+    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS)
 endif(WIN32)
