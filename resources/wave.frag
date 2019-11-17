@@ -11,9 +11,9 @@ uniform vec4 colDiffuse;
 uniform float seconds;
 uniform vec2 size;
 
-const vec2 freq = { 25.0F, 25.0F };
-const vec2 amp = { 5.0F, 5.0F };
-const vec2 speed = { 1.0F, 1.0F };
+vec2 freq = vec2(25, 25);
+vec2 amp = vec2(5, 5);
+vec2 speed = vec2(1, 1);
 
 void main()
 {
