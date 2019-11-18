@@ -41,10 +41,12 @@ void main()
 {
     vec2 p = vec2(gl_FragCoord.x, gl_FragCoord.y);
     vec2 invertedYLightPos = vec2(lightPos.x, size.y - lightPos.y);
+    vec4 lightCol = vec4(0.5, 0.75, 1.0, 1.0);
+    setLuminance(lightCol, 0.8);
 
     vec4 col = gl_FragColor;
 
-    col += drawLight(p, invertedYLightPos, vec4(0.5, 0.75, 1.0, 1.0), 500.0, 10.0);
+    col += drawLight(p, invertedYLightPos, lightCol, 500.0, 10.0);
 
     gl_FragColor = clamp(col, 0.0, 1.0);
 }
