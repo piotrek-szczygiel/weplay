@@ -49,15 +49,22 @@ public:
     bool initialize();
     bool update();
 
+    bool connected() const { return m_connected; }
+    void calibrate(Calibration calibration) { m_calibration = calibration; }
+
     int16_t yaw() const { return m_ypr[0]; }
     int16_t pitch() const { return m_ypr[1]; }
     int16_t roll() const { return m_ypr[2]; }
+
+    void print_status() const;
 
 private:
     const int INTERRUPT_PIN { 13 };
 
     MPU6050 m_mpu {};
     Calibration m_calibration;
+
+    bool m_connected { false };
 
     bool m_dmp_ready { false };
     uint8_t m_device_status {};
@@ -142,6 +149,7 @@ bool Mpu::initialize()
         return false;
     }
 
+    m_connected = true;
     return true;
 }
 
@@ -188,4 +196,9 @@ bool Mpu::update()
     }
 
     return false;
+}
+
+void Mpu::print_status() const
+{
+    Serial.printf(F("MPU6050: %d\t%d\t%d\r\n"), yaw(), pitch(), roll());
 }

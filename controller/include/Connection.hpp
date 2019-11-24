@@ -1,5 +1,4 @@
-#ifndef CONNECTION_HPP
-#define CONNECTION_HPP
+#pragma once
 
 #include <ESP8266WiFi.h>
 
@@ -29,5 +28,3 @@ public:
     void send_buttons(uint16_t buttons_state);
     void send_ypr(int16_t yaw, int16_t pitch, int16_t roll);
 };
-
-#endif
