@@ -61,6 +61,7 @@ private:
 
     std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
     Texture m_games_images[GAMES] {};
+    StateChange m_games_states[GAMES] {StateChange::Starship, StateChange ::Tetris, StateChange ::Pong};
     int m_game_index {};
     int m_last_game_index {};
     int m_game_name_position {};

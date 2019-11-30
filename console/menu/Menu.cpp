@@ -11,22 +11,16 @@ float tween(float value, float x);
 
 void Menu::update(std::shared_ptr<ControllerState> state)
 {
-    if (IsKeyPressed(KEY_F1) || state->buttons[8]) {
-        m_state_change = StateChange::Menu;
-    } else if (IsKeyPressed(KEY_F2) || state->buttons[0]) {
-        m_state_change = StateChange::Starship;
-    } else if (IsKeyPressed(KEY_F3) || state->buttons[1]) {
-        m_state_change = StateChange::Tetris;
-    } else if (IsKeyPressed(KEY_F4) || state->buttons[2]) {
-        m_state_change = StateChange::Pong;
-    } else if (IsKeyPressed(KEY_LEFT) && m_animation_state == NONE) {
+    if (IsKeyPressed(KEY_LEFT) && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-        m_animation_state = PLAYING_LEFT;
+        m_animation_state = PLAYING_RIGHT;
     } else if (IsKeyPressed(KEY_RIGHT) && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = (m_game_index + 1) % GAMES;
-        m_animation_state = PLAYING_RIGHT;
+        m_animation_state = PLAYING_LEFT;
+    }else if(IsKeyPressed(KEY_ENTER)){
+        m_state_change = m_games_states[m_game_index];
     }
 
     m_yaw = state->yaw;
