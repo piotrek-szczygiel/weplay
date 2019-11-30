@@ -16,6 +16,10 @@ void Menu::update(std::shared_ptr<ControllerState> state)
         m_state_change = StateChange::Tetris;
     } else if (IsKeyPressed(KEY_F4) || state->buttons[2]) {
         m_state_change = StateChange::Pong;
+    } else if (IsKeyPressed(KEY_LEFT)) {
+        m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
+    } else if (IsKeyPressed(KEY_RIGHT)) {
+        m_game_index = (m_game_index + 1) % GAMES;
     }
 
     m_yaw = state->yaw;
@@ -40,6 +44,9 @@ void Menu::draw()
     RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
     RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
 
+    draw_game_name();
+    draw_game_image();
+
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
             RlDrawText(str(format("Button %d pressed") % i).c_str(), 10,
@@ -58,5 +65,14 @@ void Menu::draw()
 }
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
+
+void Menu::draw_game_name() {
+    m_game_name_position = {m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), 20) / 2};
+
+    RlDrawText(str(format("%s") % m_games_names[m_game_index]).c_str(), m_game_name_position, 600, 20, RAYWHITE);
+}
+void Menu::draw_game_image() {
+    DrawTexture(m_games_images[m_game_index], m_width / 2 - 400 / 2, m_height / 2 - 400 / 2, RAYWHITE);
+}
 
 }
