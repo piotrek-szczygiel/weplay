@@ -11,8 +11,8 @@ public:
         : m_framebuffer { LoadRenderTexture(1024, 768) }
         , m_bg { LoadTexture("resources/bg.png") }
         , m_shader { LoadShader(nullptr, "resources/wave.frag") }
-        , m_width {GetScreenWidth()}
-        , m_height{GetScreenHeight()}
+        , m_width { GetScreenWidth() }
+        , m_height { GetScreenHeight() }
     {
         m_seconds_loc = GetShaderLocation(m_shader, "seconds");
 
@@ -38,7 +38,7 @@ public:
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
     void draw_game_name();
-    void draw_game_image();
+    void draw_game_image(float dt);
 
 private:
     RenderTexture2D m_framebuffer;
@@ -55,13 +55,19 @@ private:
     int m_seconds_loc;
     float m_seconds;
 
+    // main menu games images / animation
+    enum AnimationState { PLAYING_LEFT, PLAYING_RIGHT, ENDING, NONE };
+
     std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
-    Texture m_games_images[GAMES]{};
+    Texture m_games_images[GAMES] {};
     int m_game_index {};
+    int m_last_game_index {};
     int m_game_name_position {};
     int m_game_image_position {};
     int m_width;
     int m_height;
+    AnimationState m_animation_state { NONE };
+    float m_animation_timer {};
 };
 
 }
