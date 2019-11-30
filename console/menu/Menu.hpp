@@ -4,6 +4,7 @@
 namespace Menu {
 
 constexpr int GAMES { 3 };
+constexpr float SLIDE_SPEED {1.5F};
 
 class Menu final : public State {
 public:
@@ -37,7 +38,7 @@ public:
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
-    void draw_game_name();
+    void draw_game_name(int font_size);
     void draw_game_image(float dt);
 
 private:
@@ -63,7 +64,6 @@ private:
     int m_game_index {};
     int m_last_game_index {};
     int m_game_name_position {};
-    int m_game_image_position {};
     int m_width;
     int m_height;
     AnimationState m_animation_state { NONE };

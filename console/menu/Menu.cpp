@@ -8,7 +8,6 @@ using boost::str, boost::format;
 namespace Menu {
 
 float tween(float value, float x);
-float tween_x2(float value, float x);
 
 void Menu::update(std::shared_ptr<ControllerState> state)
 {
@@ -52,8 +51,8 @@ void Menu::draw()
     RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
     RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
 
-    draw_game_name();
-    draw_game_image(GetFrameTime());
+    draw_game_name(40);
+    draw_game_image(GetFrameTime() * SLIDE_SPEED);
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
@@ -74,64 +73,57 @@ void Menu::draw()
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
 
-void Menu::draw_game_name()
+void Menu::draw_game_name(int font_size)
 {
     m_game_name_position
-        = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), 20) / 2 };
+        = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), font_size) / 2 };
 
     RlDrawText(str(format("%s") % m_games_names[m_game_index]).c_str(), m_game_name_position, 600,
-        20, RAYWHITE);
+        font_size, RAYWHITE);
 }
 void Menu::draw_game_image(float dt)
 {
-    int posX { m_width + 400 };
+    int texture_width = m_games_images[m_game_index].width;
+    int texture_height = m_games_images[m_game_index].height;
+
+    int posX { m_width + texture_width };
+    int posX2 { m_width + texture_width };
     float tween_value = static_cast<float>(m_width) / 2;
 
     if (m_animation_state == PLAYING_LEFT) {
-        int x2 = m_width / 2 - 400 / 2 - static_cast<int>(tween(tween_value, m_animation_timer));
+        int x
+            = m_width / 2 + static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
+        posX = x - texture_width / 2;
 
-        if (m_animation_timer >= 0.5F) {
-            int x = m_width / 2
-                + static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.5F)));
-            posX = x - 400 / 2;
-        } else if (m_animation_timer >= 1.0F) {
-            x2 = -400;
-        }
+        int x2 = static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
+        posX2 = x2 - texture_width;
 
         m_animation_timer += dt;
-        if (m_animation_timer >= 1.5F) {
+        if (m_animation_timer >= 1.0F) {
             m_animation_state = ENDING;
         }
-
-        DrawTexture(m_games_images[m_last_game_index], x2, m_height / 2 - 400 / 2, RAYWHITE);
     } else if (m_animation_state == PLAYING_RIGHT) {
-        int x2 = m_width / 2 - 400 / 2 + static_cast<int>(tween(tween_value, m_animation_timer));
+        int x
+            = m_width / 2 - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
+        posX = x - texture_width / 2;
 
-        if (m_animation_timer >= 0.5F) {
-            int x = m_width / 2
-                - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.5F)));
-            posX = x - 400 / 2;
-        } else if (m_animation_timer >= 1.0F) {
-            x2 = -400;
-        }
+        posX2 = m_width - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
 
         m_animation_timer += dt;
-        if (m_animation_timer >= 1.5F) {
+        if (m_animation_timer >= 1.0F) {
             m_animation_state = ENDING;
         }
-
-        DrawTexture(m_games_images[m_last_game_index], x2, m_height / 2 - 400 / 2, RAYWHITE);
     } else if (m_animation_state == ENDING) {
-        posX = m_width / 2 - 400 / 2;
+        posX = m_width / 2 - texture_width / 2;
         m_animation_state = NONE;
         m_animation_timer = 0.0F;
     } else if (m_animation_state == NONE) {
-        posX = m_width / 2 - 400 / 2;
+        posX = m_width / 2 - texture_width / 2;
     }
-    DrawTexture(m_games_images[m_game_index], posX, m_height / 2 - 400 / 2, RAYWHITE);
+    DrawTexture(m_games_images[m_last_game_index], posX2, m_height / 2 - texture_height / 2, RAYWHITE);
+    DrawTexture(m_games_images[m_game_index], posX, m_height / 2 - texture_height / 2, RAYWHITE);
 }
 
 float tween(float value, float x) { return value * (x * x * x); }
-float tween_x2(float value, float x) { return value * (x); }
 
 }
