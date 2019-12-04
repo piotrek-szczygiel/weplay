@@ -29,7 +29,6 @@ void Controller::broadcaster_worker()
     BOOST_LOG_TRIVIAL(info) << "Starting broadcaster thread";
 
     std::vector<ba::ip::udp::socket> sockets {};
-    std::vector<std::string> addresses {};
 
     // Open one socket for every network interface
     ba::io_service io_service;
@@ -51,7 +50,6 @@ void Controller::broadcaster_worker()
                 socket.bind(ba::ip::udp::endpoint(addr, 0));
 
                 sockets.push_back(std::move(socket));
-                addresses.push_back(addr.to_string());
             }
         }
     }
@@ -61,8 +59,9 @@ void Controller::broadcaster_worker()
         return;
     }
 
-    for (auto& address : addresses) {
-        BOOST_LOG_TRIVIAL(info) << "Broadcasting on " << address << "...";
+    for (auto& s : sockets) {
+        BOOST_LOG_TRIVIAL(info) << "Broadcasting on " << s.local_endpoint().address().to_string()
+                                << "...";
     }
 
     // Broadcast interface ip address every second
@@ -73,8 +72,8 @@ void Controller::broadcaster_worker()
         }
 
         for (size_t i = 0; i < sockets.size(); ++i) {
-            sockets[i].async_send_to(ba::buffer(addresses[i].c_str(), addresses[i].size()),
-                ba::ip::udp::endpoint(ba::ip::address_v4::broadcast(), 2137),
+            sockets[i].async_send_to(ba::buffer("raspberry-console"),
+                ba::ip::udp::endpoint(ba::ip::address_v4::broadcast(), 1984),
                 boost::bind(
                     &on_send, ba::placeholders::error, ba::placeholders::bytes_transferred));
         }
