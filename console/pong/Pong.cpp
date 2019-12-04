@@ -7,9 +7,12 @@ namespace Pong {
 Vector2 computeBallSpeed(Vector2 v);
 float tween(float value, float x);
 
-void Pong::update(std::shared_ptr<ControllerState> state)
+void Pong::update(std::shared_ptr<AllControllersState> all_states)
 {
-    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
+    const auto& s1 = all_states->controllers[0];
+    const auto& s2 = all_states->controllers[1];
+
+    if (IsKeyPressed(KEY_Q) || s1.buttons[8] || s2.buttons[8]) {
         m_state_change = StateChange::Menu;
         return;
     }
@@ -17,17 +20,17 @@ void Pong::update(std::shared_ptr<ControllerState> state)
     float dt = GetFrameTime();
 
     if (m_game_state == PLAYING) {
-        if (IsKeyDown(KEY_W) || state->buttons[0]) {
+        if (IsKeyDown(KEY_W) || s1.buttons[0]) {
             m_player_1.speed.y = -1.0F;
-        } else if (IsKeyDown(KEY_S) || state->buttons[1]) {
+        } else if (IsKeyDown(KEY_S) || s1.buttons[1]) {
             m_player_1.speed.y = 1.0F;
         } else {
             m_player_1.speed.y = 0.0F;
         }
 
-        if (IsKeyDown(KEY_UP) || state->buttons[4]) {
+        if (IsKeyDown(KEY_UP) || s2.buttons[0]) {
             m_player_2.speed.y = -1.0F;
-        } else if (IsKeyDown(KEY_DOWN) || state->buttons[5]) {
+        } else if (IsKeyDown(KEY_DOWN) || s2.buttons[1]) {
             m_player_2.speed.y = 1.0F;
         } else {
             m_player_2.speed.y = 0.0F;

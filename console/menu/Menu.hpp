@@ -34,7 +34,7 @@ public:
         UnloadShader(m_shader);
     }
 
-    void update(std::shared_ptr<ControllerState> state) override;
+    void update(std::shared_ptr<AllControllersState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
@@ -45,10 +45,10 @@ private:
     RenderTexture2D m_framebuffer;
     StateChange m_state_change { StateChange::None };
 
+    size_t m_connected {};
     int16_t m_yaw {};
     int16_t m_pitch {};
     int16_t m_roll {};
-
     std::array<bool, 16> m_buttons {};
 
     Texture2D m_bg;

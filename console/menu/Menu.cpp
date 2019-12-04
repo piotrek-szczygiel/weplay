@@ -9,24 +9,30 @@ namespace Menu {
 
 float tween(float value, float x);
 
-void Menu::update(std::shared_ptr<ControllerState> state)
+void Menu::update(std::shared_ptr<AllControllersState> all_states)
 {
-    if (IsKeyPressed(KEY_LEFT) && m_animation_state == NONE) {
+    const auto& s1 = all_states->controllers[0];
+    const auto& s2 = all_states->controllers[1];
+
+    if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0]) && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
         m_animation_state = PLAYING_LEFT;
-    } else if (IsKeyPressed(KEY_RIGHT) && m_animation_state == NONE) {
+    } else if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
+        && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = (m_game_index + 1) % GAMES;
         m_animation_state = PLAYING_RIGHT;
-    } else if (IsKeyPressed(KEY_ENTER)) {
+    } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
         m_state_change = m_games_states[m_game_index];
     }
 
-    m_yaw = state->yaw;
-    m_pitch = state->pitch;
-    m_roll = state->roll;
-    m_buttons = state->buttons;
+    m_connected = all_states->connected_num;
+
+    m_yaw = s1.yaw;
+    m_pitch = s1.pitch;
+    m_roll = s1.roll;
+    m_buttons = s1.buttons;
 
     m_seconds += GetFrameTime();
     SetShaderValue(m_shader, m_seconds_loc, &m_seconds, UNIFORM_FLOAT);
@@ -41,6 +47,8 @@ void Menu::draw()
     DrawTexture(m_bg, 0, 0, WHITE);
     EndShaderMode();
 
+    RlDrawText(
+        str(format("Connected controllers: %d") % m_connected).c_str(), 10, 70, 16, RAYWHITE);
     RlDrawText(str(format("Yaw: %d") % m_yaw).c_str(), 10, 100, 16, RAYWHITE);
     RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
     RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);

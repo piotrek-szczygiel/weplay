@@ -9,16 +9,16 @@ using ba::ip::tcp;
 
 class TcpServer {
 public:
-    TcpServer(ba::io_context& io_context, short port, std::shared_ptr<ControllerState> state)
+    TcpServer(ba::io_context& io_context, short port, std::shared_ptr<AllControllersState> state)
         : m_acceptor(io_context, tcp::endpoint(tcp::v4(), port))
-        , m_controller_state(std::move(state))
+        , m_state(std::move(state))
     {
         do_accept();
     }
 
 private:
     tcp::acceptor m_acceptor;
-    std::shared_ptr<ControllerState> m_controller_state;
+    std::shared_ptr<AllControllersState> m_state;
 
     void do_accept();
 };

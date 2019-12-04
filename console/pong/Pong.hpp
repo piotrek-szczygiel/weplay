@@ -53,7 +53,7 @@ public:
 
     ~Pong() override { UnloadShader(m_shader); }
 
-    void update(std::shared_ptr<ControllerState> state) override;
+    void update(std::shared_ptr<AllControllersState> state) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }

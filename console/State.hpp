@@ -22,7 +22,7 @@ public:
 
     virtual ~State() = default;
 
-    virtual void update(std::shared_ptr<ControllerState> state) = 0;
+    virtual void update(std::shared_ptr<AllControllersState> state) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D framebuffer() = 0;
     virtual StateChange state_change() = 0;

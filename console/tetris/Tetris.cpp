@@ -6,45 +6,43 @@
 
 namespace Tetris {
 
-void Tetris::update(std::shared_ptr<ControllerState> state)
+void Tetris::update(std::shared_ptr<AllControllersState> all_states)
 {
-    if (IsKeyPressed(KEY_Q) || state->buttons[8]) {
-        m_state_change = StateChange::Menu;
-        return;
-    }
+    std::array<std::vector<Action>, 2> actions {};
 
-    std::vector<Action> p1 {};
-    std::vector<Action> p2 {};
+    for (size_t player = 0; player < 2; ++player) {
+        const auto& state = all_states->controllers[player];
 
-    if (IsKeyDown(KEY_LEFT) || state->roll < -20 || state->buttons[0]) {
-        p1.push_back(Action::MOVE_LEFT);
-    } else if (IsKeyDown(KEY_RIGHT) || state->roll > 20 || state->buttons[3]) {
-        p1.push_back(Action::MOVE_RIGHT);
-    }
+        if (state.buttons[8]) {
+            m_state_change = StateChange::Menu;
+            return;
+        }
 
-    if (IsKeyDown(KEY_DOWN) || state->pitch > 50 || state->buttons[1]) {
-        p1.push_back(Action::MOVE_DOWN);
-    }
+        if (state.buttons[0]) {
+            actions[player].push_back(Action::MOVE_LEFT);
+        } else if (state.buttons[3]) {
+            actions[player].push_back(Action::MOVE_RIGHT);
+        }
 
-    if (IsKeyDown(KEY_SPACE) || state->buttons[2]) {
-        p1.push_back(Action::HARD_DROP);
-    } else if (IsKeyDown(KEY_LEFT_SHIFT) || state->buttons[6]) {
-        p1.push_back(Action::SOFT_DROP);
-    }
+        if (state.buttons[1]) {
+            actions[player].push_back(Action::MOVE_DOWN);
+        }
 
-    if (IsKeyDown(KEY_Z) || state->buttons[4]) {
-        p1.push_back(Action::ROTATE_LEFT);
-    } else if (IsKeyDown(KEY_X) || state->buttons[5]) {
-        p1.push_back(Action::ROTATE_RIGHT);
-    }
+        if (state.buttons[5]) {
+            actions[player].push_back(Action::HARD_DROP);
+        } else if (state.buttons[2]) {
+            actions[player].push_back(Action::SOFT_DROP);
+        }
 
-    if (IsKeyDown(KEY_C) || state->buttons[9]) {
-        p1.push_back(Action::HOLD);
-    }
+        if (state.buttons[4]) {
+            actions[player].push_back(Action::ROTATE_LEFT);
+        } else if (state.buttons[9]) {
+            actions[player].push_back(Action::ROTATE_RIGHT);
+        }
 
-    if (IsKeyPressed(KEY_L)) {
-        m_player_1.increase_level();
-        m_player_2.increase_level();
+        if (state.buttons[6]) {
+            actions[player].push_back(Action::HOLD);
+        }
     }
 
     if (m_player_1.enough_lines() || m_player_2.enough_lines()) {
@@ -56,8 +54,8 @@ void Tetris::update(std::shared_ptr<ControllerState> state)
     }
 
     float dt = GetFrameTime();
-    m_player_1.update(dt, p1);
-    m_player_2.update(dt, p1);
+    m_player_1.update(dt, actions[0]);
+    m_player_2.update(dt, actions[1]);
 }
 
 void Tetris::draw()
@@ -73,5 +71,4 @@ void Tetris::draw()
 }
 
 RenderTexture2D Tetris::framebuffer() { return m_framebuffer; }
-
 }

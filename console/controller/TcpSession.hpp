@@ -5,10 +5,11 @@
 
 class TcpSession : public std::enable_shared_from_this<TcpSession> {
 public:
-    explicit TcpSession(boost::asio::ip::tcp::socket socket, std::shared_ptr<ControllerState> state)
+    explicit TcpSession(
+        boost::asio::ip::tcp::socket socket, std::shared_ptr<AllControllersState> state)
         : m_socket(std::move(socket))
         , m_data {}
-        , m_controller_state(std::move(state))
+        , m_state(std::move(state))
         , m_valid_controller { false }
     {
     }
@@ -28,7 +29,11 @@ private:
     boost::asio::ip::tcp::socket m_socket;
     std::array<uint8_t, 16> m_data;
 
-    std::shared_ptr<ControllerState> m_controller_state;
+    std::shared_ptr<AllControllersState> m_state;
+    size_t m_id { 0 };
 
     bool m_valid_controller;
+
+    bool register_controller();
+    void unregister_controller();
 };
