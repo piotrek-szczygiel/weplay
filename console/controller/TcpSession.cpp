@@ -3,15 +3,7 @@
 
 namespace ba = boost::asio;
 
-void TcpSession::start()
-{
-    BOOST_LOG_TRIVIAL(info) << "Started new session with "
-                            << m_socket.remote_endpoint().address().to_string();
-
-    do_read();
-}
-
-void TcpSession::do_read()
+void TcpSession::read()
 {
     auto self { shared_from_this() };
     m_socket.async_read_some(ba::buffer(m_data, m_read_size),
@@ -32,9 +24,9 @@ void TcpSession::do_read()
             if (!m_valid_controller) {
                 if (m_data[0] == '%') {
                     m_valid_controller = true;
-                    BOOST_LOG_TRIVIAL(info) << "Controller successfully registered";
+                    BOOST_LOG_TRIVIAL(info) << "Controller successfully registered on " << address;
                 } else {
-                    BOOST_LOG_TRIVIAL(error) << "Unexpected data received";
+                    BOOST_LOG_TRIVIAL(error) << "Unexpected data received from " << address;
                     return;
                 }
             } else if (m_next_read == NextRead::Mode) {
@@ -45,7 +37,7 @@ void TcpSession::do_read()
                     m_next_read = NextRead::Mpu6050;
                     m_read_size = 6;
                 } else {
-                    BOOST_LOG_TRIVIAL(error) << "Invalid reading mode";
+                    BOOST_LOG_TRIVIAL(error) << "Invalid reading mode received from " << address;
                     return;
                 }
             } else {
@@ -71,6 +63,6 @@ void TcpSession::do_read()
                 m_read_size = 1;
             }
 
-            do_read();
+            read();
         });
 }

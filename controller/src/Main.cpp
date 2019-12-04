@@ -1,15 +1,15 @@
 #include "Buttons.hpp"
 #include "Connection.hpp"
 #include "Mpu.hpp"
+#include "Print.hpp"
 
 Buttons buttons {};
 Mpu mpu {};
 
 Connection connection {
-    F("RaspberryConsole"), // SSID
-    F("Korobeiniki1984"),  // Password
-    F("192.168.12.1"),     // IP Address
-    1984,                  // TCP Port
+    "matebook",    // SSID
+    "korobeiniki", // Password
+    1984,          // Port
 };
 
 // Switch to true if you want to calibrate a controller.
@@ -18,13 +18,13 @@ const bool NEW_CALIBRATION { false };
 const Calibration CONTROLLER_1 { 1620, 1393, 584, 40, 110, -41 };
 const Calibration CONTROLLER_2 { -3946, 2651, 1802, 22, 54, 54 };
 
+// Switch to tru if you want to see realtime MPU output
+const bool DEBUG_MPU { false };
+
 void setup()
 {
-    Serial.begin(115200);
-    while (!Serial) { }
-
-    Serial.println();
-    Serial.println("Controller program started");
+    init_print();
+    println("Raspberry controller initialized");
 
     buttons.initialize();
 
@@ -39,7 +39,11 @@ void setup()
         }
     }
 
-    mpu.initialize();
+    if (!mpu.initialize()) {
+        while (true) {
+            delay(500);
+        }
+    }
 }
 
 void loop()
@@ -47,12 +51,15 @@ void loop()
     connection.connect();
 
     if (buttons.update()) {
-        buttons.print_status();
         connection.send_buttons(buttons.state());
+        buttons.print_status();
     }
 
     if (mpu.update()) {
-        mpu.print_status();
         connection.send_ypr(mpu.yaw(), mpu.pitch(), mpu.roll());
+
+        if (DEBUG_MPU) {
+            mpu.print_status();
+        }
     }
 }

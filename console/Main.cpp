@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
 
     SetTraceLogLevel(LOG_WARNING);
 
-    constexpr int width { 1024 };
-    constexpr int height { 768 };
+    constexpr int width { 2048 };
+    constexpr int height { 1536 };
 
     BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
     SetConfigFlags(FLAG_VSYNC_HINT);

@@ -19,8 +19,6 @@ void on_send(const boost::system::error_code& ec, size_t bytes)
 {
     if (ec) {
         BOOST_LOG_TRIVIAL(warning) << "Broadcaster error: " << ec.message();
-    } else {
-        BOOST_LOG_TRIVIAL(info) << "Broadcaster sent " << bytes << " bytes";
     }
 }
 

@@ -13,7 +13,7 @@ public:
     {
     }
 
-    void start();
+    void read();
 
 private:
     enum class NextRead {
@@ -31,6 +31,4 @@ private:
     std::shared_ptr<ControllerState> m_controller_state;
 
     bool m_valid_controller;
-
-    void do_read();
 };

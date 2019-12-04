@@ -1,4 +1,5 @@
 #include "Buttons.hpp"
+#include "Print.hpp"
 #include <Arduino.h>
 
 void Buttons::initialize()
@@ -36,11 +37,9 @@ bool Buttons::update()
 
 void Buttons::print_status() const
 {
-    Serial.print(F("Buttons: "));
-
+    print("Buttons: ");
     for (uint8_t i = 0; i < 16; ++i) {
-        Serial.print(m_state & 1 << i ? F(" ") : F("X"));
+        print("%c", m_state & 1 << i ? ' ' : 'X');
     }
-
-    Serial.println();
+    println();
 }

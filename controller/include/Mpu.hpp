@@ -5,6 +5,7 @@
 // It is caused by poor implementation of MPU6050 library.
 // https://github.com/jrowberg/i2cdevlib/issues/468
 
+#include "Print.hpp"
 #include <MPU6050_6Axis_MotionApps20.h>
 
 #ifndef M_PI
@@ -93,15 +94,15 @@ bool Mpu::initialize()
     m_mpu.initialize();
     pinMode(INTERRUPT_PIN, INPUT);
 
-    Serial.println(F("Testing device connections..."));
+    println("Testing device connections...");
     if (m_mpu.testConnection()) {
-        Serial.println(F("MPU6050 connection successful"));
+        println("MPU6050 connection successful");
     } else {
-        Serial.println(F("ERROR: MPU6050 connection failed"));
+        println("ERROR: MPU6050 connection failed");
         return false;
     }
 
-    Serial.println(F("Initializing DMP..."));
+    println("Initializing DMP...");
     m_device_status = m_mpu.dmpInitialize();
 
     m_mpu.setXAccelOffset(m_calibration.accel_x);
@@ -114,37 +115,36 @@ bool Mpu::initialize()
 
     if (m_device_status == 0) {
         if (!m_calibration.custom) {
-            Serial.println(F("Calibrating..."));
+            println("Calibrating...");
             m_mpu.CalibrateAccel(6);
             m_mpu.CalibrateGyro(6);
         } else {
-            Serial.println(F("Calibration skipped"));
+            println("Calibration skipped");
         }
 
         m_mpu.PrintActiveOffsets();
 
-        Serial.println(F("Enabling DMP..."));
+        println("Enabling DMP...");
         m_mpu.setDMPEnabled(true);
 
-        Serial.print(F("Enabling interrupt detection on external interrupt "));
-        Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
-        Serial.println(F("..."));
-        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmp_interrupt_handle, RISING);
+        const uint8_t pin = digitalPinToInterrupt(INTERRUPT_PIN);
+        println("Enabling interrupt detection on external interrupt %d...", pin);
+        attachInterrupt(pin, dmp_interrupt_handle, RISING);
         m_interrupt_status = m_mpu.getIntStatus();
 
-        Serial.println(F("DMP ready"));
+        println("DMP ready");
         m_dmp_ready = true;
         m_dmp_packet_size = m_mpu.dmpGetFIFOPacketSize();
     } else {
-        Serial.print(F("ERROR: DMP Initialization failed ("));
+        print("ERROR: DMP Initialization failed (");
         if (m_device_status == 1) {
-            Serial.print(F("initial memory load failed"));
+            print("initial memory load failed");
         } else if (m_device_status == 2) {
-            Serial.print(F("configuration updates failed"));
+            print("configuration updates failed");
         } else {
-            Serial.print(F("unknown"));
+            print("unknown");
         }
-        Serial.println(F(")"));
+        println(")");
 
         return false;
     }
@@ -168,11 +168,11 @@ bool Mpu::update()
     m_dmp_fifo_size = m_mpu.getFIFOCount();
 
     if (m_dmp_fifo_size < m_dmp_packet_size) {
-        Serial.println(F("ERROR: DMP FIFO size < DMP packet size"));
+        println("ERROR: DMP FIFO size < DMP packet size");
     } else if ((m_interrupt_status & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT))
         || m_dmp_fifo_size >= 1024) {
         m_mpu.resetFIFO();
-        Serial.println(F("ERROR: DMP FIFO overflow!"));
+        println("ERROR: DMP FIFO overflow!");
     } else if (m_interrupt_status & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
         while (m_dmp_fifo_size >= m_dmp_packet_size) {
             m_mpu.getFIFOBytes(m_dmp_buffer, m_dmp_packet_size);
@@ -198,7 +198,4 @@ bool Mpu::update()
     return false;
 }
 
-void Mpu::print_status() const
-{
-    Serial.printf(F("MPU6050: %d\t%d\t%d\r\n"), yaw(), pitch(), roll());
-}
+void Mpu::print_status() const { println("MPU6050: %d\t%d\t%d", yaw(), pitch(), roll()); }
