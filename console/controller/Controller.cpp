@@ -67,6 +67,11 @@ void Controller::broadcaster_worker()
 
     // Broadcast interface ip address every second
     while (true) {
+        if (m_ctx.stopped()) {
+            BOOST_LOG_TRIVIAL(info) << "Stopping broadcasting worker thread";
+            break;
+        }
+
         for (size_t i = 0; i < sockets.size(); ++i) {
             sockets[i].async_send_to(ba::buffer(addresses[i].c_str(), addresses[i].size()),
                 ba::ip::udp::endpoint(ba::ip::address_v4::broadcast(), 2137),
