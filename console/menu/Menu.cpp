@@ -19,7 +19,7 @@ void Menu::update(std::shared_ptr<ControllerState> state)
         m_last_game_index = m_game_index;
         m_game_index = (m_game_index + 1) % GAMES;
         m_animation_state = PLAYING_RIGHT;
-    }else if(IsKeyPressed(KEY_ENTER)){
+    } else if (IsKeyPressed(KEY_ENTER)) {
         m_state_change = m_games_states[m_game_index];
     }
 
@@ -114,7 +114,8 @@ void Menu::draw_game_image(float dt)
     } else if (m_animation_state == NONE) {
         posX = m_width / 2 - texture_width / 2;
     }
-    DrawTexture(m_games_images[m_last_game_index], posX2, m_height / 2 - texture_height / 2, RAYWHITE);
+    DrawTexture(
+        m_games_images[m_last_game_index], posX2, m_height / 2 - texture_height / 2, RAYWHITE);
     DrawTexture(m_games_images[m_game_index], posX, m_height / 2 - texture_height / 2, RAYWHITE);
 }
 

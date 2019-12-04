@@ -4,7 +4,7 @@
 namespace Menu {
 
 constexpr int GAMES { 3 };
-constexpr float SLIDE_SPEED {1.5F};
+constexpr float SLIDE_SPEED { 1.5F };
 
 class Menu final : public State {
 public:
@@ -61,7 +61,8 @@ private:
 
     std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
     Texture m_games_images[GAMES] {};
-    StateChange m_games_states[GAMES] {StateChange::Starship, StateChange ::Tetris, StateChange ::Pong};
+    StateChange m_games_states[GAMES] { StateChange::Starship, StateChange ::Tetris,
+        StateChange ::Pong };
     int m_game_index {};
     int m_last_game_index {};
     int m_game_name_position {};
