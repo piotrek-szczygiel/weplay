@@ -17,19 +17,23 @@ public:
 
     Controller()
         : state(std::make_shared<ControllerState>())
-        , m_thread { std::thread(&Controller::worker, this) }
+        , m_controller_thread { std::thread(&Controller::controller_worker, this) }
+        , m_broadcaster_thread { std::thread(&Controller::broadcaster_worker, this) }
     {
     }
 
     ~Controller()
     {
         m_ctx.stop();
-        m_thread.join();
+        m_controller_thread.join();
+        m_broadcaster_thread.join();
     }
 
 private:
     boost::asio::io_context m_ctx;
-    std::thread m_thread;
+    std::thread m_controller_thread;
+    std::thread m_broadcaster_thread;
 
-    void worker();
+    void controller_worker();
+    void broadcaster_worker();
 };
