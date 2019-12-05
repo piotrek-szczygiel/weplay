@@ -34,9 +34,6 @@ void Menu::update(std::shared_ptr<AllControllersState> all_states)
     m_pitch = s1.pitch;
     m_roll = s1.roll;
     m_buttons = s1.buttons;
-
-    m_seconds += GetFrameTime();
-    SetShaderValue(m_shader, m_seconds_loc, &m_seconds, UNIFORM_FLOAT);
 }
 
 void Menu::draw()
@@ -44,9 +41,14 @@ void Menu::draw()
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
 
-    BeginShaderMode(m_shader);
-    DrawTexture(m_bg, 0, 0, WHITE);
-    EndShaderMode();
+    DrawTextureEx(m_background[m_background_frame], { 0.0F, 0.0F }, 0.0F, 2.0F, WHITE);
+    m_background_timer += GetFrameTime();
+    if (m_background_timer >= 0.07) {
+        m_background_timer -= 0.07;
+        m_background_frame += 1;
+
+        m_background_frame %= m_background.size();
+    }
 
     RlDrawText(
         str(format("Connected controllers: %d") % m_connected).c_str(), 10, 70, 16, RAYWHITE);

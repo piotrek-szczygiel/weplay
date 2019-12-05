@@ -1,4 +1,6 @@
 #include "../State.hpp"
+#include <boost/log/trivial.hpp>
+#include <filesystem>
 #include <raylib.h>
 
 namespace Menu {
@@ -19,27 +21,26 @@ public:
         : m_width { 1024 }
         , m_height { 768 }
         , m_framebuffer { LoadRenderTexture(m_width, m_height) }
-        , m_bg { LoadTexture("resources/bg.png") }
-        , m_shader { LoadShader(nullptr, "resources/wave.frag") }
     {
-        m_seconds_loc = GetShaderLocation(m_shader, "seconds");
-
-        float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
-        SetShaderValue(m_shader, GetShaderLocation(m_shader, "size"), &screenSize, UNIFORM_VEC2);
-
         m_games_images[0] = LoadTexture("resources/menu/starship.png");
         m_games_images[1] = LoadTexture("resources/menu/tetris.png");
         m_games_images[2] = LoadTexture("resources/menu/pong.png");
+
+        for (auto& p : std::filesystem::directory_iterator("resources/menu/wallpaper")) {
+            m_background.push_back(LoadTexture(p.path().string().c_str()));
+        }
     }
 
     ~Menu() override
     {
         UnloadRenderTexture(m_framebuffer);
-        UnloadTexture(m_bg);
-        UnloadShader(m_shader);
         UnloadTexture(m_games_images[0]);
         UnloadTexture(m_games_images[1]);
         UnloadTexture(m_games_images[2]);
+
+        for (auto& t : m_background) {
+            UnloadTexture(t);
+        }
     }
 
     void update(std::shared_ptr<AllControllersState> state) override;
@@ -62,11 +63,9 @@ private:
     int16_t m_roll {};
     std::array<bool, 16> m_buttons {};
 
-    Texture2D m_bg;
-    Shader m_shader;
-    int m_seconds_loc {};
-
-    float m_seconds {};
+    std::vector<Texture2D> m_background {};
+    float m_background_timer {};
+    size_t m_background_frame {};
 
     std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
     Texture m_games_images[GAMES] {};
