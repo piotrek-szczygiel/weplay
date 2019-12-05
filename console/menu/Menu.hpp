@@ -4,16 +4,23 @@
 namespace Menu {
 
 constexpr int GAMES { 3 };
-constexpr float SLIDE_SPEED { 1.5F };
+constexpr float SLIDE_SPEED { 2.0F };
+
+enum class AnimationState {
+    NONE,
+    PLAYING_LEFT,
+    PLAYING_RIGHT,
+    ENDING,
+};
 
 class Menu final : public State {
 public:
     Menu()
-        : m_framebuffer { LoadRenderTexture(1024, 768) }
+        : m_width { 1024 }
+        , m_height { 768 }
+        , m_framebuffer { LoadRenderTexture(m_width, m_height) }
         , m_bg { LoadTexture("resources/bg.png") }
         , m_shader { LoadShader(nullptr, "resources/wave.frag") }
-        , m_width { GetScreenWidth() }
-        , m_height { GetScreenHeight() }
     {
         m_seconds_loc = GetShaderLocation(m_shader, "seconds");
 
@@ -23,8 +30,6 @@ public:
         m_games_images[0] = LoadTexture("resources/menu/starship.png");
         m_games_images[1] = LoadTexture("resources/menu/tetris.png");
         m_games_images[2] = LoadTexture("resources/menu/pong.png");
-
-        m_seconds = 0.0F;
     }
 
     ~Menu() override
@@ -32,6 +37,9 @@ public:
         UnloadRenderTexture(m_framebuffer);
         UnloadTexture(m_bg);
         UnloadShader(m_shader);
+        UnloadTexture(m_games_images[0]);
+        UnloadTexture(m_games_images[1]);
+        UnloadTexture(m_games_images[2]);
     }
 
     void update(std::shared_ptr<AllControllersState> state) override;
@@ -42,7 +50,10 @@ public:
     void draw_game_image(float dt);
 
 private:
+    int m_width;
+    int m_height;
     RenderTexture2D m_framebuffer;
+
     StateChange m_state_change { StateChange::None };
 
     size_t m_connected {};
@@ -53,22 +64,23 @@ private:
 
     Texture2D m_bg;
     Shader m_shader;
-    int m_seconds_loc;
-    float m_seconds;
+    int m_seconds_loc {};
 
-    // main menu games images / animation
-    enum AnimationState { PLAYING_LEFT, PLAYING_RIGHT, ENDING, NONE };
+    float m_seconds {};
 
     std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
     Texture m_games_images[GAMES] {};
-    StateChange m_games_states[GAMES] { StateChange::Starship, StateChange ::Tetris,
-        StateChange ::Pong };
+
+    StateChange m_games_states[GAMES] {
+        StateChange::Starship,
+        StateChange ::Tetris,
+        StateChange ::Pong,
+    };
+
     int m_game_index {};
     int m_last_game_index {};
     int m_game_name_position {};
-    int m_width;
-    int m_height;
-    AnimationState m_animation_state { NONE };
+    AnimationState m_animation_state { AnimationState::NONE };
     float m_animation_timer {};
 };
 

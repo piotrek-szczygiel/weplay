@@ -14,15 +14,16 @@ void Menu::update(std::shared_ptr<AllControllersState> all_states)
     const auto& s1 = all_states->controllers[0];
     const auto& s2 = all_states->controllers[1];
 
-    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3]) && m_animation_state == NONE) {
+    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
+        && m_animation_state == AnimationState::NONE) {
         m_last_game_index = m_game_index;
         m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-        m_animation_state = PLAYING_RIGHT;
+        m_animation_state = AnimationState::PLAYING_RIGHT;
     } else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
-        && m_animation_state == NONE) {
+        && m_animation_state == AnimationState::NONE) {
         m_last_game_index = m_game_index;
         m_game_index = (m_game_index + 1) % GAMES;
-        m_animation_state = PLAYING_LEFT;
+        m_animation_state = AnimationState::PLAYING_LEFT;
     } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
         m_state_change = m_games_states[m_game_index];
     }
@@ -53,7 +54,7 @@ void Menu::draw()
     RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
     RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
 
-    draw_game_name(40);
+    draw_game_name(64);
     draw_game_image(GetFrameTime() * SLIDE_SPEED);
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
@@ -73,8 +74,6 @@ void Menu::draw()
     EndTextureMode();
 }
 
-RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
-
 void Menu::draw_game_name(int font_size)
 {
     m_game_name_position
@@ -92,7 +91,7 @@ void Menu::draw_game_image(float dt)
     int posX2 { m_width + texture_width };
     float tween_value = static_cast<float>(m_width) / 2;
 
-    if (m_animation_state == PLAYING_RIGHT) {
+    if (m_animation_state == AnimationState::PLAYING_RIGHT) {
         int x
             = m_width / 2 + static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
         posX = x - texture_width / 2;
@@ -102,9 +101,9 @@ void Menu::draw_game_image(float dt)
 
         m_animation_timer += dt;
         if (m_animation_timer >= 1.0F) {
-            m_animation_state = ENDING;
+            m_animation_state = AnimationState::ENDING;
         }
-    } else if (m_animation_state == PLAYING_LEFT) {
+    } else if (m_animation_state == AnimationState::PLAYING_LEFT) {
         int x
             = m_width / 2 - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
         posX = x - texture_width / 2;
@@ -113,13 +112,13 @@ void Menu::draw_game_image(float dt)
 
         m_animation_timer += dt;
         if (m_animation_timer >= 1.0F) {
-            m_animation_state = ENDING;
+            m_animation_state = AnimationState::ENDING;
         }
-    } else if (m_animation_state == ENDING) {
+    } else if (m_animation_state == AnimationState::ENDING) {
         posX = m_width / 2 - texture_width / 2;
-        m_animation_state = NONE;
+        m_animation_state = AnimationState::NONE;
         m_animation_timer = 0.0F;
-    } else if (m_animation_state == NONE) {
+    } else if (m_animation_state == AnimationState::NONE) {
         posX = m_width / 2 - texture_width / 2;
     }
     DrawTexture(
@@ -128,5 +127,7 @@ void Menu::draw_game_image(float dt)
 }
 
 float tween(float value, float x) { return value * (x * x * x); }
+
+RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
 
 }

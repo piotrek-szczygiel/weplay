@@ -6,7 +6,7 @@ namespace ba = boost::asio;
 void TcpSession::start()
 {
     m_deadline.async_wait(std::bind(&TcpSession::check_deadline, this));
-    m_deadline.expires_after(std::chrono::seconds(5));
+    m_deadline.expires_after(std::chrono::seconds(30));
 
     read();
 }
