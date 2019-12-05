@@ -14,15 +14,15 @@ void Menu::update(std::shared_ptr<AllControllersState> all_states)
     const auto& s1 = all_states->controllers[0];
     const auto& s2 = all_states->controllers[1];
 
-    if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0]) && m_animation_state == NONE) {
+    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3]) && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-        m_animation_state = PLAYING_LEFT;
-    } else if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
+        m_animation_state = PLAYING_RIGHT;
+    } else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
         && m_animation_state == NONE) {
         m_last_game_index = m_game_index;
         m_game_index = (m_game_index + 1) % GAMES;
-        m_animation_state = PLAYING_RIGHT;
+        m_animation_state = PLAYING_LEFT;
     } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
         m_state_change = m_games_states[m_game_index];
     }
@@ -92,7 +92,7 @@ void Menu::draw_game_image(float dt)
     int posX2 { m_width + texture_width };
     float tween_value = static_cast<float>(m_width) / 2;
 
-    if (m_animation_state == PLAYING_LEFT) {
+    if (m_animation_state == PLAYING_RIGHT) {
         int x
             = m_width / 2 + static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
         posX = x - texture_width / 2;
@@ -104,7 +104,7 @@ void Menu::draw_game_image(float dt)
         if (m_animation_timer >= 1.0F) {
             m_animation_state = ENDING;
         }
-    } else if (m_animation_state == PLAYING_RIGHT) {
+    } else if (m_animation_state == PLAYING_LEFT) {
         int x
             = m_width / 2 - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
         posX = x - texture_width / 2;
