@@ -89,43 +89,32 @@ void Menu::draw_game_image(float dt)
     int texture_width = m_games_images[m_game_index].width;
     int texture_height = m_games_images[m_game_index].height;
 
-    int posX { m_width + texture_width };
+    int posX { m_width / 2 - texture_width / 2 };
     int posX2 { m_width + texture_width };
+    int dir = 1;
     float tween_value = static_cast<float>(m_width) / 2;
 
-    if (m_animation_state == AnimationState::PLAYING_RIGHT) {
-        int x
-            = m_width / 2 + static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
-        posX = x - texture_width / 2;
+    if (m_animation_state != AnimationState::NONE) {
+        int animation_offset_x = static_cast<int>(tween(tween_value, 1.0F - m_animation_timer));
 
-        int x2 = static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
-        posX2 = x2 - texture_width;
+        if (m_animation_state == AnimationState::PLAYING_LEFT)
+            dir *= -1;
+
+        int x = m_width / 2 + animation_offset_x * dir;
+        posX = x - texture_width / 2;
+        posX2 = posX - m_width / 2 * dir - texture_width / 2 * dir;
 
         m_animation_timer += dt;
         if (m_animation_timer >= 1.0F) {
-            m_animation_state = AnimationState::ENDING;
+            m_animation_state = AnimationState::NONE;
+            m_animation_timer = 0.0F;
         }
-    } else if (m_animation_state == AnimationState::PLAYING_LEFT) {
-        int x
-            = m_width / 2 - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
-        posX = x - texture_width / 2;
-
-        posX2 = m_width - static_cast<int>(tween(tween_value, 1.0F - (m_animation_timer - 0.0F)));
-
-        m_animation_timer += dt;
-        if (m_animation_timer >= 1.0F) {
-            m_animation_state = AnimationState::ENDING;
-        }
-    } else if (m_animation_state == AnimationState::ENDING) {
-        posX = m_width / 2 - texture_width / 2;
-        m_animation_state = AnimationState::NONE;
-        m_animation_timer = 0.0F;
-    } else if (m_animation_state == AnimationState::NONE) {
-        posX = m_width / 2 - texture_width / 2;
     }
-    DrawTexture(
-        m_games_images[m_last_game_index], posX2, m_height / 2 - texture_height / 2, RAYWHITE);
-    DrawTexture(m_games_images[m_game_index], posX, m_height / 2 - texture_height / 2, RAYWHITE);
+
+    int posY = m_height / 2 - texture_height / 2;
+
+    DrawTexture(m_games_images[m_last_game_index], posX2, posY, RAYWHITE);
+    DrawTexture(m_games_images[m_game_index], posX, posY, RAYWHITE);
 }
 
 float tween(float value, float x) { return value * (x * x * x); }

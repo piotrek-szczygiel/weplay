@@ -12,7 +12,6 @@ enum class AnimationState {
     NONE,
     PLAYING_LEFT,
     PLAYING_RIGHT,
-    ENDING,
 };
 
 class Menu final : public State {
@@ -67,8 +66,8 @@ private:
     float m_background_timer {};
     size_t m_background_frame {};
 
-    std::string m_games_names[GAMES] { "Starship", "Tetris", "Pong" };
-    Texture m_games_images[GAMES] {};
+    std::array<std::string, GAMES> m_games_names { "Starship", "Tetris", "Pong" };
+    std::array<Texture, GAMES> m_games_images {};
 
     StateChange m_games_states[GAMES] {
         StateChange::Starship,
