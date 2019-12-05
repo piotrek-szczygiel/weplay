@@ -15,6 +15,7 @@ public:
     }
 
     void start();
+    bool closed() { return m_closed; }
 
 private:
     enum class NextRead {
@@ -34,7 +35,8 @@ private:
     std::shared_ptr<AllControllersState> m_state;
     size_t m_id { 0 };
 
-    bool m_valid_controller;
+    bool m_valid_controller {};
+    bool m_closed {};
 
     void read();
     void check_deadline();

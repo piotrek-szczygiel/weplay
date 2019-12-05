@@ -13,14 +13,15 @@ void TcpSession::start()
 
 void TcpSession::check_deadline()
 {
-    try {
-        if (m_deadline.expiry() <= ba::steady_timer::clock_type::now()) {
-            m_socket.close();
-            return;
-        }
+    if (m_closed) {
+        return;
+    }
+
+    if (m_deadline.expiry() <= ba::steady_timer::clock_type::now()) {
+        m_socket.close();
+        m_deadline.cancel();
+    } else {
         m_deadline.async_wait(std::bind(&TcpSession::check_deadline, this));
-    } catch (std::string err) {
-        BOOST_LOG_TRIVIAL(warning) << "Exception in deadline checker:" << err;
     }
 }
 
@@ -59,17 +60,27 @@ void TcpSession::unregister_controller()
         BOOST_LOG_TRIVIAL(info) << "Unregistering controller with id " << m_id;
         m_state->connected_num -= 1;
         m_state->connected[m_id] = false;
-        m_socket.close();
-    } else {
-        BOOST_LOG_TRIVIAL(warning) << "Unable to unregister invalid controller";
     }
+
+    m_socket.close();
+    m_deadline.cancel();
+    m_closed = true;
 }
 
 void TcpSession::read()
 {
+    if (m_closed) {
+        return;
+    }
+
     auto self { shared_from_this() };
+
     m_socket.async_read_some(ba::buffer(m_data, m_read_size),
         [this, self](boost::system::error_code ec, std::size_t length) {
+            if (m_closed) {
+                return;
+            }
+
             if (ec) {
                 if (ec.value() == 1236) {
                     BOOST_LOG_TRIVIAL(error) << "Controller " << m_id << " timed out";
@@ -80,7 +91,7 @@ void TcpSession::read()
                 return unregister_controller();
             }
 
-            m_deadline.expires_after(std::chrono::seconds(5));
+            m_deadline.expires_after(std::chrono::seconds(10));
 
             auto address = m_socket.remote_endpoint().address().to_string();
 

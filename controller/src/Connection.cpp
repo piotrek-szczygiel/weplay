@@ -60,6 +60,7 @@ void Connection::discover_console_ip()
 
 void Connection::connect_server()
 {
+    delay(1000);
     print("Connecting to %s:%u", m_ip.toString().c_str(), m_port);
     while (!m_client.connect(m_ip, m_port)) {
         print(".");

@@ -20,5 +20,7 @@ private:
     tcp::acceptor m_acceptor;
     std::shared_ptr<AllControllersState> m_state;
 
+    std::vector<std::shared_ptr<TcpSession>> m_sessions {};
+
     void do_accept();
 };

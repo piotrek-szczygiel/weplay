@@ -14,7 +14,7 @@ Connection connection {
 };
 
 void ping() { connection.ping(); }
-Ticker pinger(ping, 2000);
+Ticker keep_alive { ping, 1000 };
 
 // Switch to true if you want to calibrate a controller.
 const bool NEW_CALIBRATION { false };
@@ -49,7 +49,7 @@ void setup()
         }
     }
 
-    pinger.start();
+    keep_alive.start();
 }
 
 void loop()
@@ -69,5 +69,5 @@ void loop()
         }
     }
 
-    pinger.update();
+    keep_alive.update();
 }
