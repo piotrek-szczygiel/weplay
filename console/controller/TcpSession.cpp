@@ -3,6 +3,27 @@
 
 namespace ba = boost::asio;
 
+void TcpSession::start()
+{
+    m_deadline.async_wait(std::bind(&TcpSession::check_deadline, this));
+    m_deadline.expires_after(std::chrono::seconds(5));
+
+    read();
+}
+
+void TcpSession::check_deadline()
+{
+    try {
+        if (m_deadline.expiry() <= ba::steady_timer::clock_type::now()) {
+            m_socket.close();
+            return;
+        }
+        m_deadline.async_wait(std::bind(&TcpSession::check_deadline, this));
+    } catch (std::string err) {
+        BOOST_LOG_TRIVIAL(warning) << "Exception in deadline checker:" << err;
+    }
+}
+
 bool TcpSession::register_controller()
 {
     if (m_state->connected_num >= MAX_CONTROLLERS) {
@@ -38,6 +59,7 @@ void TcpSession::unregister_controller()
         BOOST_LOG_TRIVIAL(info) << "Unregistering controller with id " << m_id;
         m_state->connected_num -= 1;
         m_state->connected[m_id] = false;
+        m_socket.close();
     } else {
         BOOST_LOG_TRIVIAL(warning) << "Unable to unregister invalid controller";
     }
@@ -46,18 +68,21 @@ void TcpSession::unregister_controller()
 void TcpSession::read()
 {
     auto self { shared_from_this() };
-
     m_socket.async_read_some(ba::buffer(m_data, m_read_size),
         [this, self](boost::system::error_code ec, std::size_t length) {
-            auto address = m_socket.remote_endpoint().address().to_string();
-            std::string data(m_data.begin(), m_data.end());
-            BOOST_LOG_TRIVIAL(debug) << "Data from " << address << ": " << data;
-
             if (ec) {
-                BOOST_LOG_TRIVIAL(error)
-                    << "Unable to receive from " << address << ": " << ec.message();
+                if (ec.value() == 1236) {
+                    BOOST_LOG_TRIVIAL(error) << "Controller " << m_id << " timed out";
+                } else {
+                    BOOST_LOG_TRIVIAL(error) << "Unable to read from controller: " << ec.message();
+                }
+
                 return unregister_controller();
             }
+
+            m_deadline.expires_after(std::chrono::seconds(5));
+
+            auto address = m_socket.remote_endpoint().address().to_string();
 
             if (length != m_read_size) {
                 BOOST_LOG_TRIVIAL(error) << "Expected " << m_read_size << " bytes";
@@ -83,6 +108,9 @@ void TcpSession::read()
                 } else if (m_data[0] == 'G') {
                     m_next_read = NextRead::Mpu6050;
                     m_read_size = 6;
+                } else if (m_data[0] == 'P') { // Ping
+                    m_next_read = NextRead::Mode;
+                    m_read_size = 1;
                 } else {
                     BOOST_LOG_TRIVIAL(error) << "Invalid reading mode received from " << address;
                     return unregister_controller();

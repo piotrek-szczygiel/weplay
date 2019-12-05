@@ -4,6 +4,8 @@
 #include <boost/asio/io_context.hpp>
 #include <thread>
 
+namespace ba = boost::asio;
+
 constexpr size_t MAX_CONTROLLERS { 2 };
 
 struct ControllerState {
@@ -38,7 +40,7 @@ public:
     }
 
 private:
-    boost::asio::io_context m_ctx;
+    ba::io_context m_ctx;
     std::thread m_controller_thread;
     std::thread m_broadcaster_thread;
 

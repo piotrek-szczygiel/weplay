@@ -2,6 +2,7 @@
 #include "Connection.hpp"
 #include "Mpu.hpp"
 #include "Print.hpp"
+#include <Ticker.h>
 
 Buttons buttons {};
 Mpu mpu {};
@@ -11,6 +12,9 @@ Connection connection {
     "korobeiniki", // Password
     1984,          // Port
 };
+
+void ping() { connection.ping(); }
+Ticker pinger(ping, 2000);
 
 // Switch to true if you want to calibrate a controller.
 const bool NEW_CALIBRATION { false };
@@ -44,6 +48,8 @@ void setup()
             delay(500);
         }
     }
+
+    pinger.start();
 }
 
 void loop()
@@ -62,4 +68,6 @@ void loop()
             mpu.print_status();
         }
     }
+
+    pinger.update();
 }

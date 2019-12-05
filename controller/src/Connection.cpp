@@ -88,6 +88,12 @@ void Connection::send_buttons(uint16_t buttons_state)
     m_client.write(packet, sizeof(packet));
 }
 
+void Connection::ping()
+{
+    uint8_t packet[] { 'P' };
+    m_client.write(packet, sizeof(packet));
+}
+
 void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
 {
     uint8_t packet[] {
