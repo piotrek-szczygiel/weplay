@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
+    console/controller/Broadcaster.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
     console/starship/Starship.cpp
@@ -63,6 +64,8 @@ if(DOWNLOAD_RAYLIB)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/libraries)
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
