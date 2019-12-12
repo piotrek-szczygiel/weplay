@@ -1,6 +1,5 @@
 #include "Score.hpp"
 #include "Context.hpp"
-#include <boost/format.hpp>
 #include <raylib.h>
 #include <string>
 
@@ -83,8 +82,8 @@ void Score::draw(int draw_x, int draw_y)
         static_cast<float>(draw_y),
     };
 
-    RlDrawTextEx(Context::instance().font, str(boost::format("%06u") % m_score).c_str(), position,
-        12.0F, 1.0F, WHITE);
+    RlDrawTextEx(
+        Context::instance().font, TextFormat("%06u", m_score), position, 12.0F, 1.0F, WHITE);
 }
 
 }

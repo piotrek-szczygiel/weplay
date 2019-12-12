@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
-    console/controller/Controller.cpp
-    console/controller/TcpSession.cpp
-    console/controller/TcpServer.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
     console/starship/Starship.cpp
@@ -27,18 +24,6 @@ set(SOURCE_FILES
     console/Util.cpp)
 
 find_package(Threads)
-
-if(NOT WIN32)
-    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED
-                    -DBOOST_ERROR_CODE_HEADER_ONLY)
-endif()
-
-find_package(
-    Boost 1.67
-    COMPONENTS log_setup log
-    REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIRS})
 
 if(WIN32)
     set(DOWNLOAD_RAYLIB ON)
@@ -79,7 +64,7 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} raylib_static)

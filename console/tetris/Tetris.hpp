@@ -16,7 +16,7 @@ public:
 
     ~Tetris() override { UnloadRenderTexture(m_framebuffer); }
 
-    void update(std::shared_ptr<AllControllersState> state) override;
+    void update() override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }

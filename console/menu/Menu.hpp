@@ -1,5 +1,5 @@
 #include "../State.hpp"
-#include <boost/log/trivial.hpp>
+#include <array>
 #include <filesystem>
 #include <raylib.h>
 
@@ -42,7 +42,7 @@ public:
         }
     }
 
-    void update(std::shared_ptr<AllControllersState> state) override;
+    void update() override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }

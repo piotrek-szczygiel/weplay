@@ -16,7 +16,7 @@ apt update -y
 apt full-upgrade -y
 
 echo "Installing dependencies"
-apt install -y libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers \
+apt install -y libraspberrypi-dev raspberrypi-kernel-headers \
                build-essential cmake hostapd dnsmasq iptables
 
 usermod -aG video dietpi

@@ -1,6 +1,5 @@
 #include "../State.hpp"
 #include "raylib.h"
-#include <boost/math/special_functions/sign.hpp>
 #include <charconv>
 #include <cmath>
 #include <cstdio>
@@ -47,15 +46,15 @@ public:
 
     ~Pong() override = default;
 
-    void update(std::shared_ptr<AllControllersState> state) override;
+    void update() override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
 
 private:
-    enum State { PLAYING, SCORING };
+    enum class State { PLAYING, SCORING };
 
-    enum AnimationState { SHADOWING, LIGHTING, NONE };
+    enum class AnimationState { SHADOWING, LIGHTING, NONE };
 
     float m_width;
     float m_height;
@@ -72,26 +71,28 @@ private:
     int m_animation_font_size;
     int m_score_position;
 
-    RenderTexture2D m_framebuffer;
+    RenderTexture2D m_framebuffer {};
 
     StateChange m_state_change { StateChange::None };
 
-    State m_game_state { PLAYING };
+    State m_game_state { State::PLAYING };
 
-    AnimationState m_anim_state { SHADOWING };
+    AnimationState m_anim_state { AnimationState::SHADOWING };
 
     Player m_player_1 {};
     Player m_player_2 {};
 
     Ball m_ball {};
 
-    std::string m_score {};
+    const char* m_score {};
 
     std::mt19937 m_gen { std::random_device {}() };
 
     void restart();
     void add_score(int id);
-    int text_position_center(std::string& string, int font_size);
+    int text_position_center(const char* text, int font_size);
+    Vector2 compute_ball_speed(Vector2 v);
+    float tween(float value, float x);
 };
 
 }

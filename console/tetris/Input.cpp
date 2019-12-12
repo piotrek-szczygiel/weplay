@@ -1,5 +1,4 @@
 #include "Input.hpp"
-#include <boost/log/trivial.hpp>
 #include <raylib.h>
 
 namespace Tetris {

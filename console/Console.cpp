@@ -31,7 +31,7 @@ void Console::run()
             }
         }
 
-        m_current_state->update(m_controller.state);
+        m_current_state->update();
         m_current_state->draw();
 
         BeginDrawing();

@@ -1,6 +1,6 @@
 #include "Console.hpp"
-#include <boost/log/trivial.hpp>
 #include <filesystem>
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     }
 
     if (!found) {
-        BOOST_LOG_TRIVIAL(error) << "Unable to find resources directory";
+        std::cerr << "Unable to find resources directory\n";
         return 1;
     }
 
@@ -26,17 +26,17 @@ int main(int argc, char* argv[])
     constexpr int width { 1024 };
     constexpr int height { 768 };
 
-    BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
+    std::cerr << "Initializing window with resolution " << width << "x" << height << "\n";
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(width, height, "Raspberry Console");
 
-    BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";
+    std::cerr << "Initializing raspberry console\n";
     Console console;
 
-    BOOST_LOG_TRIVIAL(info) << "Running raspberry console";
+    std::cerr << "Running raspberry console\n";
     console.run();
 
-    BOOST_LOG_TRIVIAL(info) << "Closing window";
+    std::cerr << "Closing window\n";
     RlCloseWindow();
 
     return 0;

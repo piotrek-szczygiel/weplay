@@ -1,6 +1,5 @@
 #pragma once
 #include "State.hpp"
-#include "controller/Controller.hpp"
 #include "menu/Menu.hpp"
 #include <memory>
 
@@ -15,5 +14,4 @@ public:
 
 private:
     std::unique_ptr<State> m_current_state;
-    Controller m_controller;
 };

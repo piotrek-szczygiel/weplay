@@ -1,39 +1,35 @@
 #include "Menu.hpp"
-#include <boost/format.hpp>
-#include <boost/log/trivial.hpp>
 #include <ctime>
-
-using boost::str, boost::format;
 
 namespace Menu {
 
 float tween(float value, float x);
 
-void Menu::update(std::shared_ptr<AllControllersState> all_states)
+void Menu::update()
 {
-    const auto& s1 = all_states->controllers[0];
-    const auto& s2 = all_states->controllers[1];
+    // const auto& s1 = all_states->controllers[0];
+    // const auto& s2 = all_states->controllers[1];
 
-    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
-        && m_animation_state == AnimationState::NONE) {
-        m_last_game_index = m_game_index;
-        m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-        m_animation_state = AnimationState::PLAYING_RIGHT;
-    } else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
-        && m_animation_state == AnimationState::NONE) {
-        m_last_game_index = m_game_index;
-        m_game_index = (m_game_index + 1) % GAMES;
-        m_animation_state = AnimationState::PLAYING_LEFT;
-    } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
-        m_state_change = m_games_states[m_game_index];
-    }
+    // if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
+    //    && m_animation_state == AnimationState::NONE) {
+    //    m_last_game_index = m_game_index;
+    //    m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
+    //    m_animation_state = AnimationState::PLAYING_RIGHT;
+    //} else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
+    //    && m_animation_state == AnimationState::NONE) {
+    //    m_last_game_index = m_game_index;
+    //    m_game_index = (m_game_index + 1) % GAMES;
+    //    m_animation_state = AnimationState::PLAYING_LEFT;
+    //} else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
+    //    m_state_change = m_games_states[m_game_index];
+    //}
 
-    m_connected = all_states->connected_num;
+    // m_connected = all_states->connected_num;
 
-    m_yaw = s1.yaw;
-    m_pitch = s1.pitch;
-    m_roll = s1.roll;
-    m_buttons = s1.buttons;
+    // m_yaw = s1.yaw;
+    // m_pitch = s1.pitch;
+    // m_roll = s1.roll;
+    // m_buttons = s1.buttons;
 }
 
 void Menu::draw()
@@ -43,26 +39,25 @@ void Menu::draw()
 
     DrawTextureEx(m_background[m_background_frame], { 0.0F, 0.0F }, 0.0F, 2.0F, WHITE);
     m_background_timer += GetFrameTime();
-    if (m_background_timer >= 0.07) {
-        m_background_timer -= 0.07;
+    if (m_background_timer >= 0.07F) {
+        m_background_timer -= 0.07F;
         m_background_frame += 1;
 
         m_background_frame %= m_background.size();
     }
 
-    RlDrawText(
-        str(format("Connected controllers: %d") % m_connected).c_str(), 10, 70, 16, RAYWHITE);
-    RlDrawText(str(format("Yaw: %d") % m_yaw).c_str(), 10, 100, 16, RAYWHITE);
-    RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
-    RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
+    RlDrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
+    RlDrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
+    RlDrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
+    RlDrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
     draw_game_name(64);
     draw_game_image(GetFrameTime() * SLIDE_SPEED);
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
-            RlDrawText(str(format("Button %d pressed") % i).c_str(), 10,
-                200 + 30 * static_cast<int>(i), 16, RAYWHITE);
+            RlDrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
+                RAYWHITE);
         }
     }
 
@@ -81,8 +76,7 @@ void Menu::draw_game_name(int font_size)
     m_game_name_position
         = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), font_size) / 2 };
 
-    RlDrawText(str(format("%s") % m_games_names[m_game_index]).c_str(), m_game_name_position, 600,
-        font_size, RAYWHITE);
+    RlDrawText(m_games_names[m_game_index].c_str(), m_game_name_position, 600, font_size, RAYWHITE);
 }
 void Menu::draw_game_image(float dt)
 {

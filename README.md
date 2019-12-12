@@ -1,20 +1,7 @@
 # Raspberry Pi Console
 
 ## Building
-- Install [Boost](https://www.boost.org) libraries
 - Build using [CMake](https://cmake.org)
-
-## Windows
-- Download and extract [Boost](https://www.boost.org)
-- Open terminal in extracted directory
-
-```
-bootstrap
-.\b2 install
-```
-
-- Set `BOOST_ROOT` environment variable to C:\Boost
-- From Visual Studio issue "Open a local folder" and point to this repository
 
 ## Raspberry Pi
 
