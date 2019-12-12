@@ -1,6 +1,7 @@
 #include "../State.hpp"
 #include <array>
 #include <filesystem>
+#include <algorithm>
 #include <raylib.h>
 
 namespace Menu {
@@ -25,8 +26,14 @@ public:
         m_games_images[1] = LoadTexture("resources/menu/tetris.png");
         m_games_images[2] = LoadTexture("resources/menu/pong.png");
 
+        std::vector<std::string> background {};
         for (auto& p : std::filesystem::directory_iterator("resources/menu/wallpaper")) {
-            m_background.push_back(LoadTexture(p.path().string().c_str()));
+            background.push_back(p.path().string());
+        }
+
+        std::sort(background.begin(), background.end());
+        for(auto& p : background) {
+            m_background.push_back(LoadTexture(p.c_str()));
         }
     }
 
