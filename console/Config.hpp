@@ -14,23 +14,23 @@ public:
 
     bool load() { return m_reader.ParseError() == 0; }
 
-    static std::string string(std::string section, std::string name, std::string default = {})
+    static std::string string(std::string section, std::string name, std::string default_value = {})
     {
-        return instance().m_reader.Get(section, name, default);
+        return instance().m_reader.Get(section, name, default_value);
     }
 
-    static int integer(std::string section, std::string name, int default = 0)
+    static int integer(std::string section, std::string name, int default_value = 0)
     {
-        return instance().m_reader.GetInteger(section, name, default);
+        return instance().m_reader.GetInteger(section, name, default_value);
     }
 
-    static int boolean(std::string section, std::string name, bool default = false)
+    static int boolean(std::string section, std::string name, bool default_value = false)
     {
-        return instance().m_reader.GetBoolean(section, name, default);
+        return instance().m_reader.GetBoolean(section, name, default_value);
     }
 
 private:
-    Config() { }
+    Config() {}
 
     INIReader m_reader { "config.ini" };
 };

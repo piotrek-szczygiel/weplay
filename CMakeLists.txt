@@ -70,9 +70,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/librari
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} raylib_static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static)
 else()
-    target_link_libraries(${PROJECT_NAME} raylib stdc++fs)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 endif()
 
 # Link against winmm.lib on Windows

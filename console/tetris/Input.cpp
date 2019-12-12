@@ -1,4 +1,5 @@
 #include "Input.hpp"
+#include <algorithm>
 #include <raylib.h>
 
 namespace Tetris {

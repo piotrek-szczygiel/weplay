@@ -1,5 +1,6 @@
 #include "Pong.hpp"
 #include "../Util.hpp"
+#include <cmath>
 
 namespace Pong {
 
@@ -157,7 +158,7 @@ void Pong::restart()
     };
 
     float modAngle = random(-PI / 8.0F, PI / 8.0F, m_gen);
-    float dirX = signbit(m_ball.speed.x) ? -1.0F : 1.0F;
+    float dirX = std::signbit(m_ball.speed.x) ? -1.0F : 1.0F;
 
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
         { compute_ball_speed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
@@ -183,8 +184,8 @@ int Pong::text_position_center(const char* text, int font_size)
 
 Vector2 Pong::compute_ball_speed(Vector2 v)
 {
-    float vXDir = signbit(v.x) ? -1.0F : 1.0F;
-    float vYDir = signbit(v.y) ? -1.0F : 1.0F;
+    float vXDir = std::signbit(v.x) ? -1.0F : 1.0F;
+    float vYDir = std::signbit(v.y) ? -1.0F : 1.0F;
     float length = sqrt(v.x * v.x + v.y * v.y);
     v = { v.x / length, v.y / length };
 
