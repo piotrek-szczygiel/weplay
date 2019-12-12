@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
-    console/controller/Broadcaster.cpp
+    console/controller/Implementation.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
     console/starship/Starship.cpp
@@ -67,7 +67,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/libraries)
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} raylib_static)
@@ -96,5 +96,5 @@ if(WIN32)
     endmacro(get_win32_winnt)
 
     get_win32_winnt(ver)
-    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX)
 endif(WIN32)

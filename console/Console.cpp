@@ -37,11 +37,11 @@ void Console::run()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        auto width { static_cast<float>(m_current_state->framebuffer().texture.width) };
-        auto height { static_cast<float>(m_current_state->framebuffer().texture.height) };
-        auto screen_width { static_cast<float>(GetScreenWidth()) };
-        auto screen_height { static_cast<float>(GetScreenHeight()) };
-        float scale { std::min(screen_width / width, screen_height / height) };
+        auto width = static_cast<float>(m_current_state->framebuffer().texture.width);
+        auto height = static_cast<float>(m_current_state->framebuffer().texture.height);
+        auto screen_width = static_cast<float>(GetScreenWidth());
+        auto screen_height = static_cast<float>(GetScreenHeight());
+        float scale = std::min(screen_width / width, screen_height / height);
 
         RlRectangle source {
             0.0F,

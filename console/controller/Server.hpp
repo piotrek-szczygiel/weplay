@@ -1,17 +1,16 @@
 #pragma once
 #include <iostream>
-#include <thread>
 
 namespace Controller {
 
-class Broadcaster {
+class Server {
 public:
-    Broadcaster()
-        : m_thread { std::thread(&Broadcaster::start, this) }
+    Server()
+        : m_thread { std::thread(&Server::start, this) }
     {
     }
 
-    ~Broadcaster()
+    ~Server()
     {
         m_running = false;
         m_thread.join();
