@@ -30,7 +30,7 @@ public:
     }
 
 private:
-    Config() {}
+    Config() { }
 
     INIReader m_reader { "config.ini" };
 };

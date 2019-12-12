@@ -1,7 +1,7 @@
 #include "../State.hpp"
+#include <algorithm>
 #include <array>
 #include <filesystem>
-#include <algorithm>
 #include <raylib.h>
 
 namespace Menu {
@@ -32,7 +32,7 @@ public:
         }
 
         std::sort(background.begin(), background.end());
-        for(auto& p : background) {
+        for (auto& p : background) {
             m_background.push_back(LoadTexture(p.c_str()));
         }
     }
