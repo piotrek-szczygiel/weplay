@@ -1,5 +1,6 @@
 #pragma once
 #include "State.hpp"
+#include "controller/Broadcaster.hpp"
 #include "menu/Menu.hpp"
 #include <memory>
 
@@ -14,4 +15,6 @@ public:
 
 private:
     std::unique_ptr<State> m_current_state;
+
+    Controller::Broadcaster m_broadcaster;
 };
