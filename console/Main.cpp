@@ -1,10 +1,11 @@
+#include "Config.hpp"
 #include "Console.hpp"
 #include <filesystem>
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
-    // Travel upwards to directory containing resources
+    // Travel upwards to the directory containing resources
     constexpr int max_depth { 5 };
     bool found = false;
     for (int i = 0; i < max_depth; ++i) {
@@ -21,22 +22,38 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    if (!Config::instance().load()) {
+        std::cerr << "Unable to load configuration file\n";
+        return 1;
+    }
+
     SetTraceLogLevel(LOG_WARNING);
 
-    constexpr int width { 1024 };
-    constexpr int height { 768 };
-
+    int width = Config::integer("window", "width");
+    int height = Config::integer("window", "height");
     std::cerr << "Initializing window with resolution " << width << "x" << height << "\n";
-    SetConfigFlags(FLAG_VSYNC_HINT);
+
+    unsigned int flags = 0;
+    if (Config::boolean("window", "fullscreen")) {
+        flags |= FLAG_FULLSCREEN_MODE;
+        std::cerr << "Enabling fullscreen\n";
+    }
+
+    if (Config::boolean("window", "vsync")) {
+        flags |= FLAG_VSYNC_HINT;
+        std::cerr << "Enabling vsync\n";
+    }
+    SetConfigFlags(flags);
+
     InitWindow(width, height, "Raspberry Console");
 
-    std::cerr << "Initializing raspberry console\n";
+    std::cerr << "Initializing console\n";
     Console console;
 
-    std::cerr << "Running raspberry console\n";
+    std::cerr << "Running console\n";
     console.run();
 
-    std::cerr << "Closing window\n";
+    std::cerr << "Exiting\n";
     RlCloseWindow();
 
     return 0;

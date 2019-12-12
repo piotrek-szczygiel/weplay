@@ -1,4 +1,5 @@
 #include "Broadcaster.hpp"
+#include "../Config.hpp"
 #include <cluon.hpp>
 #include <inih.h>
 #include <memory>
@@ -10,18 +11,12 @@ namespace Controller {
 
 void Broadcaster::start()
 {
-    INIReader reader { "config.ini" };
-    if (reader.ParseError() != 0) {
-        std::cerr << "Unable to load config.ini\n";
-        return;
-    }
-
     std::vector<std::unique_ptr<cluon::UDPSender>> senders {};
 
-    std::stringstream ss(reader.Get("config", "broadcast", "127.0.0.1"));
+    std::stringstream ss(Config::string("network", "broadcast", "127.0.0.1"));
     std::string address;
     while (std::getline(ss, address, ' ')) {
-        std::cerr << "Creating broadcaster on " << address << "\n";
+        std::cout << "Creating broadcaster on " << address << "\n";
         senders.push_back(std::make_unique<cluon::UDPSender>(address, 1984));
     }
 
