@@ -1,11 +1,13 @@
 #include "Config.hpp"
 #include "Console.hpp"
 #include <filesystem>
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 int main(int argc, char* argv[])
 {
-    // Travel upwards to the directory containing resources
+    spdlog::set_level(spdlog::level::trace);
+
+    spdlog::debug("Looking for root directory");
     constexpr int max_depth { 5 };
     bool found = false;
     for (int i = 0; i < max_depth; ++i) {
@@ -18,42 +20,45 @@ int main(int argc, char* argv[])
     }
 
     if (!found) {
-        std::cerr << "Unable to find resources directory\n";
+        spdlog::error("Unable to find resources directory");
         return 1;
     }
+
+    spdlog::debug("Changed directory to root: {}", std::filesystem::current_path().string());
 
     if (!Config::instance().load()) {
-        std::cerr << "Unable to load configuration file\n";
+        spdlog::error("Unable to load configuration file");
         return 1;
     }
 
+    // raylib log level
     SetTraceLogLevel(LOG_WARNING);
 
     int width = Config::integer("window", "width");
     int height = Config::integer("window", "height");
-    std::cerr << "Initializing window with resolution " << width << "x" << height << "\n";
+    spdlog::info("Initializing window with resolution {}x{}", width, height);
 
     unsigned int flags = 0;
     if (Config::boolean("window", "fullscreen")) {
         flags |= FLAG_FULLSCREEN_MODE;
-        std::cerr << "Enabling fullscreen\n";
+        spdlog::info("Enabling fullscreen");
     }
 
     if (Config::boolean("window", "vsync")) {
         flags |= FLAG_VSYNC_HINT;
-        std::cerr << "Enabling vsync\n";
+        spdlog::info("Enabling vsync");
     }
     SetConfigFlags(flags);
 
     InitWindow(width, height, "Raspberry Console");
 
-    std::cerr << "Initializing console\n";
+    spdlog::info("Initializing console");
     Console console;
 
-    std::cerr << "Running console\n";
+    spdlog::info("Running console");
     console.run();
 
-    std::cerr << "Exiting\n";
+    spdlog::info("Exiting");
     RlCloseWindow();
 
     return 0;

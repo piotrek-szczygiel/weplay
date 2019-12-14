@@ -161,7 +161,7 @@ void Pong::restart()
     float dirX = std::signbit(m_ball.speed.x) ? -1.0F : 1.0F;
 
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
-        { compute_ball_speed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
+        { compute_ball_speed(Vector2 { cosf(modAngle) * dirX * -1.0F, sinf(modAngle) }) } };
 
     m_score = TextFormat("%d : %d", m_player_1.score, m_player_2.score);
     m_score_position = text_position_center(m_score, m_font_size);

@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
-    console/controller/Implementation.cpp
+    console/controller/Broadcaster.cpp
+    console/controller/Server.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
     console/starship/Starship.cpp
