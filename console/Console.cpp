@@ -32,7 +32,9 @@ void Console::run()
         }
         }
 
-        m_current_state->update();
+        const auto& controllers = m_server.get_controllers().get_states();
+
+        m_current_state->update(controllers);
         m_current_state->draw();
 
         BeginDrawing();

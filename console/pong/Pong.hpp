@@ -35,8 +35,7 @@ public:
         m_racket_width = 0.1F * m_racket_height;
         m_ball_radius = 0.65F * m_racket_width;
         m_player_speed_factor = 0.75F * m_height;
-        m_ball_speed_factor
-            = 0.65F * sqrt(m_width * m_width + m_height * m_width); // should be 0.65
+        m_ball_speed_factor = 0.65F * sqrtf(m_width * m_width + m_height * m_width);
         m_collision_shift = 0.5F * m_ball_radius;
         m_font_size = static_cast<int>(0.05F * m_height);
         m_animation_font_size = static_cast<int>(0.15F * m_height);
@@ -46,7 +45,7 @@ public:
 
     ~Pong() override = default;
 
-    void update() override;
+    void update(const std::vector<ControllerState>& controllers) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
@@ -91,8 +90,9 @@ private:
     void restart();
     void add_score(int id);
     int text_position_center(const char* text, int font_size);
-    Vector2 compute_ball_speed(Vector2 v);
-    float tween(float value, float x);
+
+    static Vector2 compute_ball_speed(Vector2 v);
+    static float tween(float value, float x);
 };
 
 }

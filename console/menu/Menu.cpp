@@ -5,31 +5,32 @@ namespace Menu {
 
 float tween(float value, float x);
 
-void Menu::update()
+void Menu::update(const std::vector<ControllerState>& controllers)
 {
-    // const auto& s1 = all_states->controllers[0];
-    // const auto& s2 = all_states->controllers[1];
+    const auto& s1 = controllers[0];
+    const auto& s2 = controllers[1];
 
-    // if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
-    //    && m_animation_state == AnimationState::NONE) {
-    //    m_last_game_index = m_game_index;
-    //    m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-    //    m_animation_state = AnimationState::PLAYING_RIGHT;
-    //} else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
-    //    && m_animation_state == AnimationState::NONE) {
-    //    m_last_game_index = m_game_index;
-    //    m_game_index = (m_game_index + 1) % GAMES;
-    //    m_animation_state = AnimationState::PLAYING_LEFT;
-    //} else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
-    //    m_state_change = m_games_states[m_game_index];
-    //}
+    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
+        && m_animation_state == AnimationState::NONE) {
+        m_last_game_index = m_game_index;
+        m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
+        m_animation_state = AnimationState::PLAYING_RIGHT;
+    } else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
+        && m_animation_state == AnimationState::NONE) {
+        m_last_game_index = m_game_index;
+        m_game_index = (m_game_index + 1) % GAMES;
+        m_animation_state = AnimationState::PLAYING_LEFT;
+    } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
+        m_state_change = m_games_states[m_game_index];
+    }
 
-    // m_connected = all_states->connected_num;
+    m_connected
+        = std::count_if(controllers.begin(), controllers.end(), [](auto s) { return s.connected; });
 
-    // m_yaw = s1.yaw;
-    // m_pitch = s1.pitch;
-    // m_roll = s1.roll;
-    // m_buttons = s1.buttons;
+    m_yaw = s1.yaw;
+    m_pitch = s1.pitch;
+    m_roll = s1.roll;
+    m_buttons = s1.buttons;
 }
 
 void Menu::draw()

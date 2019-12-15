@@ -3,25 +3,22 @@
 
 namespace Starship {
 
-void Starship::update()
+void Starship::update(const std::vector<ControllerState>& controllers)
 {
-    // auto& state = all_states->controllers[0];
-    // if (!all_states->connected[0] && all_states->connected[1]) {
-    //    state = all_states->controllers[1];
-    //}
+    auto& state = controllers[0];
 
-    // if (state.buttons[8]) {
-    //    m_state_change = StateChange::Menu;
-    //    return;
-    //}
+    if (state.buttons[8]) {
+        m_state_change = StateChange::Menu;
+        return;
+    }
 
-    // m_ship.set_controls({
-    //    state.buttons[0],
-    //    state.buttons[1],
-    //    state.buttons[4],
-    //    state.buttons[5],
-    //    clamp(static_cast<float>(state.roll) / 45.0F, -1.0F, 1.0F),
-    //});
+    m_ship.set_controls({
+        state.buttons[0],
+        state.buttons[1],
+        state.buttons[4],
+        state.buttons[5],
+        clamp(static_cast<float>(state.roll) / 45.0F, -1.0F, 1.0F),
+    });
 
     float dt = GetFrameTime();
     m_ship.update(dt, m_map_size, m_columns);

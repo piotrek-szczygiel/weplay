@@ -4,101 +4,104 @@
 
 namespace Pong {
 
-void Pong::update()
+void Pong::update(const std::vector<ControllerState>& controllers)
 {
-    // const auto& s1 = all_states->controllers[0];
-    // const auto& s2 = all_states->controllers[1];
+    const auto& s1 = controllers[0];
+    const auto& s2 = controllers[1];
 
-    // if (IsKeyPressed(KEY_Q) || s1.buttons[8] || s2.buttons[8]) {
-    //    m_state_change = StateChange::Menu;
-    //    return;
-    //}
-
-    // if (m_game_state == PLAYING) {
-    //    if (IsKeyDown(KEY_W) || s1.buttons[0]) {
-    //        m_player_1.speed.y = -1.0F;
-    //    } else if (IsKeyDown(KEY_S) || s1.buttons[1]) {
-    //        m_player_1.speed.y = 1.0F;
-    //    } else {
-    //        m_player_1.speed.y = 0.0F;
-    //    }
-
-    //    if (IsKeyDown(KEY_UP) || s2.buttons[0]) {
-    //        m_player_2.speed.y = -1.0F;
-    //    } else if (IsKeyDown(KEY_DOWN) || s2.buttons[1]) {
-    //        m_player_2.speed.y = 1.0F;
-    //    } else {
-    //        m_player_2.speed.y = 0.0F;
-    //    }
-
-    float dt = GetFrameTime();
-
-    m_player_1.position.y += m_player_1.speed.y * m_player_speed_factor * dt;
-    m_player_2.position.y += m_player_2.speed.y * m_player_speed_factor * dt;
-
-    m_player_1.position.y = clamp(m_player_1.position.y, 10.0F, m_height - m_racket_height - 10.0F);
-    m_player_2.position.y = clamp(m_player_2.position.y, 10.0F, m_height - m_racket_height - 10.0F);
-
-    if (m_ball.position.y < m_ball_radius) {
-        m_ball.speed.y = -m_ball.speed.y;
-        m_ball.position.y = m_ball_radius;
-    } else if (m_ball.position.y > m_height - m_ball_radius) {
-        m_ball.speed.y = -m_ball.speed.y;
-        m_ball.position.y = m_height - m_ball_radius;
+    if (IsKeyPressed(KEY_Q) || s1.buttons[8] || s2.buttons[8]) {
+        m_state_change = StateChange::Menu;
+        return;
     }
 
-    Vector2 center { m_ball.position.x, m_ball.position.y };
+    if (m_game_state == State::PLAYING) {
+        if (IsKeyDown(KEY_W) || s1.buttons[0]) {
+            m_player_1.speed.y = -1.0F;
+        } else if (IsKeyDown(KEY_S) || s1.buttons[1]) {
+            m_player_1.speed.y = 1.0F;
+        } else {
+            m_player_1.speed.y = 0.0F;
+        }
 
-    Rectangle rect_1 {
-        m_player_1.position.x,
-        m_player_1.position.y - m_collision_shift,
-        m_racket_width,
-        m_racket_height + m_collision_shift,
-    };
-    Rectangle rect_2 {
-        m_player_2.position.x,
-        m_player_2.position.y - m_collision_shift,
-        m_racket_width,
-        m_racket_height + m_collision_shift,
-    };
+        if (IsKeyDown(KEY_UP) || s2.buttons[0]) {
+            m_player_2.speed.y = -1.0F;
+        } else if (IsKeyDown(KEY_DOWN) || s2.buttons[1]) {
+            m_player_2.speed.y = 1.0F;
+        } else {
+            m_player_2.speed.y = 0.0F;
+        }
 
-    if (CheckCollisionCircleRec(center, m_ball_radius, rect_1)) {
-        m_ball.speed = compute_ball_speed(
-            { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
-        m_ball.position.x = m_player_1.position.x + m_racket_width + m_ball_radius + 1;
+        float dt = GetFrameTime();
+
+        m_player_1.position.y += m_player_1.speed.y * m_player_speed_factor * dt;
+        m_player_2.position.y += m_player_2.speed.y * m_player_speed_factor * dt;
+
+        m_player_1.position.y
+            = clamp(m_player_1.position.y, 10.0F, m_height - m_racket_height - 10.0F);
+        m_player_2.position.y
+            = clamp(m_player_2.position.y, 10.0F, m_height - m_racket_height - 10.0F);
+
+        if (m_ball.position.y < m_ball_radius) {
+            m_ball.speed.y = -m_ball.speed.y;
+            m_ball.position.y = m_ball_radius;
+        } else if (m_ball.position.y > m_height - m_ball_radius) {
+            m_ball.speed.y = -m_ball.speed.y;
+            m_ball.position.y = m_height - m_ball_radius;
+        }
+
+        Vector2 center { m_ball.position.x, m_ball.position.y };
+
+        Rectangle rect_1 {
+            m_player_1.position.x,
+            m_player_1.position.y - m_collision_shift,
+            m_racket_width,
+            m_racket_height + m_collision_shift,
+        };
+        Rectangle rect_2 {
+            m_player_2.position.x,
+            m_player_2.position.y - m_collision_shift,
+            m_racket_width,
+            m_racket_height + m_collision_shift,
+        };
+
+        if (CheckCollisionCircleRec(center, m_ball_radius, rect_1)) {
+            m_ball.speed = compute_ball_speed(
+                { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
+            m_ball.position.x = m_player_1.position.x + m_racket_width + m_ball_radius + 1;
+        }
+
+        if (CheckCollisionCircleRec(center, m_ball_radius, rect_2)) {
+            m_ball.speed = compute_ball_speed(
+                { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
+            m_ball.position.x = m_player_2.position.x - m_ball_radius - 1;
+        }
+
+        m_ball.position.x += m_ball.speed.x * m_ball_speed_factor * dt;
+        m_ball.position.y += m_ball.speed.y * m_ball_speed_factor * dt;
+
+        if (m_ball.position.x < 0)
+            add_score(1);
+        else if (m_ball.position.x > m_width)
+            add_score(0);
+
+        //} else if (m_game_state == SCORING) {
+        if (m_animation_timer >= 1.8F) {
+            m_game_state = State::PLAYING;
+            m_anim_state = AnimationState::SHADOWING;
+            m_animation_timer = 0.0F;
+            m_animation_timer_shift = 0.0F;
+        } else if (m_animation_timer >= 1.5F) {
+            m_anim_state = AnimationState::NONE;
+        } else if (m_animation_timer >= 1.0F) {
+            m_anim_state = AnimationState::SHADOWING;
+            m_animation_timer_shift = 1.0F;
+        } else if (m_animation_timer >= 0.5F) {
+            m_anim_state = AnimationState::LIGHTING;
+            m_animation_timer_shift = 0.5F;
+            restart();
+        }
+        m_animation_timer += dt;
     }
-
-    if (CheckCollisionCircleRec(center, m_ball_radius, rect_2)) {
-        m_ball.speed = compute_ball_speed(
-            { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
-        m_ball.position.x = m_player_2.position.x - m_ball_radius - 1;
-    }
-
-    m_ball.position.x += m_ball.speed.x * m_ball_speed_factor * dt;
-    m_ball.position.y += m_ball.speed.y * m_ball_speed_factor * dt;
-
-    if (m_ball.position.x < 0)
-        add_score(1);
-    else if (m_ball.position.x > m_width)
-        add_score(0);
-
-    //} else if (m_game_state == SCORING) {
-    if (m_animation_timer >= 1.8F) {
-        m_game_state = State::PLAYING;
-        m_anim_state = AnimationState::SHADOWING;
-        m_animation_timer = 0.0F;
-        m_animation_timer_shift = 0.0F;
-    } else if (m_animation_timer >= 1.5F) {
-        m_anim_state = AnimationState::NONE;
-    } else if (m_animation_timer >= 1.0F) {
-        m_anim_state = AnimationState::SHADOWING;
-        m_animation_timer_shift = 1.0F;
-    } else if (m_animation_timer >= 0.5F) {
-        m_anim_state = AnimationState::LIGHTING;
-        m_animation_timer_shift = 0.5F;
-        restart();
-    }
-    m_animation_timer += dt;
 }
 
 void Pong::draw()
@@ -186,12 +189,12 @@ Vector2 Pong::compute_ball_speed(Vector2 v)
 {
     float vXDir = std::signbit(v.x) ? -1.0F : 1.0F;
     float vYDir = std::signbit(v.y) ? -1.0F : 1.0F;
-    float length = sqrt(v.x * v.x + v.y * v.y);
+    float length = sqrtf(v.x * v.x + v.y * v.y);
     v = { v.x / length, v.y / length };
 
-    if (abs(v.y) >= 0.90F) {
+    if (fabsf(v.y) >= 0.90F) {
         v.y = 0.90F * vYDir;
-        v.x = sqrt(1 - v.y * v.y) * vXDir;
+        v.x = sqrtf(1 - v.y * v.y) * vXDir;
     }
 
     return v;
