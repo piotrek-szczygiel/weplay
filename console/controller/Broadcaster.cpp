@@ -31,7 +31,7 @@ void Broadcaster::start()
 
     while (m_running) {
         for (auto& socket : sockets) {
-            if (!socket.send("@")) {
+            if (!socket.send("raspberry-console")) {
                 spdlog::error("Unable to send broadcast on {}: {}", socket.info(), strerror(errno));
             }
         }

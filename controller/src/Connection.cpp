@@ -11,7 +11,7 @@ void Connection::connect()
         discover_console_ip();
     }
 
-    if (!m_client.connected()) {
+    if (!m_connected) {
         connect_server();
     }
 }
@@ -32,37 +32,10 @@ void Connection::connect_wifi()
 
 void Connection::discover_console_ip()
 {
-    println("Discovering console on udp port %u...", m_port);
+    print("Discovering console on udp port %u", m_port);
     m_udp.begin(m_port);
 
-    while (true) {
-        int size = m_udp.parsePacket();
-        if (size > 0) {
-            int len = m_udp.read(m_udp_packet, MAX_UDP_PACKET_SIZE);
-
-            if (len > 0 && len < MAX_UDP_PACKET_SIZE) {
-                m_udp_packet[static_cast<size_t>(len)] = 0;
-
-                if (strcmp("raspberry-console", m_udp_packet) == 0) {
-                    println("Found console at %s", m_ip.toString().c_str());
-                    m_ip = m_udp.remoteIP();
-                    m_discovered = true;
-                    break;
-                } else {
-                    println("Unknown packet received: %s", m_udp_packet);
-                }
-            } else {
-                println("Received UDP packet with invalid size: %d", len);
-            }
-        }
-    }
-}
-
-void Connection::connect_server()
-{
-    delay(1000);
-    print("Connecting to %s:%u", m_ip.toString().c_str(), m_port);
-    while (!m_client.connect(m_ip, m_port)) {
+    while (!m_discovered) {
         print(".");
         delay(500);
 
@@ -70,35 +43,109 @@ void Connection::connect_server()
             println();
             connect_wifi();
         }
+
+        int len = m_udp.parsePacket();
+        if (len > 0) {
+            len = m_udp.read(m_udp_packet, MAX_UDP_PACKET_SIZE);
+
+            if (len > 0 && len < MAX_UDP_PACKET_SIZE) {
+                m_udp_packet[static_cast<size_t>(len)] = 0;
+
+                if (strcmp("raspberry-console", m_udp_packet) == 0) {
+                    m_ip = m_udp.remoteIP();
+                    m_discovered = true;
+                    break;
+                } else {
+                    println();
+                    println("Unknown packet received: %s", m_udp_packet);
+                }
+            } else {
+                println();
+                println("Received UDP packet with invalid size: %d", len);
+            }
+        }
+    }
+
+    println();
+    println("Found console at %s", m_ip.toString().c_str());
+}
+
+void Connection::connect_server()
+{
+    m_udp.beginPacket(m_ip, m_port);
+    m_udp.write("ping");
+    m_udp.endPacket();
+
+    print("Connecting to %s:%u", m_ip.toString().c_str(), m_port);
+    while (!m_connected) {
+        print(".");
+        delay(500);
+
+        if (WiFi.status() != WL_CONNECTED) {
+            println();
+            connect_wifi();
+        }
+
+        int len = m_udp.parsePacket();
+        if (len > 0) {
+            len = m_udp.read(m_udp_packet, MAX_UDP_PACKET_SIZE);
+
+            if (len > 0 && len < MAX_UDP_PACKET_SIZE) {
+                m_udp_packet[static_cast<size_t>(len)] = 0;
+                if (strcmp("pong", m_udp_packet) == 0) {
+                    m_connected = true;
+                    m_ip = m_udp.remoteIP();
+                    break;
+                }
+            }
+        }
     }
 
     println();
     println("Connected to %s:%u", m_ip.toString().c_str(), m_port);
-    m_client.setNoDelay(true);
-    m_client.write('%');
-}
-
-void Connection::send_buttons(uint16_t buttons_state)
-{
-    uint8_t packet[] {
-        'B',
-        static_cast<uint8_t>((buttons_state & 0x00ff)),
-        static_cast<uint8_t>((buttons_state & 0xff00) >> 8),
-    };
-
-    m_client.write(packet, sizeof(packet));
+    m_ping = 0;
 }
 
 void Connection::ping()
 {
-    uint8_t packet[] { 'P' };
-    m_client.write(packet, sizeof(packet));
+    if (m_connected) {
+        m_udp.beginPacket(m_ip, m_port);
+        m_udp.write("ping");
+        m_udp.endPacket();
+        ++m_ping;
+
+        println("Sent ping (%d)", m_ping);
+
+        if (m_ping >= 5) {
+            println("Connection with console timed out!");
+            m_discovered = false;
+            m_connected = false;
+        }
+    }
 }
 
-void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
+void Connection::pong()
+{
+    if (m_connected) {
+        int len = m_udp.parsePacket();
+        if (len > 0) {
+            len = m_udp.read(m_udp_packet, MAX_UDP_PACKET_SIZE);
+            if (len > 0 && len < MAX_UDP_PACKET_SIZE) {
+                m_udp_packet[static_cast<size_t>(len)] = 0;
+                if (strcmp("pong", m_udp_packet) == 0) {
+                    m_ping = 0;
+                    println("Received pong (%d)", m_ping);
+                }
+            }
+        }
+    }
+}
+
+void Connection::update(uint16_t buttons_state, int16_t yaw, int16_t pitch, int16_t roll)
 {
     uint8_t packet[] {
-        'G',
+        static_cast<uint8_t>((buttons_state & 0x00ff)),
+        static_cast<uint8_t>((buttons_state & 0xff00) >> 8),
         static_cast<uint8_t>((yaw & 0x00ff)),
         static_cast<uint8_t>((yaw & 0xff00) >> 8),
         static_cast<uint8_t>((pitch & 0x00ff)),
@@ -107,5 +154,7 @@ void Connection::send_ypr(int16_t yaw, int16_t pitch, int16_t roll)
         static_cast<uint8_t>((roll & 0xff00) >> 8),
     };
 
-    m_client.write(packet, sizeof(packet));
+    m_udp.beginPacket(m_ip, m_port);
+    m_udp.write(packet, sizeof(packet));
+    m_udp.endPacket();
 }

@@ -17,6 +17,11 @@ public:
         m_thread.join();
     }
 
+    std::array<bool, 16> buttons {};
+    int16_t yaw;
+    int16_t pitch;
+    int16_t roll;
+
 private:
     std::thread m_thread;
     bool m_running { true };

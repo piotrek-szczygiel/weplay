@@ -44,10 +44,11 @@ std::vector<LocalAddress> get_local_addresses()
             }
 
             if (strcmp(host, "127.0.0.1") == 0) {
-                spdlog::debug("Ignoring loopback interface");
+                spdlog::trace("Ignoring loopback interface");
                 continue;
             }
 
+            spdlog::trace("Queried local interface: {} {}", host, mask);
             result.push_back({ inet_addr(host), inet_addr(mask) });
         }
     }
@@ -90,7 +91,7 @@ bool BroadcastSocket::send(const std::string& data)
     int sent = sendto(m_socket, data.c_str(), data.size(), 0,
         reinterpret_cast<const sockaddr*>(&m_addr), sizeof(m_addr));
 
-    return sent == 1;
+    return sent == data.size();
 }
 
 bool ServerSocket::bind()
@@ -115,6 +116,7 @@ bool ServerSocket::bind()
     }
 
     m_ignore = get_local_addresses();
+    m_ignore.push_back({ htonl(INADDR_LOOPBACK), htonl(0xFF000000) });
     return true;
 }
 
@@ -124,7 +126,7 @@ ReceiveResult ServerSocket::receive()
 
     sockaddr_in addr {};
     int addr_len = sizeof(addr);
-    char buffer[1024];
+    uint8_t buffer[1024];
 
     int size = recvfrom(m_socket, buffer, sizeof(buffer) - 1, MSG_WAITALL,
         reinterpret_cast<sockaddr*>(&addr), reinterpret_cast<socklen_t*>(&addr_len));
@@ -134,12 +136,10 @@ ReceiveResult ServerSocket::receive()
         return result;
     }
 
-    buffer[size] = '\0';
-
     result.success = true;
-    result.address = addr.sin_addr.s_addr;
-    result.port = addr.sin_port;
-    result.data = std::string(buffer);
+    result.addr = addr;
+    result.data = buffer;
+    result.size = size;
 
     char addr_str[16];
     inet_ntop(AF_INET, &addr.sin_addr.s_addr, addr_str, sizeof(addr_str));
@@ -147,13 +147,21 @@ ReceiveResult ServerSocket::receive()
 
     // Ignore local addresses
     for (auto& i : m_ignore) {
-        if (i.address == result.address) {
+        if (i.address == result.addr.sin_addr.s_addr) {
             result.ignore = true;
             break;
         }
     }
 
     return result;
+}
+
+bool ServerSocket::send(socket_address addr, const std::string& data)
+{
+    int sent = sendto(m_socket, data.c_str(), data.size(), 0,
+        reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
+
+    return sent == data.size();
 }
 
 #endif // linux

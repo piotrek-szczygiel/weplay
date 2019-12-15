@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[])
 {
-    spdlog::set_level(spdlog::level::trace);
+    spdlog::set_level(spdlog::level::debug);
 
     spdlog::debug("Looking for root directory");
     constexpr int max_depth { 5 };

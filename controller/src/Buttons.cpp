@@ -14,7 +14,7 @@ void Buttons::initialize()
     update();
 }
 
-bool Buttons::update()
+void Buttons::update()
 {
     m_state = {};
     for (uint8_t i = 0; i < 16; ++i) {
@@ -26,13 +26,6 @@ bool Buttons::update()
             m_state |= m_mcp.digitalRead(i) << i;
         }
     }
-
-    if (m_state != m_last_state) {
-        m_last_state = m_state;
-        return true;
-    }
-
-    return false;
 }
 
 void Buttons::print_status() const

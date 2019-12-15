@@ -13,10 +13,11 @@
 struct ReceiveResult {
     bool success;
     bool ignore;
-    uint32_t address;
-    uint16_t port;
+    socket_address addr;
     std::string repr;
-    std::string data;
+
+    uint8_t* data;
+    int size;
 };
 
 struct LocalAddress {
@@ -59,6 +60,7 @@ public:
     bool bind();
 
     ReceiveResult receive();
+    bool send(socket_address addr, const std::string& data);
 
 private:
     uint16_t m_port;
