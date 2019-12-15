@@ -22,9 +22,11 @@ apt install -y libraspberrypi-dev raspberrypi-kernel-headers \
 usermod -aG video dietpi
 
 echo "Installing create_ap"
+pushd /tmp
 git clone https://github.com/oblique/create_ap
 pushd create_ap
 make install
+popd
 popd
 
 echo "Configuring Access Point"
