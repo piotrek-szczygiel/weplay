@@ -7,7 +7,7 @@
 #endif
 
 #ifdef _WIN32
-// TODO
+#define socket_address void*
 #endif
 
 struct ReceiveResult {

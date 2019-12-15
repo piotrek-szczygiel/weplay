@@ -4,8 +4,7 @@
 void init_print()
 {
     Serial.begin(115200);
-    while (!Serial) {
-    }
+    while (!Serial) { }
 
     println("\r\n\r\n========================================");
 }

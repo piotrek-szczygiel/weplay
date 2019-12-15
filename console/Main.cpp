@@ -1,3 +1,6 @@
+// Fixes build errors on Windows, must be included first
+#include "Windows.hpp"
+
 #include "Config.hpp"
 #include "Console.hpp"
 #include <filesystem>

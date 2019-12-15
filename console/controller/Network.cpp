@@ -165,3 +165,29 @@ bool ServerSocket::send(socket_address addr, const std::string& data)
 }
 
 #endif // linux
+
+#ifdef _WIN32
+
+std::vector<LocalAddress> get_local_addresses()
+{
+    std::vector<LocalAddress> result {};
+    return result;
+}
+
+std::string BroadcastSocket::info() const { return "unimplemented"; }
+
+bool BroadcastSocket::initialize() { return false; }
+
+bool BroadcastSocket::send(const std::string& data) { return false; }
+
+bool ServerSocket::bind() { return false; }
+
+ReceiveResult ServerSocket::receive()
+{
+    ReceiveResult result {};
+    return result;
+}
+
+bool ServerSocket::send(socket_address addr, const std::string& data) { return false; }
+
+#endif // _WIN32

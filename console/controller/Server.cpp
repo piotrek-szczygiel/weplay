@@ -46,10 +46,9 @@ void Server::start()
         }
 
         if (result.size == 8) {
-            ControllerState state {
-                .connected = true,
-                .last_update = std::chrono::system_clock::now(),
-            };
+            ControllerState state {};
+            state.connected = true;
+            state.last_update = std::chrono::system_clock::now();
 
             for (uint8_t i = 0; i < 16; ++i) {
                 uint8_t byte = i / 8;
