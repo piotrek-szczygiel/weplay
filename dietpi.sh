@@ -59,6 +59,7 @@ PASSPHRASE=Korobeiniki1984
 USE_PSK=0
 EOF
 
+systemctl daemon-reload
 systemctl start create_ap
 systemctl enable create_ap
 
