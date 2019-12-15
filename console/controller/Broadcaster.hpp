@@ -9,13 +9,10 @@ public:
     Broadcaster()
         : m_thread { std::thread(&Broadcaster::start, this) }
     {
+        m_thread.detach();
     }
 
-    ~Broadcaster()
-    {
-        m_running = false;
-        m_thread.join();
-    }
+    ~Broadcaster() { m_running = false; }
 
 private:
     std::thread m_thread;

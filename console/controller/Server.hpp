@@ -9,13 +9,10 @@ public:
     Server()
         : m_thread { std::thread(&Server::start, this) }
     {
+        m_thread.detach();
     }
 
-    ~Server()
-    {
-        m_running = false;
-        m_thread.join();
-    }
+    ~Server() { m_running = false; }
 
     std::array<bool, 16> buttons {};
     int16_t yaw;

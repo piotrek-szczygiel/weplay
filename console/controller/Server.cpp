@@ -23,7 +23,7 @@ void Server::start()
         auto str = std::string { result.data, result.data + result.size };
 
         if (result.ignore) {
-            spdlog::trace("Ignored packet from {}: {}", result.repr, result.data);
+            spdlog::trace("Ignored packet from {} ({}B): {}", result.repr, result.size, str);
             continue;
         }
 
@@ -50,12 +50,16 @@ void Server::start()
             roll = result.data[6];
             roll |= result.data[7] << 8u;
 
-            spdlog::trace("{}\t{}:{}:{}", buttons[0], yaw, pitch, roll);
+            std::string buttons_str;
+            for (auto down : buttons) {
+                buttons_str += down ? "X" : " ";
+            }
+
+            spdlog::debug("{} {}:{}:{}", buttons_str, yaw, pitch, roll);
             continue;
         }
 
-        spdlog::warn("Unknown packet received from {} ({} bytes): {}", result.repr, result.size,
-            result.data);
+        spdlog::warn("Unknown packet from {} ({}B): {}", result.repr, result.size, result.data);
     }
 }
 

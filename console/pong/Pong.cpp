@@ -49,13 +49,13 @@ void Pong::update()
 
     Vector2 center { m_ball.position.x, m_ball.position.y };
 
-    RlRectangle rect_1 {
+    Rectangle rect_1 {
         m_player_1.position.x,
         m_player_1.position.y - m_collision_shift,
         m_racket_width,
         m_racket_height + m_collision_shift,
     };
-    RlRectangle rect_2 {
+    Rectangle rect_2 {
         m_player_2.position.x,
         m_player_2.position.y - m_collision_shift,
         m_racket_width,
@@ -119,7 +119,7 @@ void Pong::draw()
         DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
             m_ball_radius, RAYWHITE);
 
-        RlDrawText(m_score, m_score_position, 15, m_font_size, WHITE);
+        DrawText(m_score, m_score_position, 15, m_font_size, WHITE);
     } else if (m_game_state == State::SCORING) {
         int score_position_x { text_position_center(m_score, m_animation_font_size) };
         int score_position_y { static_cast<int>(
@@ -130,13 +130,13 @@ void Pong::draw()
                 static_cast<unsigned char>(
                     255 - tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
+            DrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
         } else if (m_anim_state == AnimationState::LIGHTING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     0 + tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
+            DrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
         }
     }
 

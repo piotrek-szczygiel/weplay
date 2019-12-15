@@ -39,14 +39,15 @@ public:
 
     ~Menu() override
     {
-        UnloadRenderTexture(m_framebuffer);
-        UnloadTexture(m_games_images[0]);
-        UnloadTexture(m_games_images[1]);
-        UnloadTexture(m_games_images[2]);
-
         for (auto& t : m_background) {
             UnloadTexture(t);
         }
+
+        UnloadTexture(m_games_images[2]);
+        UnloadTexture(m_games_images[1]);
+        UnloadTexture(m_games_images[0]);
+
+        UnloadRenderTexture(m_framebuffer);
     }
 
     void update() override;

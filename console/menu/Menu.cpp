@@ -46,17 +46,17 @@ void Menu::draw()
         m_background_frame %= m_background.size();
     }
 
-    RlDrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
-    RlDrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
-    RlDrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
-    RlDrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
+    DrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
+    DrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
+    DrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
+    DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
     draw_game_name(64);
     draw_game_image(GetFrameTime() * SLIDE_SPEED);
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
-            RlDrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
+            DrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
                 RAYWHITE);
         }
     }
@@ -66,7 +66,7 @@ void Menu::draw()
     const auto raw_time = std::time(nullptr);
     const auto time_info = localtime(&raw_time);
     strftime(time, sizeof(time), "%H:%M", time_info);
-    RlDrawText(time, 980, 10, 16, RAYWHITE);
+    DrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();
 }
@@ -76,7 +76,7 @@ void Menu::draw_game_name(int font_size)
     m_game_name_position
         = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), font_size) / 2 };
 
-    RlDrawText(m_games_names[m_game_index].c_str(), m_game_name_position, 600, font_size, RAYWHITE);
+    DrawText(m_games_names[m_game_index].c_str(), m_game_name_position, 600, font_size, RAYWHITE);
 }
 void Menu::draw_game_image(float dt)
 {

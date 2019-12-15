@@ -40,7 +40,7 @@ if(DOWNLOAD_RAYLIB)
     if(NOT raylib_FOUND)
         include(FetchContent)
 
-        # My fork of original library that fixes symbol collisions on Windows
+        # My fork of raysan5's library without examples, games, projects and templates
         FetchContent_Declare(raylib
                              URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
 

@@ -30,7 +30,7 @@ void DrawBlock(ShapeType type, int game_level, int x, int y, unsigned char alpha
     assert(level >= 0);
     assert(level <= 9);
 
-    RlRectangle source {
+    Rectangle source {
         static_cast<float>(index) * tile_size,
         static_cast<float>(level) * tile_size,
         tile_size,

@@ -22,10 +22,10 @@ public:
 
     ~Context()
     {
-        UnloadTexture(tiles);
-        UnloadTexture(tiles_small);
-        UnloadTexture(texture_ui);
         UnloadFont(font);
+        UnloadTexture(texture_ui);
+        UnloadTexture(tiles_small);
+        UnloadTexture(tiles);
     }
 
 private:

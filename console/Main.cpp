@@ -53,13 +53,16 @@ int main(int argc, char* argv[])
     InitWindow(width, height, "Raspberry Console");
 
     spdlog::info("Initializing console");
-    Console console;
 
-    spdlog::info("Running console");
-    console.run();
+    {
+        Console console;
+
+        spdlog::info("Running console");
+        console.run();
+    }
 
     spdlog::info("Exiting");
-    RlCloseWindow();
+    CloseWindow();
 
     return 0;
 }

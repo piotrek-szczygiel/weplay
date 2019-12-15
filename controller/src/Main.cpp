@@ -8,9 +8,9 @@ Buttons buttons {};
 Mpu mpu {};
 
 Connection connection {
-    "matebook",    // SSID
-    "korobeiniki", // Password
-    1984,          // Port
+    "RaspberryConsole", // SSID
+    "Korobeiniki1984",  // Password
+    1984,               // Port
 };
 
 void ping() { connection.ping(); }
