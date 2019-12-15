@@ -7,6 +7,7 @@ set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
     console/controller/Broadcaster.cpp
+    console/controller/Network.cpp
     console/controller/Server.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
