@@ -17,7 +17,8 @@ apt full-upgrade -y
 
 echo "Installing dependencies"
 apt install -y libraspberrypi-dev raspberrypi-kernel-headers \
-               build-essential cmake hostapd dnsmasq iptables
+               build-essential cmake hostapd dnsmasq iptables \
+               libdevmapper-dev libnet1-dev
 
 usermod -aG video dietpi
 
