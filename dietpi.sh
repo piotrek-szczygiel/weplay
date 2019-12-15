@@ -74,3 +74,5 @@ make PLATFORM=PLATFORM_RPI RAYLIB_LIBTYPE=SHARED -j4
 make install RAYLIB_LIBTYPE=SHARED
 popd
 popd
+
+echo "Finished successfully"
