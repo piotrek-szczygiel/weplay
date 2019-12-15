@@ -114,8 +114,6 @@ void Connection::ping()
         m_udp.endPacket();
         ++m_ping;
 
-        println("Sent ping (%d)", m_ping);
-
         if (m_ping >= 5) {
             println("Connection with console timed out!");
             m_discovered = false;
@@ -134,7 +132,6 @@ void Connection::pong()
                 m_udp_packet[static_cast<size_t>(len)] = 0;
                 if (strcmp("pong", m_udp_packet) == 0) {
                     m_ping = 0;
-                    println("Received pong (%d)", m_ping);
                 }
             }
         }
