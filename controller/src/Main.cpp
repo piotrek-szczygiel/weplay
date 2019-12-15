@@ -10,7 +10,8 @@ Mpu mpu {};
 Connection connection {
     "RaspberryConsole", // SSID
     "Korobeiniki1984",  // Password
-    1984,               // Port
+    1984,               // Server port
+    1985,               // Discovery port
 };
 
 void ping() { connection.ping(); }

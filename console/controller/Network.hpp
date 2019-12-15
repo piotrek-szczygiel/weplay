@@ -12,7 +12,6 @@
 
 struct ReceiveResult {
     bool success;
-    bool ignore;
     socket_address addr;
     std::string repr;
 
@@ -67,6 +66,4 @@ private:
 
     int m_socket {};
     socket_address m_addr {};
-
-    std::vector<LocalAddress> m_ignore {};
 };

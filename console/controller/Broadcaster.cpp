@@ -1,4 +1,5 @@
 #include "Broadcaster.hpp"
+#include "../Config.hpp"
 #include "Network.hpp"
 #include <spdlog/spdlog.h>
 
@@ -8,7 +9,7 @@ namespace Controller {
 
 void Broadcaster::start()
 {
-    const uint16_t port = 1984;
+    const uint16_t port = Config::integer("network", "broadcast_port", 1985);
 
     spdlog::debug("Obtaining local network addresses");
     auto addresses = get_local_addresses();

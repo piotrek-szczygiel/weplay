@@ -7,10 +7,12 @@
 
 class Connection {
 public:
-    Connection(const char* ssid, const char* password, uint16_t port)
+    Connection(
+        const char* ssid, const char* password, uint16_t server_port, uint16_t discovery_port)
         : m_ssid(ssid)
         , m_password(password)
-        , m_port(port)
+        , m_server_port(server_port)
+        , m_discovery_port(discovery_port)
     {
     }
 
@@ -27,7 +29,8 @@ private:
     WiFiUDP m_udp;
 
     IPAddress m_ip;
-    uint16_t m_port;
+    uint16_t m_server_port;
+    uint16_t m_discovery_port;
 
     char m_udp_packet[MAX_UDP_PACKET_SIZE];
 

@@ -115,8 +115,6 @@ bool ServerSocket::bind()
         return false;
     }
 
-    m_ignore = get_local_addresses();
-    m_ignore.push_back({ htonl(INADDR_LOOPBACK), htonl(0xFF000000) });
     return true;
 }
 
@@ -144,14 +142,6 @@ ReceiveResult ServerSocket::receive()
     char addr_str[16];
     inet_ntop(AF_INET, &addr.sin_addr.s_addr, addr_str, sizeof(addr_str));
     result.repr = std::string(addr_str) + ":" + std::to_string(addr.sin_port);
-
-    // Ignore local addresses
-    for (auto& i : m_ignore) {
-        if (i.address == result.addr.sin_addr.s_addr) {
-            result.ignore = true;
-            break;
-        }
-    }
 
     return result;
 }

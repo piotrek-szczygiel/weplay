@@ -32,8 +32,8 @@ void Connection::connect_wifi()
 
 void Connection::discover_console_ip()
 {
-    print("Discovering console on udp port %u", m_port);
-    m_udp.begin(m_port);
+    print("Discovering console on udp port %u", m_discovery_port);
+    m_udp.begin(m_discovery_port);
 
     while (!m_discovered) {
         print(".");
@@ -72,11 +72,11 @@ void Connection::discover_console_ip()
 
 void Connection::connect_server()
 {
-    m_udp.beginPacket(m_ip, m_port);
+    m_udp.beginPacket(m_ip, m_server_port);
     m_udp.write("ping");
     m_udp.endPacket();
 
-    print("Connecting to %s:%u", m_ip.toString().c_str(), m_port);
+    print("Connecting to %s:%u", m_ip.toString().c_str(), m_server_port);
     while (!m_connected) {
         print(".");
         delay(500);
@@ -102,14 +102,14 @@ void Connection::connect_server()
     }
 
     println();
-    println("Connected to %s:%u", m_ip.toString().c_str(), m_port);
+    println("Connected to %s:%u", m_ip.toString().c_str(), m_server_port);
     m_ping = 0;
 }
 
 void Connection::ping()
 {
     if (m_connected) {
-        m_udp.beginPacket(m_ip, m_port);
+        m_udp.beginPacket(m_ip, m_server_port);
         m_udp.write("ping");
         m_udp.endPacket();
         ++m_ping;
@@ -151,7 +151,7 @@ void Connection::update(uint16_t buttons_state, int16_t yaw, int16_t pitch, int1
         static_cast<uint8_t>((roll & 0xff00) >> 8),
     };
 
-    m_udp.beginPacket(m_ip, m_port);
+    m_udp.beginPacket(m_ip, m_server_port);
     m_udp.write(packet, sizeof(packet));
     m_udp.endPacket();
 }

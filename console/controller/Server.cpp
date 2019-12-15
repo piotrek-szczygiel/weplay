@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "../Config.hpp"
 #include "Network.hpp"
 #include <spdlog/spdlog.h>
 
@@ -7,7 +8,7 @@ namespace Controller {
 void Server::start()
 {
     spdlog::info("Starting server");
-    ServerSocket server { 1984 };
+    ServerSocket server { static_cast<uint16_t>(Config::integer("network", "server_port", 1984)) };
     if (!server.bind()) {
         spdlog::error("Unable to start server");
         return;
@@ -33,11 +34,6 @@ void Server::start()
         }
 
         auto str = std::string { result.data, result.data + result.size };
-
-        if (result.ignore) {
-            spdlog::trace("Ignored packet from {} ({}B): {}", result.repr, result.size, str);
-            continue;
-        }
 
         if (str == "ping") {
             server.send(result.addr, "pong");
