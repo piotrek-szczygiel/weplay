@@ -3,25 +3,34 @@
 
 namespace Menu {
 
-float tween(float value, float x);
+int sin_out_easing(float time, int start_pos, int distance, float duration);
 
 void Menu::update(const std::vector<ControllerState>& controllers)
 {
     const auto& s1 = controllers[0];
     const auto& s2 = controllers[1];
 
-    if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
-        && m_animation_state == AnimationState::NONE) {
-        m_last_game_index = m_game_index;
-        m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
-        m_animation_state = AnimationState::PLAYING_RIGHT;
-    } else if ((IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0])
-        && m_animation_state == AnimationState::NONE) {
-        m_last_game_index = m_game_index;
-        m_game_index = (m_game_index + 1) % GAMES;
-        m_animation_state = AnimationState::PLAYING_LEFT;
-    } else if (IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5]) {
-        m_state_change = m_games_states[m_game_index];
+    bool input_right = IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3];
+    bool input_left = IsKeyPressed(KEY_LEFT) || s1.buttons[0] || s2.buttons[0];
+    bool input_enter = IsKeyPressed(KEY_ENTER) || s1.buttons[5] || s2.buttons[5];
+
+    if (input_right) {
+        if (m_animation_state == AnimationState::NONE) {
+            m_last_game_index = m_game_index;
+            m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
+            m_animation_state = AnimationState::START_RIGHT;
+        }
+    }
+    else if (input_left) {
+        if (m_animation_state == AnimationState::NONE) {
+            m_last_game_index = m_game_index;
+            m_game_index = (m_game_index + 1) % GAMES;
+            m_animation_state = AnimationState::START_LEFT;
+        }
+    }
+
+    if (input_enter) {
+        m_state_change = m_logos[m_game_index].game_state;
     }
 
     m_connected
@@ -53,7 +62,7 @@ void Menu::draw()
     DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
     draw_game_name(64);
-    draw_game_image(GetFrameTime() * SLIDE_SPEED);
+    draw_game_image(GetFrameTime());
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
@@ -74,45 +83,77 @@ void Menu::draw()
 
 void Menu::draw_game_name(int font_size)
 {
-    m_game_name_position
-        = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), font_size) / 2 };
+    int text_lenght = MeasureText(m_logos[m_game_index].name.c_str(), font_size) / 2;
+    m_game_name_position = { m_width / 2 - text_lenght };
 
-    DrawText(m_games_names[m_game_index].c_str(), m_game_name_position, 600, font_size, RAYWHITE);
+    DrawText(m_logos[m_game_index].name.c_str(), m_game_name_position, 600, font_size, RAYWHITE);
 }
 void Menu::draw_game_image(float dt)
 {
-    int texture_width = m_games_images[m_game_index].width;
-    int texture_height = m_games_images[m_game_index].height;
+    int left_border = 0 - m_texture_width;
+    int middle = m_width / 2 - m_texture_width / 2;
+    int right_border = m_width;
 
-    int posX { m_width / 2 - texture_width / 2 };
-    int posX2 { m_width + texture_width };
-    int dir = 1;
-    float tween_value = static_cast<float>(m_width) / 2;
+    // SET UP ANIMATION START AND DESTINATION POSITION
+    if (m_animation_state == AnimationState::START_RIGHT) {
+        m_logos[m_game_index].visible = true;
 
-    if (m_animation_state != AnimationState::NONE) {
-        int animation_offset_x = static_cast<int>(tween(tween_value, 1.0F - m_animation_timer));
+        m_logos[m_last_game_index].start_pos = middle;
+        m_logos[m_last_game_index].dest_pos = left_border;
 
-        if (m_animation_state == AnimationState::PLAYING_LEFT)
-            dir *= -1;
+        m_logos[m_game_index].start_pos = right_border;
+        m_logos[m_game_index].dest_pos = middle;
 
-        int x = m_width / 2 + animation_offset_x * dir;
-        posX = x - texture_width / 2;
-        posX2 = posX - m_width / 2 * dir - texture_width / 2 * dir;
+        m_animation_state = AnimationState::PLAYING_RIGHT;
+    }
+    else if (m_animation_state == AnimationState::START_LEFT) {
+        m_logos[m_game_index].visible = true;
+
+        m_logos[m_last_game_index].start_pos = middle;
+        m_logos[m_last_game_index].dest_pos = right_border;
+
+        m_logos[m_game_index].start_pos = left_border;
+        m_logos[m_game_index].dest_pos = middle;
+
+        m_animation_state = AnimationState::PLAYING_LEFT;
+    }
+
+    // INTERPOLATE POSITIONS
+    if (m_animation_state == AnimationState::PLAYING_RIGHT
+        || m_animation_state == AnimationState::PLAYING_LEFT) {
+
+        int start_pos = m_logos[m_game_index].start_pos;
+        int distance = m_logos[m_game_index].dest_pos - start_pos;
+
+        int pos_x = sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME);
+
+        m_logos[m_game_index].draw_pos_x = pos_x;
+
+        start_pos = m_logos[m_last_game_index].start_pos;
+        distance = m_logos[m_last_game_index].dest_pos - start_pos;
+
+        pos_x = sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME);
+
+        m_logos[m_last_game_index].draw_pos_x = pos_x;
 
         m_animation_timer += dt;
-        if (m_animation_timer >= 1.0F) {
+        if (m_animation_timer > ANIMATION_TIME) {
             m_animation_state = AnimationState::NONE;
             m_animation_timer = 0.0F;
+            m_logos[m_last_game_index].visible = false;
         }
     }
 
-    int posY = m_height / 2 - texture_height / 2;
-
-    DrawTexture(m_games_images[m_last_game_index], posX2, posY, RAYWHITE);
-    DrawTexture(m_games_images[m_game_index], posX, posY, RAYWHITE);
+    for (int i = 0; i < GAMES; ++i) {
+        if (m_logos[i].visible)
+            DrawTexture(m_logos[i].texture, m_logos[i].draw_pos_x, m_logos[i].draw_pos_y, RAYWHITE);
+    }
 }
 
-float tween(float value, float x) { return value * (x * x * x); }
+int sin_out_easing(float time, int start_pos, int distance, float duration)
+{
+    return distance * sin(time / duration * (PI / 2)) + start_pos;
+}
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
 

@@ -7,12 +7,29 @@
 namespace Menu {
 
 constexpr int GAMES { 3 };
-constexpr float SLIDE_SPEED { 2.0F };
+constexpr float ANIMATION_TIME{ 0.5F };
 
 enum class AnimationState {
     NONE,
+    START_LEFT,
+    START_RIGHT,
     PLAYING_LEFT,
     PLAYING_RIGHT,
+};
+
+struct Logo {
+    int start_pos;
+    int dest_pos;
+    int draw_pos_x;
+    int draw_pos_y;
+
+    bool visible;
+
+    StateChange game_state;
+
+    Texture2D texture;
+
+    std::string name;
 };
 
 class Menu final : public State {
@@ -20,11 +37,44 @@ public:
     Menu()
         : m_width { 1024 }
         , m_height { 768 }
+        , m_texture_width{ 350 }
+        , m_texture_height{ 350 }
         , m_framebuffer { LoadRenderTexture(m_width, m_height) }
     {
-        m_games_images[0] = LoadTexture("resources/menu/starship.png");
-        m_games_images[1] = LoadTexture("resources/menu/tetris.png");
-        m_games_images[2] = LoadTexture("resources/menu/pong.png");
+        int pos_y = m_height / 2 - m_texture_height / 2;
+
+        m_logos[0] = {
+            0,
+            0,
+            m_width / 2 - m_texture_width / 2,
+            pos_y,
+            true,
+            StateChange::Starship,
+            LoadTexture("resources/menu/starship.png"),
+            "Starship",
+        };
+
+        m_logos[1] = {
+            0,
+            0,
+            0,
+            pos_y,
+            false,
+            StateChange::Tetris,
+            LoadTexture("resources/menu/tetris.png"),
+            "Tetris",
+        };
+
+        m_logos[2] = {
+            0,
+            0,
+            0,
+            pos_y,
+            false,
+            StateChange::Pong,
+            LoadTexture("resources/menu/pong.png"),
+            "Pong",
+        };
 
         std::vector<std::string> background {};
         for (auto& p : std::filesystem::directory_iterator("resources/menu/wallpaper")) {
@@ -43,9 +93,9 @@ public:
             UnloadTexture(t);
         }
 
-        UnloadTexture(m_games_images[2]);
-        UnloadTexture(m_games_images[1]);
-        UnloadTexture(m_games_images[0]);
+        for (auto& logo : m_logos) {
+            UnloadTexture(logo.texture);
+        }
 
         UnloadRenderTexture(m_framebuffer);
     }
@@ -83,11 +133,15 @@ private:
         StateChange ::Pong,
     };
 
-    int m_game_index {};
-    int m_last_game_index {};
-    int m_game_name_position {};
-    AnimationState m_animation_state { AnimationState::NONE };
-    float m_animation_timer {};
+    int m_game_index{};
+    int m_last_game_index{};
+    int m_game_name_position{};
+    int m_texture_width{};
+    int m_texture_height{};
+    AnimationState m_animation_state{ AnimationState::NONE };
+    float m_animation_timer{};
+
+    std::array<Logo, GAMES> m_logos;
 };
 
 }
