@@ -219,11 +219,11 @@ void Player::draw(int draw_x, int draw_y, bool left)
     }
 
     if (m_state == GAME_OVER) {
-        RlDrawText("Game", draw_x + 4, draw_y + 34, 30, BLACK);
-        RlDrawText("Game", draw_x + 5, draw_y + 35, 30, MAROON);
+        DrawText("Game", draw_x + 4, draw_y + 34, 30, BLACK);
+        DrawText("Game", draw_x + 5, draw_y + 35, 30, MAROON);
 
-        RlDrawText("Over", draw_x + 4, draw_y + 70, 30, BLACK);
-        RlDrawText("Over", draw_x + 5, draw_y + 71, 30, MAROON);
+        DrawText("Over", draw_x + 4, draw_y + 70, 30, BLACK);
+        DrawText("Over", draw_x + 5, draw_y + 71, 30, MAROON);
     }
 
     if (m_state == CLEARING || (m_state == CHANGING_LEVEL && m_last_state == CLEARING)) {
@@ -231,7 +231,7 @@ void Player::draw(int draw_x, int draw_y, bool left)
             = m_clearing_duration / m_clearing_max_duration * static_cast<float>(WIDTH * TILE_SIZE);
 
         for (int row : m_clearing_rows) {
-            RlRectangle rect {
+            Rectangle rect {
                 static_cast<float>(draw_x) + static_cast<float>(WIDTH * TILE_SIZE) / 2.0F,
                 static_cast<float>(draw_y + (row - VANISH) * TILE_SIZE)
                     + static_cast<float>(TILE_SIZE) / 2.0F,

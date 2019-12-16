@@ -1,10 +1,16 @@
+// Fixes build errors on Windows, must be included first
+#include "Windows.hpp"
+
+#include "Config.hpp"
 #include "Console.hpp"
-#include <boost/log/trivial.hpp>
 #include <filesystem>
+#include <spdlog/spdlog.h>
 
 int main(int argc, char* argv[])
 {
-    // Travel upwards to directory containing resources
+    spdlog::set_level(spdlog::level::debug);
+
+    spdlog::debug("Looking for root directory");
     constexpr int max_depth { 5 };
     bool found = false;
     for (int i = 0; i < max_depth; ++i) {
@@ -17,27 +23,49 @@ int main(int argc, char* argv[])
     }
 
     if (!found) {
-        BOOST_LOG_TRIVIAL(error) << "Unable to find resources directory";
+        spdlog::error("Unable to find resources directory");
         return 1;
     }
 
+    spdlog::debug("Changed directory to root: {}", std::filesystem::current_path().string());
+
+    if (!Config::instance().load()) {
+        spdlog::error("Unable to load configuration file");
+        return 1;
+    }
+
+    // raylib log level
     SetTraceLogLevel(LOG_WARNING);
 
-    constexpr int width { 1024 };
-    constexpr int height { 768 };
+    int width = Config::integer("window", "width");
+    int height = Config::integer("window", "height");
+    spdlog::info("Initializing window with resolution {}x{}", width, height);
 
-    BOOST_LOG_TRIVIAL(info) << "Initializing window with resolution " << width << "x" << height;
-    SetConfigFlags(FLAG_VSYNC_HINT);
+    unsigned int flags = 0;
+    if (Config::boolean("window", "fullscreen")) {
+        flags |= FLAG_FULLSCREEN_MODE;
+        spdlog::info("Enabling fullscreen");
+    }
+
+    if (Config::boolean("window", "vsync")) {
+        flags |= FLAG_VSYNC_HINT;
+        spdlog::info("Enabling vsync");
+    }
+    SetConfigFlags(flags);
+
     InitWindow(width, height, "Raspberry Console");
 
-    BOOST_LOG_TRIVIAL(info) << "Initializing raspberry console";
-    Console console;
+    spdlog::info("Initializing console");
 
-    BOOST_LOG_TRIVIAL(info) << "Running raspberry console";
-    console.run();
+    {
+        Console console;
 
-    BOOST_LOG_TRIVIAL(info) << "Closing window";
-    RlCloseWindow();
+        spdlog::info("Running console");
+        console.run();
+    }
+
+    spdlog::info("Exiting");
+    CloseWindow();
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 // Everything has to be in the header file,
-// because splitting into source and header causes comiler errors.
+// because splitting into source and header causes compiler errors.
 // It is caused by poor implementation of MPU6050 library.
 // https://github.com/jrowberg/i2cdevlib/issues/468
 
@@ -78,7 +78,6 @@ private:
     VectorFloat m_gravity {};
     std::array<float, 3> m_ypr_float {};
     std::array<int16_t, 3> m_ypr {};
-    std::array<int16_t, 3> m_ypr_last {};
 
     static volatile bool m_interrupt;
     static void ICACHE_RAM_ATTR dmp_interrupt_handle() { Mpu::m_interrupt = true; }
@@ -189,10 +188,7 @@ bool Mpu::update()
             static_cast<int16_t>(m_ypr_float[2] * 180.0F / M_PI),
         };
 
-        bool changed { m_ypr != m_ypr_last };
-        m_ypr_last = m_ypr;
-
-        return changed;
+        return true;
     }
 
     return false;

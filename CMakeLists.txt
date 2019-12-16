@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
-    console/controller/Controller.cpp
-    console/controller/TcpSession.cpp
-    console/controller/TcpServer.cpp
+    console/controller/Broadcaster.cpp
+    console/controller/Network.cpp
+    console/controller/Server.cpp
     console/menu/Menu.cpp
     console/pong/Pong.cpp
     console/starship/Starship.cpp
@@ -28,18 +28,6 @@ set(SOURCE_FILES
 
 find_package(Threads)
 
-if(NOT WIN32)
-    add_definitions(-DBOOST_LOG_DYN_LINK -DBOOST_SYSTEM_NO_DEPRECATED
-                    -DBOOST_ERROR_CODE_HEADER_ONLY)
-endif()
-
-find_package(
-    Boost 1.67
-    COMPONENTS log_setup log
-    REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIRS})
-
 if(WIN32)
     set(DOWNLOAD_RAYLIB ON)
 else()
@@ -52,7 +40,7 @@ if(DOWNLOAD_RAYLIB)
     if(NOT raylib_FOUND)
         include(FetchContent)
 
-        # My fork of original library that fixes symbol collisions on Windows
+        # My fork of raysan5's library without examples, games, projects and templates
         FetchContent_Declare(raylib
                              URL https://github.com/piotrek-szczygiel/raylib/archive/master.tar.gz)
 
@@ -79,17 +67,19 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT} Boost::log_setup Boost::log)
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/libraries)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} raylib_static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static)
 else()
-    target_link_libraries(${PROJECT_NAME} raylib stdc++fs)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 endif()
 
 # Link against winmm.lib on Windows
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} winmm)
+    target_link_libraries(${PROJECT_NAME} PRIVATE winmm)
 
     # Set _WIN32_WINNT so Boost doesn't complain
     macro(get_win32_winnt version)
@@ -108,5 +98,5 @@ if(WIN32)
     endmacro(get_win32_winnt)
 
     get_win32_winnt(ver)
-    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX)
 endif(WIN32)

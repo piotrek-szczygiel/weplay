@@ -8,13 +8,16 @@ Buttons buttons {};
 Mpu mpu {};
 
 Connection connection {
-    "matebook",    // SSID
-    "korobeiniki", // Password
-    1984,          // Port
+    "RaspberryConsole", // SSID
+    "Korobeiniki1984",  // Password
+    1984,               // Server port
+    1985,               // Discovery port
 };
 
 void ping() { connection.ping(); }
-Ticker keep_alive { ping, 1000 };
+void pong() { connection.pong(); }
+Ticker pinger { ping, 1000 };
+Ticker ponger { pong, 500 };
 
 // Switch to true if you want to calibrate a controller.
 const bool NEW_CALIBRATION { false };
@@ -22,8 +25,8 @@ const bool NEW_CALIBRATION { false };
 const Calibration CONTROLLER_1 { 1620, 1393, 584, 40, 110, -41 };
 const Calibration CONTROLLER_2 { -3946, 2651, 1802, 22, 54, 54 };
 
-// Switch to tru if you want to see realtime MPU output
-const bool DEBUG_MPU { false };
+// Switch to true if you want to see realtime buttons and MPU output
+const bool PRINT_STATUS { false };
 
 void setup()
 {
@@ -49,25 +52,24 @@ void setup()
         }
     }
 
-    keep_alive.start();
+    pinger.start();
+    ponger.start();
 }
 
 void loop()
 {
     connection.connect();
 
-    if (buttons.update()) {
-        connection.send_buttons(buttons.state());
-        buttons.print_status();
-    }
-
     if (mpu.update()) {
-        connection.send_ypr(mpu.yaw(), mpu.pitch(), mpu.roll());
+        buttons.update();
+        connection.update(buttons.state(), mpu.yaw(), mpu.pitch(), mpu.roll());
 
-        if (DEBUG_MPU) {
+        if (PRINT_STATUS) {
+            buttons.print_status();
             mpu.print_status();
         }
     }
 
-    keep_alive.update();
+    pinger.update();
+    ponger.update();
 }

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ $EUID > 0 ]]; then
+if [[ $EUID -gt 0 ]]; then
     echo "Please run as root/sudo"
     exit 1
 fi
 
 if [[ "$(uname -n)" != "DietPi" ]]; then
-    echo "You are not running $(uname -n) instead of the DietPi distribution"
+    echo "You are running $(uname -n) instead of the DietPi distribution"
     exit 1
 fi
 
@@ -16,10 +16,19 @@ apt update -y
 apt full-upgrade -y
 
 echo "Installing dependencies"
-apt install -y libraspberrypi-dev libboost-all-dev raspberrypi-kernel-headers \
-               build-essential cmake hostapd dnsmasq iptables
+apt install -y libraspberrypi-dev raspberrypi-kernel-headers \
+               build-essential cmake hostapd dnsmasq iptables \
+               libdevmapper-dev libnet1-dev
 
 usermod -aG video dietpi
+
+echo "Installing create_ap"
+pushd /tmp
+git clone https://github.com/oblique/create_ap
+pushd create_ap
+make install
+popd
+popd
 
 echo "Configuring Access Point"
 cat << EOF > /etc/create_ap.conf
@@ -53,6 +62,7 @@ PASSPHRASE=Korobeiniki1984
 USE_PSK=0
 EOF
 
+systemctl daemon-reload
 systemctl start create_ap
 systemctl enable create_ap
 
@@ -66,3 +76,4 @@ make install RAYLIB_LIBTYPE=SHARED
 popd
 popd
 
+echo "Finished successfully"

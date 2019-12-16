@@ -1,5 +1,5 @@
 #pragma once
-#include "controller/Controller.hpp"
+#include "controller/Controllers.hpp"
 #include <raylib.h>
 
 enum class StateChange {
@@ -22,7 +22,7 @@ public:
 
     virtual ~State() = default;
 
-    virtual void update(std::shared_ptr<AllControllersState> state) = 0;
+    virtual void update(const std::vector<ControllerState>&) = 0;
     virtual void draw() = 0;
     virtual RenderTexture2D framebuffer() = 0;
     virtual StateChange state_change() = 0;

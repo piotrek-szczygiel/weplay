@@ -2,16 +2,15 @@
 #include "Context.hpp"
 #include "DrawBlock.hpp"
 #include "Piece.hpp"
-#include <iostream>
 
 namespace Tetris {
 
-void Tetris::update(std::shared_ptr<AllControllersState> all_states)
+void Tetris::update(const std::vector<ControllerState>& controllers)
 {
     std::array<std::vector<Action>, 2> actions {};
 
     for (size_t player = 0; player < 2; ++player) {
-        const auto& state = all_states->controllers[player];
+        const auto& state = controllers[player];
 
         if (state.buttons[8]) {
             m_state_change = StateChange::Menu;

@@ -1,18 +1,14 @@
 #include "Menu.hpp"
-#include <boost/format.hpp>
-#include <boost/log/trivial.hpp>
 #include <ctime>
-
-using boost::str, boost::format;
 
 namespace Menu {
 
 float tween(float value, float x);
 
-void Menu::update(std::shared_ptr<AllControllersState> all_states)
+void Menu::update(const std::vector<ControllerState>& controllers)
 {
-    const auto& s1 = all_states->controllers[0];
-    const auto& s2 = all_states->controllers[1];
+    const auto& s1 = controllers[0];
+    const auto& s2 = controllers[1];
 
     if ((IsKeyPressed(KEY_RIGHT) || s1.buttons[3] || s2.buttons[3])
         && m_animation_state == AnimationState::NONE) {
@@ -28,7 +24,8 @@ void Menu::update(std::shared_ptr<AllControllersState> all_states)
         m_state_change = m_games_states[m_game_index];
     }
 
-    m_connected = all_states->connected_num;
+    m_connected
+        = std::count_if(controllers.begin(), controllers.end(), [](auto s) { return s.connected; });
 
     m_yaw = s1.yaw;
     m_pitch = s1.pitch;
@@ -43,26 +40,25 @@ void Menu::draw()
 
     DrawTextureEx(m_background[m_background_frame], { 0.0F, 0.0F }, 0.0F, 2.0F, WHITE);
     m_background_timer += GetFrameTime();
-    if (m_background_timer >= 0.07) {
-        m_background_timer -= 0.07;
+    if (m_background_timer >= 0.07F) {
+        m_background_timer -= 0.07F;
         m_background_frame += 1;
 
         m_background_frame %= m_background.size();
     }
 
-    RlDrawText(
-        str(format("Connected controllers: %d") % m_connected).c_str(), 10, 70, 16, RAYWHITE);
-    RlDrawText(str(format("Yaw: %d") % m_yaw).c_str(), 10, 100, 16, RAYWHITE);
-    RlDrawText(str(format("Pitch: %d") % m_pitch).c_str(), 10, 130, 16, RAYWHITE);
-    RlDrawText(str(format("Roll: %d") % m_roll).c_str(), 10, 160, 16, RAYWHITE);
+    DrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
+    DrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
+    DrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
+    DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
     draw_game_name(64);
     draw_game_image(GetFrameTime() * SLIDE_SPEED);
 
     for (size_t i = 0; i < m_buttons.size(); ++i) {
         if (m_buttons[i]) {
-            RlDrawText(str(format("Button %d pressed") % i).c_str(), 10,
-                200 + 30 * static_cast<int>(i), 16, RAYWHITE);
+            DrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
+                RAYWHITE);
         }
     }
 
@@ -71,7 +67,7 @@ void Menu::draw()
     const auto raw_time = std::time(nullptr);
     const auto time_info = localtime(&raw_time);
     strftime(time, sizeof(time), "%H:%M", time_info);
-    RlDrawText(time, 980, 10, 16, RAYWHITE);
+    DrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();
 }
@@ -81,8 +77,7 @@ void Menu::draw_game_name(int font_size)
     m_game_name_position
         = { m_width / 2 - MeasureText(m_games_names[m_game_index].c_str(), font_size) / 2 };
 
-    RlDrawText(str(format("%s") % m_games_names[m_game_index]).c_str(), m_game_name_position, 600,
-        font_size, RAYWHITE);
+    DrawText(m_games_names[m_game_index].c_str(), m_game_name_position, 600, font_size, RAYWHITE);
 }
 void Menu::draw_game_image(float dt)
 {

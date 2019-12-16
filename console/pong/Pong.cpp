@@ -1,25 +1,20 @@
 #include "Pong.hpp"
 #include "../Util.hpp"
-#include <boost/format.hpp>
+#include <cmath>
 
 namespace Pong {
 
-Vector2 computeBallSpeed(Vector2 v);
-float tween(float value, float x);
-
-void Pong::update(std::shared_ptr<AllControllersState> all_states)
+void Pong::update(const std::vector<ControllerState>& controllers)
 {
-    const auto& s1 = all_states->controllers[0];
-    const auto& s2 = all_states->controllers[1];
+    const auto& s1 = controllers[0];
+    const auto& s2 = controllers[1];
 
     if (IsKeyPressed(KEY_Q) || s1.buttons[8] || s2.buttons[8]) {
         m_state_change = StateChange::Menu;
         return;
     }
 
-    float dt = GetFrameTime();
-
-    if (m_game_state == PLAYING) {
+    if (m_game_state == State::PLAYING) {
         if (IsKeyDown(KEY_W) || s1.buttons[0]) {
             m_player_1.speed.y = -1.0F;
         } else if (IsKeyDown(KEY_S) || s1.buttons[1]) {
@@ -35,6 +30,8 @@ void Pong::update(std::shared_ptr<AllControllersState> all_states)
         } else {
             m_player_2.speed.y = 0.0F;
         }
+
+        float dt = GetFrameTime();
 
         m_player_1.position.y += m_player_1.speed.y * m_player_speed_factor * dt;
         m_player_2.position.y += m_player_2.speed.y * m_player_speed_factor * dt;
@@ -54,13 +51,13 @@ void Pong::update(std::shared_ptr<AllControllersState> all_states)
 
         Vector2 center { m_ball.position.x, m_ball.position.y };
 
-        RlRectangle rect_1 {
+        Rectangle rect_1 {
             m_player_1.position.x,
             m_player_1.position.y - m_collision_shift,
             m_racket_width,
             m_racket_height + m_collision_shift,
         };
-        RlRectangle rect_2 {
+        Rectangle rect_2 {
             m_player_2.position.x,
             m_player_2.position.y - m_collision_shift,
             m_racket_width,
@@ -68,13 +65,13 @@ void Pong::update(std::shared_ptr<AllControllersState> all_states)
         };
 
         if (CheckCollisionCircleRec(center, m_ball_radius, rect_1)) {
-            m_ball.speed = computeBallSpeed(
+            m_ball.speed = compute_ball_speed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_1.speed.y * FRICTION });
             m_ball.position.x = m_player_1.position.x + m_racket_width + m_ball_radius + 1;
         }
 
         if (CheckCollisionCircleRec(center, m_ball_radius, rect_2)) {
-            m_ball.speed = computeBallSpeed(
+            m_ball.speed = compute_ball_speed(
                 { -m_ball.speed.x, m_ball.speed.y + m_player_2.speed.y * FRICTION });
             m_ball.position.x = m_player_2.position.x - m_ball_radius - 1;
         }
@@ -87,19 +84,19 @@ void Pong::update(std::shared_ptr<AllControllersState> all_states)
         else if (m_ball.position.x > m_width)
             add_score(0);
 
-    } else if (m_game_state == SCORING) {
+        //} else if (m_game_state == SCORING) {
         if (m_animation_timer >= 1.8F) {
-            m_game_state = PLAYING;
-            m_anim_state = SHADOWING;
+            m_game_state = State::PLAYING;
+            m_anim_state = AnimationState::SHADOWING;
             m_animation_timer = 0.0F;
             m_animation_timer_shift = 0.0F;
         } else if (m_animation_timer >= 1.5F) {
-            m_anim_state = NONE;
+            m_anim_state = AnimationState::NONE;
         } else if (m_animation_timer >= 1.0F) {
-            m_anim_state = SHADOWING;
+            m_anim_state = AnimationState::SHADOWING;
             m_animation_timer_shift = 1.0F;
         } else if (m_animation_timer >= 0.5F) {
-            m_anim_state = LIGHTING;
+            m_anim_state = AnimationState::LIGHTING;
             m_animation_timer_shift = 0.5F;
             restart();
         }
@@ -111,7 +108,7 @@ void Pong::draw()
 {
     BeginTextureMode(m_framebuffer);
     ClearBackground(BLACK);
-    if (m_game_state == PLAYING) {
+    if (m_game_state == State::PLAYING) {
         DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), BLACK);
 
         DrawRectangle(static_cast<int>(m_player_1.position.x),
@@ -125,26 +122,24 @@ void Pong::draw()
         DrawCircle(static_cast<int>(m_ball.position.x), static_cast<int>(m_ball.position.y),
             m_ball_radius, RAYWHITE);
 
-        RlDrawText(m_score.c_str(), m_score_position, 15, m_font_size, WHITE);
-    } else if (m_game_state == SCORING) {
+        DrawText(m_score, m_score_position, 15, m_font_size, WHITE);
+    } else if (m_game_state == State::SCORING) {
         int score_position_x { text_position_center(m_score, m_animation_font_size) };
         int score_position_y { static_cast<int>(
             m_height / 2 - (static_cast<float>(m_animation_font_size) / 2)) };
 
-        if (m_anim_state == SHADOWING) {
+        if (m_anim_state == AnimationState::SHADOWING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     255 - tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(
-                m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
-        } else if (m_anim_state == LIGHTING) {
+            DrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
+        } else if (m_anim_state == AnimationState::LIGHTING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     0 + tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            RlDrawText(
-                m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
+            DrawText(m_score, score_position_x, score_position_y, m_animation_font_size, color);
         }
     }
 
@@ -166,12 +161,12 @@ void Pong::restart()
     };
 
     float modAngle = random(-PI / 8.0F, PI / 8.0F, m_gen);
-    float dirX = signbit(m_ball.speed.x) ? -1.0F : 1.0F;
+    float dirX = std::signbit(m_ball.speed.x) ? -1.0F : 1.0F;
 
     m_ball = { { static_cast<float>(m_width / 2), static_cast<float>(m_height / 2) },
-        { computeBallSpeed(Vector2 { cos(modAngle) * dirX * -1.0F, sin(modAngle) }) } };
+        { compute_ball_speed(Vector2 { cosf(modAngle) * dirX * -1.0F, sinf(modAngle) }) } };
 
-    m_score = str(boost::format("%d : %d") % m_player_1.score % m_player_2.score);
+    m_score = TextFormat("%d : %d", m_player_1.score, m_player_2.score);
     m_score_position = text_position_center(m_score, m_font_size);
 }
 
@@ -182,29 +177,28 @@ void Pong::add_score(int id)
     } else if (id == 1) {
         m_player_2.score += 1;
     }
-    m_game_state = SCORING;
+    m_game_state = State::SCORING;
 }
 
-int Pong::text_position_center(std::string& string, int font_size)
+int Pong::text_position_center(const char* text, int font_size)
 {
-    return (static_cast<int>(m_width) - MeasureText(string.c_str(), font_size)) / 2;
+    return (static_cast<int>(m_width) - MeasureText(text, font_size)) / 2;
 }
 
-Vector2 computeBallSpeed(Vector2 v)
+Vector2 Pong::compute_ball_speed(Vector2 v)
 {
-    float vXDir = signbit(v.x) ? -1.0F : 1.0F;
-    float vYDir = signbit(v.y) ? -1.0F : 1.0F;
-    float length = sqrt(v.x * v.x + v.y * v.y);
+    float vXDir = std::signbit(v.x) ? -1.0F : 1.0F;
+    float vYDir = std::signbit(v.y) ? -1.0F : 1.0F;
+    float length = sqrtf(v.x * v.x + v.y * v.y);
     v = { v.x / length, v.y / length };
 
-    if (abs(v.y) >= 0.90F) {
+    if (fabsf(v.y) >= 0.90F) {
         v.y = 0.90F * vYDir;
-        v.x = sqrt(1 - v.y * v.y) * vXDir;
+        v.x = sqrtf(1 - v.y * v.y) * vXDir;
     }
 
     return v;
 }
 
-float tween(float value, float x) { return value * (x * x * x); }
-
+float Pong::tween(float value, float x) { return value * (x * x * x); }
 }

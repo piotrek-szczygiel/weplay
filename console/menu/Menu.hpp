@@ -1,5 +1,6 @@
 #include "../State.hpp"
-#include <boost/log/trivial.hpp>
+#include <algorithm>
+#include <array>
 #include <filesystem>
 #include <raylib.h>
 
@@ -25,24 +26,31 @@ public:
         m_games_images[1] = LoadTexture("resources/menu/tetris.png");
         m_games_images[2] = LoadTexture("resources/menu/pong.png");
 
+        std::vector<std::string> background {};
         for (auto& p : std::filesystem::directory_iterator("resources/menu/wallpaper")) {
-            m_background.push_back(LoadTexture(p.path().string().c_str()));
+            background.push_back(p.path().string());
+        }
+
+        std::sort(background.begin(), background.end());
+        for (auto& p : background) {
+            m_background.push_back(LoadTexture(p.c_str()));
         }
     }
 
     ~Menu() override
     {
-        UnloadRenderTexture(m_framebuffer);
-        UnloadTexture(m_games_images[0]);
-        UnloadTexture(m_games_images[1]);
-        UnloadTexture(m_games_images[2]);
-
         for (auto& t : m_background) {
             UnloadTexture(t);
         }
+
+        UnloadTexture(m_games_images[2]);
+        UnloadTexture(m_games_images[1]);
+        UnloadTexture(m_games_images[0]);
+
+        UnloadRenderTexture(m_framebuffer);
     }
 
-    void update(std::shared_ptr<AllControllersState> state) override;
+    void update(const std::vector<ControllerState>& controllers) override;
     void draw() override;
     RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
