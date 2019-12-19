@@ -83,7 +83,7 @@ private:
 
     Ball m_ball {};
 
-    const char* m_score {};
+    std::string m_score {};
 
     std::mt19937 m_gen { std::random_device {}() };
 
