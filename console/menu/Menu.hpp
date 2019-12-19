@@ -7,7 +7,7 @@
 namespace Menu {
 
 constexpr int GAMES { 3 };
-constexpr float ANIMATION_TIME{ 0.5F };
+constexpr float ANIMATION_TIME { 0.5F };
 
 enum class AnimationState {
     NONE,
@@ -37,8 +37,8 @@ public:
     Menu()
         : m_width { 1024 }
         , m_height { 768 }
-        , m_texture_width{ 350 }
-        , m_texture_height{ 350 }
+        , m_texture_width { 350 }
+        , m_texture_height { 350 }
         , m_framebuffer { LoadRenderTexture(m_width, m_height) }
     {
         int pos_y = m_height / 2 - m_texture_height / 2;
@@ -133,13 +133,13 @@ private:
         StateChange ::Pong,
     };
 
-    int m_game_index{};
-    int m_last_game_index{};
-    int m_game_name_position{};
-    int m_texture_width{};
-    int m_texture_height{};
-    AnimationState m_animation_state{ AnimationState::NONE };
-    float m_animation_timer{};
+    int m_game_index {};
+    int m_last_game_index {};
+    int m_game_name_position {};
+    int m_texture_width {};
+    int m_texture_height {};
+    AnimationState m_animation_state { AnimationState::NONE };
+    float m_animation_timer {};
 
     std::array<Logo, GAMES> m_logos;
 };

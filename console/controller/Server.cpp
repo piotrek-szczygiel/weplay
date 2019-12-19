@@ -1,7 +1,7 @@
 #include "Server.hpp"
 #include "../Config.hpp"
+#include "../Logging.hpp"
 #include "Network.hpp"
-#include <spdlog/spdlog.h>
 
 namespace Controller {
 

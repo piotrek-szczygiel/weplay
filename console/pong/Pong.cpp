@@ -16,7 +16,6 @@ void Pong::update(const std::vector<ControllerState>& controllers)
 
     float dt = GetFrameTime();
 
-
     if (m_game_state == State::PLAYING) {
         if (IsKeyDown(KEY_W) || s1.buttons[0]) {
             m_player_1.speed.y = -1.0F;
@@ -134,13 +133,15 @@ void Pong::draw()
                 static_cast<unsigned char>(
                     255 - tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            DrawText(m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
+            DrawText(
+                m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
         } else if (m_anim_state == AnimationState::LIGHTING) {
             Color color { 255, 255, 255,
                 static_cast<unsigned char>(
                     0 + tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift))) };
 
-            DrawText(m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
+            DrawText(
+                m_score.c_str(), score_position_x, score_position_y, m_animation_font_size, color);
         }
     }
 

@@ -6,5 +6,5 @@
 #define NOGDI
 #define NOUSER
 
-#include <spdlog/spdlog.h>
+#include "Logging.hpp"
 #endif

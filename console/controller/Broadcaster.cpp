@@ -1,7 +1,7 @@
 #include "Broadcaster.hpp"
 #include "../Config.hpp"
+#include "../Logging.hpp"
 #include "Network.hpp"
-#include <spdlog/spdlog.h>
 
 using namespace std::chrono_literals;
 

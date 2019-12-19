@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     console/Main.cpp
     console/Console.cpp
+    console/Logging.cpp
     console/controller/Broadcaster.cpp
     console/controller/Network.cpp
     console/controller/Server.cpp
@@ -25,6 +26,18 @@ set(SOURCE_FILES
     console/tetris/Shape.cpp
     console/tetris/Tetris.cpp
     console/Util.cpp)
+
+option(LOGGING "Enable logging" OFF)
+if(LOGGING)
+    add_compile_definitions(CONSOLE_LOGGING)
+else()
+    if(MSVC)
+        set(CMAKE_EXE_LINKER_FLAGS
+            "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+        set(CMAKE_EXE_LINKER_FLAGS_RELEASE
+            "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    endif()
+endif()
 
 find_package(Threads)
 
@@ -76,27 +89,3 @@ if(WIN32)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 endif()
-
-# Link against winmm.lib on Windows
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE winmm)
-
-    # Set _WIN32_WINNT so Boost doesn't complain
-    macro(get_win32_winnt version)
-        if(CMAKE_SYSTEM_VERSION)
-            set(ver ${CMAKE_SYSTEM_VERSION})
-            string(REGEX MATCH "^([0-9]+).([0-9])" ver ${ver})
-            string(REGEX MATCH "^([0-9]+)" verMajor ${ver})
-            if("${verMajor}" MATCHES "10")
-                set(verMajor "A")
-                string(REGEX REPLACE "^([0-9]+)" ${verMajor} ver ${ver})
-            endif("${verMajor}" MATCHES "10")
-            string(REPLACE "." "" ver ${ver})
-            string(REGEX REPLACE "([0-9A-Z])" "0\\1" ver ${ver})
-            set(${version} "0x${ver}")
-        endif(CMAKE_SYSTEM_VERSION)
-    endmacro(get_win32_winnt)
-
-    get_win32_winnt(ver)
-    add_definitions(-D_WIN32_WINNT=${ver} -D_CRT_SECURE_NO_WARNINGS -DNOMINMAX)
-endif(WIN32)

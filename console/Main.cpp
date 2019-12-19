@@ -3,8 +3,8 @@
 
 #include "Config.hpp"
 #include "Console.hpp"
+#include "Logging.hpp"
 #include <filesystem>
-#include <spdlog/spdlog.h>
 
 int main(int argc, char* argv[])
 {

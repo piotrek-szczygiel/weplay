@@ -1,6 +1,6 @@
 #include "Network.hpp"
+#include "../Logging.hpp"
 #include <algorithm>
-#include <spdlog/spdlog.h>
 
 #ifdef linux
 #include <ifaddrs.h>
