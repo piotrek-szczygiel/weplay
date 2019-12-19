@@ -17,14 +17,14 @@ void Menu::update(const std::vector<ControllerState>& controllers)
     if (input_right) {
         if (m_animation_state == AnimationState::NONE) {
             m_last_game_index = m_game_index;
-            m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
+            m_game_index = (m_game_index + 1) % GAMES;
             m_animation_state = AnimationState::START_RIGHT;
         }
     }
     else if (input_left) {
         if (m_animation_state == AnimationState::NONE) {
             m_last_game_index = m_game_index;
-            m_game_index = (m_game_index + 1) % GAMES;
+            m_game_index = m_game_index == 0 ? (GAMES - 1) : m_game_index - 1;
             m_animation_state = AnimationState::START_LEFT;
         }
     }
