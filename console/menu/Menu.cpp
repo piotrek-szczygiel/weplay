@@ -1,4 +1,5 @@
 #include "Menu.hpp"
+#include <cmath>
 #include <ctime>
 
 namespace Menu {
@@ -150,7 +151,7 @@ void Menu::draw_game_image(float dt)
 
 int sin_out_easing(float time, int start_pos, int distance, float duration)
 {
-    return distance * sin(time / duration * (PI / 2)) + start_pos;
+    return distance * std::sin(time / duration * (PI / 2)) + start_pos;
 }
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
