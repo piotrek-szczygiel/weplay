@@ -57,11 +57,16 @@ std::vector<LocalAddress> get_local_addresses()
     return result;
 }
 
+std::string int_to_ip(uint32_t ip)
+{
+    in_addr ip_address;
+    ip_address.s_addr = ip;
+    return std::string(inet_ntoa(ip_address));
+}
+
 std::string BroadcastSocket::info() const
 {
-    char addr[16];
-    inet_ntop(AF_INET, &m_address, addr, sizeof(addr));
-    return std::string(addr) + ":" + std::to_string(m_port);
+    return int_to_ip(m_address) + ":" + std::to_string(m_port);
 }
 
 bool BroadcastSocket::initialize()
