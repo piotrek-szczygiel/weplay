@@ -10,6 +10,15 @@ int main(int argc, char* argv[])
 {
     spdlog::set_level(spdlog::level::debug);
 
+#ifdef _WIN32
+    WSADATA wsaData;
+    int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (result != NO_ERROR) {
+        spdlog::error("Error at WSAStartup()");
+        return 1;
+    }
+#endif
+
     spdlog::debug("Looking for root directory");
     constexpr int max_depth { 5 };
     bool found = false;

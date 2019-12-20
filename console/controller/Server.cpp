@@ -9,6 +9,7 @@ void Server::start()
 {
     spdlog::info("Starting server");
     ServerSocket server { static_cast<uint16_t>(Config::integer("network", "server_port", 1984)) };
+
     if (!server.bind()) {
         spdlog::error("Unable to start server");
         return;
@@ -29,7 +30,9 @@ void Server::start()
 
         auto result = server.receive();
         if (!result.success) {
-            spdlog::error("Error while receiving: {}", strerror(errno));
+            if (!result.timedout) {
+                spdlog::error("Error while receiving: {}", last_error());
+            }
             continue;
         }
 
@@ -72,5 +75,4 @@ void Server::start()
         spdlog::warn("Unknown packet from {} ({}B): {}", result.repr, result.size, result.data);
     }
 }
-
 }

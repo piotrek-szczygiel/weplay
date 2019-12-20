@@ -31,15 +31,19 @@ void Broadcaster::start()
             sockets.push_back(socket);
             spdlog::info("Broadcasting on {}", socket.info());
         } else {
-            spdlog::warn(
-                "Unable to initialize broadcasting socket {}:{}", int_to_ip(address.address), port);
+            spdlog::warn("Unable to initialize broadcasting socket {}", socket.info());
         }
+    }
+
+    if (sockets.empty()) {
+        spdlog::error("Unable to create any broadcasting socket");
+        return;
     }
 
     while (m_running) {
         for (auto& socket : sockets) {
             if (!socket.send("raspberry-console")) {
-                spdlog::error("Unable to send broadcast on {}: {}", socket.info(), strerror(errno));
+                spdlog::error("Unable to send broadcast on {}: {}", socket.info(), last_error());
             }
         }
 

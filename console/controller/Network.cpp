@@ -2,12 +2,26 @@
 #include "../Logging.hpp"
 #include <algorithm>
 
+std::string BroadcastSocket::info() const
+{
+    return int_to_ip(m_address) + ":" + std::to_string(m_port);
+}
+
 #ifdef linux
 #include <ifaddrs.h>
 #include <libdevmapper.h>
 #include <libnet.h>
 #include <netdb.h>
 #include <netinet/in.h>
+
+std::string last_error() { return std::string(strerror(errno)); }
+
+std::string int_to_ip(uint32_t ip)
+{
+    in_addr addr;
+    addr.s_addr = ip;
+    return inet_ntoa(addr);
+}
 
 std::vector<LocalAddress> get_local_addresses()
 {
@@ -57,18 +71,6 @@ std::vector<LocalAddress> get_local_addresses()
     return result;
 }
 
-std::string int_to_ip(uint32_t ip)
-{
-    in_addr ip_address;
-    ip_address.s_addr = ip;
-    return std::string(inet_ntoa(ip_address));
-}
-
-std::string BroadcastSocket::info() const
-{
-    return int_to_ip(m_address) + ":" + std::to_string(m_port);
-}
-
 bool BroadcastSocket::initialize()
 {
     m_socket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -103,7 +105,7 @@ bool ServerSocket::bind()
 {
     m_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (m_socket < 0) {
-        spdlog::error("Unable to create UDP socket: {}", strerror(errno));
+        spdlog::error("Unable to create UDP socket: {}", last_error());
         return false;
     }
 
@@ -116,7 +118,7 @@ bool ServerSocket::bind()
     m_addr.sin_port = htons(m_port);
 
     if (::bind(m_socket, reinterpret_cast<const sockaddr*>(&m_addr), sizeof(m_addr)) < 0) {
-        spdlog::error("Unable to create UDP server on port {}: {}", m_port, strerror(errno));
+        spdlog::error("Unable to create UDP server on port {}: {}", m_port, last_error());
         return false;
     }
 
@@ -151,7 +153,7 @@ ReceiveResult ServerSocket::receive()
     return result;
 }
 
-bool ServerSocket::send(socket_address addr, const std::string& data)
+bool ServerSocket::send(sockaddr_in addr, const std::string& data)
 {
     int sent = sendto(m_socket, data.c_str(), data.size(), 0,
         reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
@@ -164,10 +166,29 @@ bool ServerSocket::send(socket_address addr, const std::string& data)
 #ifdef _WIN32
 
 #include "../Windows.hpp"
+#include <Winsock2.h>
 #include <iphlpapi.h>
 #include <stdio.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+
+std::string last_error()
+{
+    char* s = nullptr;
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        reinterpret_cast<LPSTR>(&s), 0, NULL);
+
+    std::string message(s);
+    LocalFree(s);
+    return message;
+}
+
+std::string int_to_ip(uint32_t ip)
+{
+    in_addr addr;
+    addr.S_un.S_addr = ip;
+    return inet_ntoa(addr);
+}
 
 std::vector<LocalAddress> get_local_addresses()
 {
@@ -203,6 +224,11 @@ std::vector<LocalAddress> get_local_addresses()
         uint32_t address = address_table->table[i].dwAddr;
         uint32_t mask = address_table->table[i].dwMask;
 
+        if (address == htonl(INADDR_LOOPBACK)) {
+            spdlog::trace("Ignoring loopback interface");
+            continue;
+        }
+
         result.push_back({ address, mask });
     }
 
@@ -213,27 +239,95 @@ std::vector<LocalAddress> get_local_addresses()
     return result;
 }
 
-std::string int_to_ip(uint32_t ip)
+bool BroadcastSocket::initialize()
 {
-    IN_ADDR ip_address;
-    ip_address.S_un.S_addr = ip;
-    return std::string(inet_ntoa(ip_address));
+    m_socket = socket(AF_INET, SOCK_DGRAM, 0);
+
+    if (m_socket == INVALID_SOCKET) {
+        spdlog::error("Unable to create broadcasting socket");
+        return false;
+    }
+
+    int yes = 1;
+    if (setsockopt(m_socket, SOL_SOCKET, SO_BROADCAST, (char*)&yes, sizeof(yes)) < 0) {
+        spdlog::error("Unable to set broadcast option on a socket");
+        return false;
+    }
+
+    m_addr.sin_family = AF_INET;
+    m_addr.sin_port = htons(m_port);
+    m_addr.sin_addr.s_addr = m_address;
+
+    return true;
 }
 
-std::string BroadcastSocket::info() const { return "unimplemented"; }
+bool BroadcastSocket::send(const std::string& data)
+{
+    int sent = sendto(m_socket, data.c_str(), data.size(), 0,
+        reinterpret_cast<const sockaddr*>(&m_addr), sizeof(m_addr));
 
-bool BroadcastSocket::initialize() { return false; }
+    return sent == data.size();
+}
 
-bool BroadcastSocket::send(const std::string& data) { return false; }
+bool ServerSocket::bind()
+{
+    m_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (m_socket == INVALID_SOCKET) {
+        spdlog::error("Unable to create UDP socket: {}", last_error());
+        return false;
+    }
 
-bool ServerSocket::bind() { return false; }
+    DWORD timeout = 1000;
+    setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+
+    m_addr.sin_family = AF_INET;
+    m_addr.sin_addr.s_addr = INADDR_ANY;
+    m_addr.sin_port = htons(m_port);
+
+    if (::bind(m_socket, reinterpret_cast<const sockaddr*>(&m_addr), sizeof(m_addr)) < 0) {
+        spdlog::error("Unable to create UDP server on port {}: {}", m_port, last_error());
+        return false;
+    }
+
+    return true;
+}
 
 ReceiveResult ServerSocket::receive()
 {
     ReceiveResult result {};
+
+    sockaddr_in addr {};
+    int addr_len = sizeof(addr);
+    uint8_t buffer[1024];
+
+    int size = recvfrom(m_socket, reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, 0,
+        reinterpret_cast<sockaddr*>(&addr), &addr_len);
+
+    if (WSAGetLastError() == WSAETIMEDOUT) {
+        result.timedout = true;
+    }
+
+    if (size <= 0) {
+        result.success = false;
+        return result;
+    }
+
+    result.success = true;
+    result.addr = addr;
+    result.data = buffer;
+    result.size = size;
+
+    result.repr = int_to_ip(addr.sin_addr.s_addr) + ":" + std::to_string(addr.sin_port);
+
     return result;
 }
 
-bool ServerSocket::send(socket_address addr, const std::string& data) { return false; }
+bool ServerSocket::send(sockaddr_in addr, const std::string& data)
+{
+    int sent = sendto(m_socket, data.c_str(), data.size(), 0,
+        reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
+
+    return sent == data.size();
+}
 
 #endif // _WIN32

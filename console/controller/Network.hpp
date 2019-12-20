@@ -3,16 +3,16 @@
 
 #ifdef linux
 #include <netinet/in.h>
-#define socket_address sockaddr_in
 #endif
 
 #ifdef _WIN32
-#define socket_address void*
+#include "../Windows.hpp"
 #endif
 
 struct ReceiveResult {
     bool success;
-    socket_address addr;
+    bool timedout;
+    sockaddr_in addr;
     std::string repr;
 
     uint8_t* data;
@@ -24,8 +24,9 @@ struct LocalAddress {
     uint32_t mask;
 };
 
-std::vector<LocalAddress> get_local_addresses();
+std::string last_error();
 std::string int_to_ip(uint32_t);
+std::vector<LocalAddress> get_local_addresses();
 
 class BroadcastSocket {
 public:
@@ -47,7 +48,7 @@ private:
     uint16_t m_port;
 
     int m_socket {};
-    socket_address m_addr {};
+    sockaddr_in m_addr {};
 };
 
 class ServerSocket {
@@ -60,11 +61,11 @@ public:
     bool bind();
 
     ReceiveResult receive();
-    bool send(socket_address addr, const std::string& data);
+    bool send(sockaddr_in addr, const std::string& data);
 
 private:
     uint16_t m_port;
 
     int m_socket {};
-    socket_address m_addr {};
+    sockaddr_in m_addr {};
 };
