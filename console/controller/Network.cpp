@@ -16,7 +16,7 @@ std::vector<LocalAddress> get_local_addresses()
     ifaddrs* if_addr;
     if (getifaddrs(&if_addr) == -1) {
         spdlog::error("Unable to get interfaces information");
-        return result;
+        return {};
     }
 
     int n = 0;
@@ -158,10 +158,61 @@ bool ServerSocket::send(socket_address addr, const std::string& data)
 
 #ifdef _WIN32
 
+#include "../Windows.hpp"
+#include <iphlpapi.h>
+#include <stdio.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 std::vector<LocalAddress> get_local_addresses()
 {
     std::vector<LocalAddress> result {};
+
+    PMIB_IPADDRTABLE address_table = static_cast<MIB_IPADDRTABLE*>(malloc(sizeof(MIB_IPADDRTABLE)));
+    if (address_table == nullptr) {
+        spdlog::error("Memory allocation failed for IP address table");
+        return {};
+    }
+
+    DWORD table_size = 0;
+    if (GetIpAddrTable(address_table, &table_size, 0) == ERROR_INSUFFICIENT_BUFFER) {
+        free(address_table);
+        address_table = static_cast<MIB_IPADDRTABLE*>(malloc(table_size));
+    }
+
+    if (address_table == nullptr) {
+        spdlog::error("Memory allocation failed for GetIpAddrTable");
+        return {};
+    }
+
+    DWORD get_table_result = GetIpAddrTable(address_table, &table_size, 0);
+    if (get_table_result != NO_ERROR) {
+        spdlog::error("GetIpAddrTable failed with error {}", get_table_result);
+        return {};
+    }
+
+    IN_ADDR ip_address {};
+    DWORD entries = address_table->dwNumEntries;
+
+    for (int i = 0; i < entries; i++) {
+        uint32_t address = address_table->table[i].dwAddr;
+        uint32_t mask = address_table->table[i].dwMask;
+
+        result.push_back({ address, mask });
+    }
+
+    if (address_table) {
+        free(address_table);
+    }
+
     return result;
+}
+
+std::string int_to_ip(uint32_t ip)
+{
+    IN_ADDR ip_address;
+    ip_address.S_un.S_addr = ip;
+    return std::string(inet_ntoa(ip_address));
 }
 
 std::string BroadcastSocket::info() const { return "unimplemented"; }

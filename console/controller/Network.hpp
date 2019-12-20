@@ -25,6 +25,7 @@ struct LocalAddress {
 };
 
 std::vector<LocalAddress> get_local_addresses();
+std::string int_to_ip(uint32_t);
 
 class BroadcastSocket {
 public:

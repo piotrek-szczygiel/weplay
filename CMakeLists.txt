@@ -27,7 +27,12 @@ set(SOURCE_FILES
     console/tetris/Tetris.cpp
     console/Util.cpp)
 
-option(LOGGING "Enable logging" OFF)
+if(WIN32)
+    option(LOGGING "Enable logging" ON)
+else()
+    option(LOGGING "Enable logging" OFF)
+endif()
+
 if(LOGGING)
     add_compile_definitions(CONSOLE_LOGGING)
 else()
@@ -38,8 +43,6 @@ else()
             "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     endif()
 endif()
-
-find_package(Threads)
 
 if(WIN32)
     set(DOWNLOAD_RAYLIB ON)
@@ -62,13 +65,6 @@ if(DOWNLOAD_RAYLIB)
             set(FETCHCONTENT_QUIET NO)
             FetchContent_Populate(raylib)
 
-            set(BUILD_EXAMPLES
-                OFF
-                CACHE BOOL "" FORCE)
-            set(BUILD_GAMES
-                OFF
-                CACHE BOOL "" FORCE)
-
             set(SHARED
                 ON
                 CACHE BOOL "" FORCE)
@@ -79,13 +75,10 @@ if(DOWNLOAD_RAYLIB)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/libraries)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_THREAD_LIBS_INIT})
-
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static iphlpapi ws2_32)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
 endif()

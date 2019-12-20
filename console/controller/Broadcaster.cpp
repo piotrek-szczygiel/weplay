@@ -16,6 +16,11 @@ void Broadcaster::start()
     if (addresses.empty()) {
         spdlog::error("No network interfaces to broadcast on");
         return;
+    } else {
+        spdlog::debug("Local network addresses:");
+        for (const auto& a : addresses) {
+            spdlog::debug("\t{}\t{}", int_to_ip(a.address), int_to_ip(a.mask));
+        }
     }
 
     std::vector<BroadcastSocket> sockets {};
@@ -26,7 +31,8 @@ void Broadcaster::start()
             sockets.push_back(socket);
             spdlog::info("Broadcasting on {}", socket.info());
         } else {
-            spdlog::warn("Unable to initialize broadcasting socket {}:{}", address.address, port);
+            spdlog::warn(
+                "Unable to initialize broadcasting socket {}:{}", int_to_ip(address.address), port);
         }
     }
 
