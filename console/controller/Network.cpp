@@ -189,7 +189,7 @@ bool ServerSocket::bind()
     m_addr.sin_addr.s_addr = INADDR_ANY;
     m_addr.sin_port = htons(m_port);
 
-    if (::bind(m_socket, (sockaddr*)&m_addr, sizeof(m_addr)) == SOCKET_ERROR) {
+    if (::bind(m_socket, (sockaddr*)&m_addr, sizeof(m_addr)) == INVALID_SOCKET) {
         spdlog::error("Unable to create UDP server on port {}: {}", m_port, last_error());
         return false;
     }
@@ -215,6 +215,10 @@ ReceiveResult ServerSocket::receive()
 #else
     int size = recvfrom(
         m_socket, buffer, sizeof(buffer) - 1, MSG_WAITALL, (sockaddr*)&addr, (socklen_t*)&addr_len);
+
+    if (errno = EAGAIN) {
+        result.timedout = true;
+    }
 #endif
 
     if (size <= 0) {

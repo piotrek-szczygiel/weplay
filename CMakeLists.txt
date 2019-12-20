@@ -80,5 +80,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/librari
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static iphlpapi ws2_32)
 else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs)
+    find_package(Threads)
+    target_link_libraries(${PROJECT_NAME} PRIVATE raylib stdc++fs ${CMAKE_THREAD_LIBS_INIT})
 endif()
