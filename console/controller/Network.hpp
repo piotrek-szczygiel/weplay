@@ -1,12 +1,12 @@
 #include <string>
 #include <vector>
 
-#ifdef linux
-#include <netinet/in.h>
-#endif
-
 #ifdef _WIN32
 #include "../Windows.hpp"
+#else
+#include <netinet/in.h>
+#define INVALID_SOCKET -1
+#define SOCKET int
 #endif
 
 struct ReceiveResult {
@@ -47,7 +47,7 @@ private:
     uint32_t m_address;
     uint16_t m_port;
 
-    int m_socket {};
+    SOCKET m_socket {};
     sockaddr_in m_addr {};
 };
 
@@ -64,8 +64,8 @@ public:
     bool send(sockaddr_in addr, const std::string& data);
 
 private:
+    SOCKET m_socket {};
     uint16_t m_port;
 
-    int m_socket {};
     sockaddr_in m_addr {};
 };
