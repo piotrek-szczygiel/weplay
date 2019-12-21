@@ -23,7 +23,11 @@ public:
     void update(float dt, int max_height);
     void check_collision(Player* player);
     void set_pos();
-    void draw() { DrawCircle(m_position.x, m_position.y, m_radius, RAYWHITE); };
+    void draw()
+    {
+        DrawCircle(
+            static_cast<int>(m_position.x), static_cast<int>(m_position.y), m_radius, RAYWHITE);
+    };
 
 private:
     float m_radius;

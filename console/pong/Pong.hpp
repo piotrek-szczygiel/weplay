@@ -17,8 +17,8 @@ public:
         , m_framebuffer { LoadRenderTexture(m_width, m_height) }
         , m_score_position {}
     {
-        m_font_size = 0.05F * m_height;
-        m_animation_font_size = 0.15F * m_height;
+        m_font_size = static_cast<int>(0.05F * m_height);
+        m_animation_font_size = static_cast<int>(0.15F * m_height);
 
         new_round();
     }
@@ -66,5 +66,4 @@ private:
 
     static float tween(float value, float x);
 };
-
 }

@@ -144,16 +144,16 @@ void Menu::draw_game_image(float dt)
     }
 
     for (int i = 0; i < GAMES; ++i) {
-        if (m_logos[i].visible)
+        if (m_logos[i].visible) {
             DrawTexture(m_logos[i].texture, m_logos[i].draw_pos_x, m_logos[i].draw_pos_y, RAYWHITE);
+        }
     }
 }
 
 int sin_out_easing(float time, int start_pos, int distance, float duration)
 {
-    return distance * std::sin(time / duration * (PI / 2)) + start_pos;
+    return static_cast<int>(distance * std::sin(time / duration * (PI / 2)) + start_pos);
 }
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
-
 }

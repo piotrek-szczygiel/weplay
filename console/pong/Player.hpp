@@ -32,7 +32,11 @@ public:
     ~Player() = default;
 
     void update(float dt, int min_height, int max_height);
-    void draw() { DrawRectangle(m_position.x, m_position.y, m_width, m_height, RAYWHITE); };
+    void draw()
+    {
+        DrawRectangle(static_cast<int>(m_position.x), static_cast<int>(m_position.y),
+            static_cast<int>(m_width), static_cast<int>(m_height), RAYWHITE);
+    };
     void set_pos(Vector2 pos) { m_position = { pos.x - m_width / 2.0F, pos.y - m_height / 2.0F }; };
     Rectangle get_player_rect()
     {
