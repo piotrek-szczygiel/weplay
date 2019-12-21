@@ -1,4 +1,4 @@
-# Raspberry Pi Console
+# weplay
 
 ## Building
 

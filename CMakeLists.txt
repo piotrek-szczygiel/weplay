@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(raspberry_console)
+project(weplay)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -80,6 +80,7 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/libraries)
 
 if(WIN32)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
     target_link_libraries(${PROJECT_NAME} PRIVATE raylib_static iphlpapi ws2_32)
 else()
     find_package(Threads)
