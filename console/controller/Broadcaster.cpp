@@ -42,7 +42,7 @@ void Broadcaster::start()
 
     while (m_running) {
         for (auto& socket : sockets) {
-            if (!socket.send("raspberry-console")) {
+            if (!socket.send("weplay")) {
                 spdlog::error("Unable to send broadcast on {}: {}", socket.info(), last_error());
             }
         }
@@ -50,5 +50,4 @@ void Broadcaster::start()
         std::this_thread::sleep_for(1s);
     }
 }
-
 }

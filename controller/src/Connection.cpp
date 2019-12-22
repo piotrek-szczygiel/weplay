@@ -51,7 +51,7 @@ void Connection::discover_console_ip()
             if (len > 0 && len < MAX_UDP_PACKET_SIZE) {
                 m_udp_packet[static_cast<size_t>(len)] = 0;
 
-                if (strcmp("raspberry-console", m_udp_packet) == 0) {
+                if (strcmp("weplay", m_udp_packet) == 0) {
                     m_ip = m_udp.remoteIP();
                     m_discovered = true;
                     break;

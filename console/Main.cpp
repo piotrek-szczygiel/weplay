@@ -62,14 +62,14 @@ int main(int argc, char* argv[])
     }
     SetConfigFlags(flags);
 
-    InitWindow(width, height, "Raspberry Console");
+    InitWindow(width, height, "weplay");
 
-    spdlog::info("Initializing console");
+    spdlog::info("Initializing");
 
     {
         Console console;
 
-        spdlog::info("Running console");
+        spdlog::info("Running");
         console.run();
     }
 
