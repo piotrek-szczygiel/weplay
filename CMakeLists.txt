@@ -14,6 +14,7 @@ set(SOURCE_FILES
     console/pong/Pong.cpp
     console/pong/Player.cpp
     console/pong/Ball.cpp
+    console/pong/PowerUp.cpp
     console/starship/Starship.cpp
     console/starship/Ship.cpp
     console/starship/ShipCamera.cpp

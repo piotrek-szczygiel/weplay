@@ -6,7 +6,6 @@ namespace Pong {
 
 void Ball::check_collision(Player* player)
 {
-
     Rectangle rect_1 { player->get_player_rect() };
     Rectangle rect_2 { m_position.x - m_radius, m_position.y - m_radius, m_radius * 2.0F,
         m_radius * 2.0F };
@@ -21,9 +20,15 @@ void Ball::check_collision(Player* player)
     }
 }
 
-void Ball::set_pos()
+void Ball::init_round()
 {
-    float modAngle = random(-PI / 8.0F, PI / 8.0F, m_gen);
+    if (m_power_up_timer > 0.0F) { // reset power up and ball speed
+        m_power_up_timer = 0.0F;
+        m_speed_factor = SPEED_FACTOR;
+    }
+    
+
+    float modAngle = m_dis(m_gen);
     float dirX = std::signbit(m_speed.x) ? -1.0F : 1.0F;
 
     if (dirX > 0.0F) {
@@ -37,6 +42,14 @@ void Ball::set_pos()
 
 void Ball::update(float dt, int max_height)
 {
+    if (m_power_up_timer > 0.0F) {
+        m_power_up_timer -= dt;
+
+        m_speed_factor = SPEED_FACTOR_POWER_UP;
+    } else {
+        m_speed_factor = SPEED_FACTOR;
+    }
+
     if (m_position.y < m_radius) {
         m_speed.y = -m_speed.y;
         m_position.y = m_radius;
