@@ -37,7 +37,6 @@ public:
             static_cast<int>(m_position.x), static_cast<int>(m_position.y), m_radius, RAYWHITE);
     };
 
-
 private:
     float m_speed_factor;
 

@@ -41,7 +41,7 @@ public:
         }
     }
 
-    ~PowerUp() {}
+    ~PowerUp() { }
 
     void update(float dt) { m_position.y += dt * m_speed.y * m_speed_factor; };
     void draw() { DrawTextureRec(m_texture, m_texture_rect, m_position, RAYWHITE); };

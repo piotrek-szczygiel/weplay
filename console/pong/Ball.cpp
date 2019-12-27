@@ -26,7 +26,6 @@ void Ball::init_round()
         m_power_up_timer = 0.0F;
         m_speed_factor = SPEED_FACTOR;
     }
-    
 
     float modAngle = m_dis(m_gen);
     float dirX = std::signbit(m_speed.x) ? -1.0F : 1.0F;
