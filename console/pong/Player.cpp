@@ -14,7 +14,7 @@ void Player::update(float dt, int min_height, int max_height)
 
     m_position.y += m_speed.y * m_speed_factor * dt;
 
-    float min = static_cast<float>(min_height);
+    auto min = static_cast<float>(min_height);
 
     m_position.y = clamp(m_position.y, min, max_height - m_height - 10.0F);
 

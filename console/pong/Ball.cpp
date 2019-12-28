@@ -1,5 +1,4 @@
 #include "Ball.hpp"
-#include "../Util.hpp"
 #include <cmath>
 
 namespace Pong {
@@ -7,8 +6,6 @@ namespace Pong {
 void Ball::check_collision(Player* player)
 {
     Rectangle rect_1 { player->get_player_rect() };
-    Rectangle rect_2 { m_position.x - m_radius, m_position.y - m_radius, m_radius * 2.0F,
-        m_radius * 2.0F };
 
     if (CheckCollisionCircleRec(m_position, m_radius, rect_1)) {
         m_speed = compute_speed({ -m_speed.x, m_speed.y + player->m_speed.y * FRICTION });
@@ -37,6 +34,8 @@ void Ball::init_round()
     }
 
     m_speed = { compute_speed(Vector2 { cosf(modAngle) * dirX * -1.0F, sinf(modAngle) }) };
+
+    m_particle_system.clear();
 }
 
 void Ball::update(float dt, int max_height)
@@ -59,6 +58,35 @@ void Ball::update(float dt, int max_height)
 
     m_position.x += m_speed.x * m_speed_factor * dt;
     m_position.y += m_speed.y * m_speed_factor * dt;
+
+    if (m_particles_delay <= 0.0F) {
+
+        Vector2 particle_start_pos;
+        particle_start_pos.x = m_position.x - 2.0F * (m_speed.x * m_speed_factor * dt);
+        particle_start_pos.y = m_position.y - 2.0F * (m_speed.y * m_speed_factor * dt);
+
+        Vector2 particle_start_speed;
+        particle_start_speed.x = m_speed.x * m_speed_factor * 0.3F;
+        particle_start_speed.y = m_speed.y * m_speed_factor * 0.3F;
+
+        m_power_up_particle.position = particle_start_pos;
+        m_power_up_particle.speed = particle_start_speed;
+
+        m_normal_particle.position = particle_start_pos;
+        m_normal_particle.speed = particle_start_speed;
+
+        if (m_power_up_timer > 0.0F) {
+            m_particle_system.emit(m_power_up_particle);
+        } else {
+            m_particle_system.emit(m_normal_particle);
+        }
+
+        m_particles_delay = PARTICLES_DELAY;
+    }
+
+    m_particles_delay -= dt;
+
+    m_particle_system.update(dt);
 }
 
 Vector2 Ball::compute_speed(Vector2 v)

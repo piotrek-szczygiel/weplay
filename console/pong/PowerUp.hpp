@@ -1,6 +1,5 @@
 #include "Ball.hpp"
 #include "Context.hpp"
-#include <iostream>
 #include <raylib.h>
 
 namespace Pong {
@@ -16,7 +15,7 @@ public:
     PowerUpType m_type;
 
     PowerUp(PowerUpType type, float start_pos_x)
-        : m_position { start_pos_x, 0.0F }
+        : m_position { start_pos_x, -40.0F }
         , m_speed { 0.0F, 1.0F }
         , m_colliding { false }
         , m_speed_factor { 150.0F }

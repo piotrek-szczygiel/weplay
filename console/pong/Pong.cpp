@@ -26,9 +26,9 @@ void Pong::update(const std::vector<ControllerState>& controllers)
             float pos = m_dis_real(m_gen);
 
             if (random_power_up_type == 0) {
-                m_power_ups.push_back(PowerUp(PowerUpType::PALETTE_SIZE, pos));
+                m_power_ups.emplace_back(PowerUpType::PALETTE_SIZE, pos);
             } else {
-                m_power_ups.push_back(PowerUp(PowerUpType::BALL_SPEED, pos));
+                m_power_ups.emplace_back(PowerUpType::BALL_SPEED, pos);
             }
         }
 
@@ -123,14 +123,14 @@ void Pong::draw()
     if (m_game_state == State::PLAYING) {
         DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), BLACK);
 
-        m_player_1.draw();
-        m_player_2.draw();
-
         m_ball.draw();
 
         for (auto& it : m_power_ups) {
             it.draw();
         }
+
+        m_player_1.draw();
+        m_player_2.draw();
 
         DrawText(m_score.c_str(), m_score_position, 15, m_font_size, WHITE);
     } else if (m_game_state == State::SCORING) {
@@ -141,7 +141,7 @@ void Pong::draw()
             m_height / 2 - (static_cast<float>(m_animation_font_size) / 2)) };
 
         float tween_value = tween(230.0F, 2 * (m_animation_timer - m_animation_timer_shift));
-        unsigned char alpha = static_cast<unsigned char>(255 - tween_value);
+        auto alpha = static_cast<unsigned char>(255 - tween_value);
 
         Color shadowing_color { 255, 255, 255, alpha };
 
