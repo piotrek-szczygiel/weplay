@@ -1,4 +1,8 @@
 #pragma once
+
+#define _USE_MATH_DEFINES
+
+#include <math.h>
 #include <random>
 
 template <typename T> T random(T min, T max, std::mt19937& random_generator)
@@ -23,3 +27,7 @@ template <typename T> T clamp(T value, T min, T max)
 bool threshold(float x, float y, float threshold);
 
 float fade(float x, float y, float offset);
+
+unsigned char sin_out_easing(float time, float start, float distance, float duration);
+
+int sin_out_easing(float time, int start_pos, int distance, float duration);

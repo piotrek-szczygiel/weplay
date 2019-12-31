@@ -1,10 +1,8 @@
 #include "Menu.hpp"
-#include <cmath>
+#include "../Util.hpp"
 #include <ctime>
 
 namespace Menu {
-
-int sin_out_easing(float time, int start_pos, int distance, float duration);
 
 void Menu::update(const std::vector<ControllerState>& controllers)
 {
@@ -148,11 +146,6 @@ void Menu::draw_game_image(float dt)
             DrawTexture(m_logos[i].texture, m_logos[i].draw_pos_x, m_logos[i].draw_pos_y, RAYWHITE);
         }
     }
-}
-
-int sin_out_easing(float time, int start_pos, int distance, float duration)
-{
-    return static_cast<int>(distance * std::sin(time / duration * (PI / 2)) + start_pos);
 }
 
 RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
