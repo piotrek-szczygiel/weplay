@@ -62,12 +62,12 @@ void Pong::update(const std::vector<ControllerState>& controllers)
             if (it->m_colliding) {
                 if (it->m_type == PowerUpType::PALETTE_SIZE) {
                     if (m_ball.m_speed.x > 0.0F) {
-                        m_player_1.m_power_up_timer = 10.0F;
+                        m_player_1.m_power_up_timer = PLAYER_POWER_UP_DURATION;
                     } else {
-                        m_player_2.m_power_up_timer = 10.0F;
+                        m_player_2.m_power_up_timer = PLAYER_POWER_UP_DURATION;
                     }
                 } else if (it->m_type == PowerUpType::BALL_SPEED) {
-                    m_ball.m_power_up_timer = 5.0F;
+                    m_ball.m_power_up_timer = BALL_POWER_UP_DURATION;
                 }
 
                 it->to_remove = true;

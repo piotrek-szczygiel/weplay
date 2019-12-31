@@ -11,6 +11,7 @@ constexpr float FRICTION { 0.8F };
 constexpr float SPEED_FACTOR { 800.0F };
 constexpr float SPEED_FACTOR_POWER_UP { 1050.0F };
 constexpr float PARTICLES_DELAY { 0.035F };
+constexpr float BALL_POWER_UP_DURATION { 5.0F };
 
 class Ball {
 public:
@@ -54,16 +55,12 @@ public:
     void update(float dt, int max_height);
     void check_collision(Player* player);
     void init_round();
-    void draw()
-    {
-        m_particle_system.draw();
-        DrawCircle(
-            static_cast<int>(m_position.x), static_cast<int>(m_position.y), m_radius, RAYWHITE);
-    };
+    void draw();
 
 private:
     float m_speed_factor;
     float m_particles_delay;
+    Color m_power_up_color { 254, 109, 41, 255 };
 
     std::mt19937 m_gen { std::random_device {}() };
     std::uniform_real_distribution<> m_dis { -PI / 8.0F, PI / 8.0F };

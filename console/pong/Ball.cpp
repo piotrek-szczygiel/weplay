@@ -1,4 +1,5 @@
 #include "Ball.hpp"
+#include "../Util.hpp"
 #include <cmath>
 
 namespace Pong {
@@ -87,6 +88,23 @@ void Ball::update(float dt, int max_height)
     m_particles_delay -= dt;
 
     m_particle_system.update(dt);
+}
+
+void Ball::draw()
+{
+    Color color = RAYWHITE;
+    if (m_power_up_timer > 0.0F) {
+        float t_dur = BALL_POWER_UP_DURATION; // time duration (maximal)
+
+        // full power up color {254, 109, 41, 255}
+        unsigned char r = sin_out_easing(t_dur - m_power_up_timer, 254.0F, 255.0F - 254.0F, t_dur);
+        unsigned char g = sin_out_easing(t_dur - m_power_up_timer, 109.0F, 255.0F - 109.0F, t_dur);
+        unsigned char b = sin_out_easing(t_dur - m_power_up_timer, 41.0F, 255.0F - 41.0F, t_dur);
+
+        color = { r, g, b, 255 };
+    }
+    m_particle_system.draw();
+    DrawCircle(static_cast<int>(m_position.x), static_cast<int>(m_position.y), m_radius, color);
 }
 
 Vector2 Ball::compute_speed(Vector2 v)

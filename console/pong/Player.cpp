@@ -39,4 +39,18 @@ void Player::init_round(Vector2 pos)
     m_position = { pos.x - m_width / 2.0F, pos.y - m_height / 2.0F };
 }
 
+void Player::draw()
+{
+    Color color = RAYWHITE;
+    if (m_power_up_timer > 0.0F) {
+        float t_dur = PLAYER_POWER_UP_DURATION; // time duration (maximal)
+
+        // full power up color {255, 255, 0, 255}
+        unsigned char b = sin_out_easing(t_dur - m_power_up_timer, 0.0F, 255.0F, t_dur);
+        color = { 255, 255, b, 255 };
+    }
+    DrawRectangle(static_cast<int>(m_position.x), static_cast<int>(m_position.y),
+        static_cast<int>(m_width), static_cast<int>(m_height), color);
+};
+
 }

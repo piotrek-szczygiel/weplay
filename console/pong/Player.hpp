@@ -6,6 +6,7 @@ namespace Pong {
 
 constexpr float PLAYER_HEIGHT { 180.0F };
 constexpr float PLAYER_POWER_UP_HEIGHT { 300.0F };
+constexpr float PLAYER_POWER_UP_DURATION { 10.0F };
 
 struct PlayerControls {
     bool up;
@@ -37,14 +38,8 @@ public:
     ~Player() = default;
 
     void update(float dt, int min_height, int max_height);
-
     void init_round(Vector2 pos);
-
-    void draw()
-    {
-        DrawRectangle(static_cast<int>(m_position.x), static_cast<int>(m_position.y),
-            static_cast<int>(m_width), static_cast<int>(m_height), RAYWHITE);
-    };
+    void draw();
 
     Rectangle get_player_rect()
     {
