@@ -16,10 +16,7 @@ struct PlayerControls {
 class Player {
 public:
     int m_score;
-    float m_width;
-    float m_height;
     float m_power_up_timer;
-    Vector2 m_position;
     Vector2 m_speed;
     PlayerControls m_controls;
 
@@ -32,6 +29,7 @@ public:
         , m_position {}
         , m_speed {}
         , m_power_up_timer { 0.0F }
+        , m_offset_y { 0.0F }
     {
     }
 
@@ -43,11 +41,15 @@ public:
 
     Rectangle get_player_rect()
     {
-        return { m_position.x, m_position.y, static_cast<float>(m_width),
+        return { m_position.x, m_position.y + m_offset_y, static_cast<float>(m_width),
             static_cast<float>(m_height) };
     };
 
 private:
     float m_speed_factor;
+    float m_offset_y;
+    float m_width;
+    float m_height;
+    Vector2 m_position;
 };
 }
