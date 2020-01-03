@@ -119,17 +119,19 @@ void Menu::draw_game_image(float dt)
     if (m_animation_state == AnimationState::PLAYING_RIGHT
         || m_animation_state == AnimationState::PLAYING_LEFT) {
 
-        int start_pos = m_logos[m_game_index].start_pos;
-        int distance = m_logos[m_game_index].dest_pos - start_pos;
+        float start_pos = m_logos[m_game_index].start_pos;
+        float distance = m_logos[m_game_index].dest_pos - start_pos;
 
-        int pos_x = sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME);
+        int pos_x = static_cast<int>(
+            sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME));
 
         m_logos[m_game_index].draw_pos_x = pos_x;
 
         start_pos = m_logos[m_last_game_index].start_pos;
         distance = m_logos[m_last_game_index].dest_pos - start_pos;
 
-        pos_x = sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME);
+        pos_x = static_cast<int>(
+            sin_out_easing(m_animation_timer, start_pos, distance, ANIMATION_TIME));
 
         m_logos[m_last_game_index].draw_pos_x = pos_x;
 

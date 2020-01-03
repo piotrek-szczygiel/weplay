@@ -28,6 +28,4 @@ bool threshold(float x, float y, float threshold);
 
 float fade(float x, float y, float offset);
 
-unsigned char sin_out_easing(float time, float start, float distance, float duration);
-
-int sin_out_easing(float time, int start_pos, int distance, float duration);
+float sin_out_easing(float time, float start, float distance, float duration);

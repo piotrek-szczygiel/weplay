@@ -52,11 +52,24 @@ void Player::draw()
 {
     Color color = RAYWHITE;
     if (m_power_up_timer > 0.0F) {
-        float t_dur = PLAYER_POWER_UP_DURATION; // time duration (maximal)
-
         // full power up color {255, 255, 0, 255}
-        unsigned char b = sin_out_easing(t_dur - m_power_up_timer, 0.0F, 255.0F, t_dur);
-        color = { 255, 255, b, 255 };
+        // after normalization:
+        // r = color_norm.x
+        // g = color_norm.y
+        // b = color_norm.z
+        // a = color_norm.w
+        Vector4 color_norm = ColorNormalize({ 255, 255, 0, 255 });
+
+        float duration = PLAYER_POWER_UP_DURATION; // time duration (maximal)
+        float time = duration - m_power_up_timer;
+
+        // compute float color value <0.0F, 1.0F>
+        float b = sin_out_easing(time, color_norm.z, 1.0F - color_norm.z, duration);
+
+        // compute char color value
+        unsigned char b_val = static_cast<unsigned char>(255.0F * b);
+
+        color = { 255, 255, b_val, 255 };
     }
     DrawRectangle(static_cast<int>(m_position.x), static_cast<int>(m_position.y + m_offset_y),
         static_cast<int>(m_width), static_cast<int>(m_height), color);

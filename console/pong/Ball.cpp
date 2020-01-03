@@ -94,14 +94,28 @@ void Ball::draw()
 {
     Color color = RAYWHITE;
     if (m_power_up_timer > 0.0F) {
-        float t_dur = BALL_POWER_UP_DURATION; // time duration (maximal)
-
         // full power up color {254, 109, 41, 255}
-        unsigned char r = sin_out_easing(t_dur - m_power_up_timer, 254.0F, 255.0F - 254.0F, t_dur);
-        unsigned char g = sin_out_easing(t_dur - m_power_up_timer, 109.0F, 255.0F - 109.0F, t_dur);
-        unsigned char b = sin_out_easing(t_dur - m_power_up_timer, 41.0F, 255.0F - 41.0F, t_dur);
+        // after normalization:
+        // r = color_norm.x
+        // g = color_norm.y
+        // b = color_norm.z
+        // a = color_norm.w
+        Vector4 color_norm = ColorNormalize({ 254, 109, 41, 255 });
 
-        color = { r, g, b, 255 };
+        float duration = BALL_POWER_UP_DURATION; // time duration (maximal)
+        float time = duration - m_power_up_timer;
+
+        // compute float color value <0.0F, 1.0F>
+        float r = sin_out_easing(time, color_norm.x, 1.0F - color_norm.x, duration);
+        float g = sin_out_easing(time, color_norm.y, 1.0F - color_norm.y, duration);
+        float b = sin_out_easing(time, color_norm.z, 1.0F - color_norm.z, duration);
+
+        // compute char color value
+        unsigned char r_val = static_cast<unsigned char>(255.0F * r);
+        unsigned char g_val = static_cast<unsigned char>(255.0F * g);
+        unsigned char b_val = static_cast<unsigned char>(255.0F * b);
+
+        color = { r_val, g_val, b_val, 255 };
     }
     m_particle_system.draw();
     DrawCircle(static_cast<int>(m_position.x), static_cast<int>(m_position.y), m_radius, color);
