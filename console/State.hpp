@@ -24,6 +24,5 @@ public:
 
     virtual void update(const std::vector<ControllerState>&) = 0;
     virtual void draw() = 0;
-    virtual RenderTexture2D framebuffer() = 0;
     virtual StateChange state_change() = 0;
 };

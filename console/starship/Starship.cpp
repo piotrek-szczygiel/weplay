@@ -87,11 +87,7 @@ void Starship::draw()
         EndTextureMode();
     }
 
-    BeginTextureMode(m_framebuffer);
     DrawTexturePro(m_view_1.texture, m_view_source, m_view_dest_1, {}, 0.0F, WHITE);
     DrawTexturePro(m_view_2.texture, m_view_source, m_view_dest_2, {}, 0.0F, WHITE);
-    EndTextureMode();
 }
-
-RenderTexture2D Starship::framebuffer() { return m_framebuffer; }
 }

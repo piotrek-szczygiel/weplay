@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <random>
+#include <raylib.h>
 
 template <typename T> T random(T min, T max, std::mt19937& random_generator)
 {
@@ -29,3 +30,5 @@ bool threshold(float x, float y, float threshold);
 float fade(float x, float y, float offset);
 
 float sin_out_easing(float time, float start, float distance, float duration);
+
+void draw_scaled(RenderTexture2D framebuffer);

@@ -1,4 +1,5 @@
 #include "Tetris.hpp"
+#include "../Util.hpp"
 #include "Context.hpp"
 #include "DrawBlock.hpp"
 #include "Piece.hpp"
@@ -67,7 +68,7 @@ void Tetris::draw()
 
     DrawTexture(Context::instance().texture_ui, 0, 0, WHITE);
     EndTextureMode();
-}
 
-RenderTexture2D Tetris::framebuffer() { return m_framebuffer; }
+    draw_scaled(m_framebuffer);
+}
 }

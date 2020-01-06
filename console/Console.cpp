@@ -35,32 +35,11 @@ void Console::run()
         const auto& controllers = m_server.get_controllers().get_states();
 
         m_current_state->update(controllers);
-        m_current_state->draw();
 
         BeginDrawing();
         ClearBackground(BLACK);
 
-        auto width = static_cast<float>(m_current_state->framebuffer().texture.width);
-        auto height = static_cast<float>(m_current_state->framebuffer().texture.height);
-        auto screen_width = static_cast<float>(GetScreenWidth());
-        auto screen_height = static_cast<float>(GetScreenHeight());
-        float scale = std::min(screen_width / width, screen_height / height);
-
-        Rectangle source {
-            0.0F,
-            0.0F,
-            width,
-            -height,
-        };
-
-        Rectangle dest {
-            (screen_width - width * scale) / 2.0F,
-            (screen_height - height * scale) / 2.0F,
-            width * scale,
-            height * scale,
-        };
-
-        DrawTexturePro(m_current_state->framebuffer().texture, source, dest, {}, 0.0F, WHITE);
+        m_current_state->draw();
 
         DrawFPS(10, 10);
         EndDrawing();

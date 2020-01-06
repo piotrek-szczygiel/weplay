@@ -102,7 +102,6 @@ public:
 
     void update(const std::vector<ControllerState>& controllers) override;
     void draw() override;
-    RenderTexture2D framebuffer() override;
     StateChange state_change() override { return m_state_change; }
     void draw_game_name(int font_size);
     void draw_game_image(float dt);
@@ -143,5 +142,4 @@ private:
 
     std::array<Logo, GAMES> m_logos;
 };
-
 }

@@ -161,9 +161,9 @@ void Pong::draw()
     }
 
     EndTextureMode();
-}
 
-RenderTexture2D Pong::framebuffer() { return m_framebuffer; }
+    draw_scaled(m_framebuffer);
+}
 
 void Pong::new_round()
 {

@@ -77,6 +77,8 @@ void Menu::draw()
     DrawText(time, 980, 10, 16, RAYWHITE);
 
     EndTextureMode();
+
+    draw_scaled(m_framebuffer);
 }
 
 void Menu::draw_game_name(int font_size)
@@ -149,6 +151,4 @@ void Menu::draw_game_image(float dt)
         }
     }
 }
-
-RenderTexture2D Menu::framebuffer() { return m_framebuffer; }
 }
