@@ -30,8 +30,6 @@ void Starship::update(const std::vector<ControllerState>& controllers)
 
 void Starship::draw()
 {
-    constexpr float RENDER_DISTANCE { 300.0F };
-
     for (int i = 0; i < 2; ++i) {
         auto& view = (i == 0) ? m_view_1 : m_view_2;
         auto& player = (i == 0) ? m_player_1 : m_player_2;
@@ -62,11 +60,11 @@ void Starship::draw()
                 continue;
             }
 
-            if (distance < RENDER_DISTANCE) {
+            if (distance < m_render_distance) {
 
-                if (distance > RENDER_DISTANCE * 0.5F) {
+                if (distance > m_render_distance * 0.5F) {
                     column.set_alpha(static_cast<unsigned char>(
-                        (1.0F - ((distance / RENDER_DISTANCE) - 0.5F) * 2.0F) * 255.0F));
+                        (1.0F - ((distance / m_render_distance) - 0.5F) * 2.0F) * 255.0F));
                 } else {
                     column.set_alpha(255);
                 }

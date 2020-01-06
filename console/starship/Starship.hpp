@@ -1,4 +1,5 @@
 #pragma once
+#include "../Config.hpp"
 #include "../State.hpp"
 #include "Column.hpp"
 #include "Ship.hpp"
@@ -24,6 +25,7 @@ public:
         , m_columns { Column::generate_random_columns(
               static_cast<size_t>(m_map_size.z / 10.0F), m_map_size, true) }
     {
+        m_render_distance = Config::real("starship", "render_distance", 300.0F);
     }
 
     ~Starship() override { UnloadRenderTexture(m_framebuffer); }
@@ -51,6 +53,7 @@ private:
     Ship m_player_2 { { 0.0, 5.0, 5.0 }, 50.0F };
 
     Vector3 m_map_size { 40.0F, 30.0F, 10'000.0F };
+    float m_render_distance;
 
     std::vector<Column> m_columns;
 };

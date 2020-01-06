@@ -24,6 +24,11 @@ public:
         return instance().m_reader.GetInteger(section, name, default_value);
     }
 
+    static float real(std::string section, std::string name, float default_value = 0.0F)
+    {
+        return instance().m_reader.GetFloat(section, name, default_value);
+    }
+
     static int boolean(std::string section, std::string name, bool default_value = false)
     {
         return instance().m_reader.GetBoolean(section, name, default_value);
