@@ -12,11 +12,16 @@ void Player::update(float dt, int min_height, int max_height)
     else
         m_speed.y = 0.0F;
 
+    float last_pos = m_position.y;
     m_position.y += m_speed.y * m_speed_factor * dt;
 
     auto min = static_cast<float>(min_height);
 
     m_position.y = clamp(m_position.y, min, max_height - PLAYER_HEIGHT - 10.0F);
+
+    if (last_pos == m_position.y) { // if we stuck on wall and we dont move
+        m_speed.y = 0.0F;
+    }
 
     if (m_power_up_timer > 0.0F) {
         m_power_up_timer -= dt;
