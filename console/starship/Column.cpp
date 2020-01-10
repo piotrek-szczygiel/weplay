@@ -2,6 +2,9 @@
 #include "../Util.hpp"
 #include <algorithm>
 #include <cmath>
+#include <random.hpp>
+
+using Random = effolkronium::random_static;
 
 namespace Starship {
 
@@ -17,15 +20,14 @@ bool Column::collision(Vector3 ship) const
 std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, bool horizontal)
 {
     std::vector<Column> columns {};
-    std::mt19937 gen { std::random_device {}() };
 
     for (size_t i = 0; i < n; ++i) {
-        float height { random(map_size.y / 4.0F, map_size.y * 2.0F, gen) };
+        float height { Random::get(map_size.y / 4.0F, map_size.y * 2.0F) };
 
         Color color {
-            static_cast<unsigned char>(random(20, 255, gen)),
-            static_cast<unsigned char>(random(10, 55, gen)),
-            static_cast<unsigned char>(random(30, 60, gen)),
+            static_cast<unsigned char>(Random::get(20, 255)),
+            static_cast<unsigned char>(Random::get(10, 55)),
+            static_cast<unsigned char>(Random::get(30, 60)),
             255,
         };
 
@@ -34,8 +36,8 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
 
             Vector3 position {
                 0.0F,
-                std::roundf(random(1.0F, map_size.y, gen)),
-                std::roundf(random(50.0F, map_size.z, gen)),
+                std::roundf(Random::get(1.0F, map_size.y)),
+                std::roundf(Random::get(50.0F, map_size.z)),
             };
 
             Vector3 size {
@@ -62,9 +64,9 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
             columns.emplace_back(pole_position, pole_size, color);
         } else {
             Vector3 position {
-                std::roundf(random(-map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F, gen)),
+                std::roundf(Random::get(-map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F)),
                 height / 2.0F,
-                std::roundf(random(50.0F, map_size.z, gen)),
+                std::roundf(Random::get(50.0F, map_size.z)),
             };
 
             Vector3 size {
@@ -82,5 +84,4 @@ std::vector<Column> Column::generate_random_columns(size_t n, Vector3 map_size, 
 
     return columns;
 }
-
 }

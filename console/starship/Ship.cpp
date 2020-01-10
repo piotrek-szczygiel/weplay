@@ -53,7 +53,7 @@ void Ship::update(float dt, Vector3 map_size, const std::vector<Column>& columns
 
     Vector3 new_position {
         clamp(m_position.x + offset.x, -map_size.x / 2.0F + 1.0F, map_size.x / 2.0F - 1.0F),
-        clamp(m_position.y + offset.y, 1.0F, map_size.y),
+        clamp(m_position.y + offset.y, 2.0F, map_size.y),
         clamp(m_position.z + offset.z, 0.0F, map_size.z),
     };
 

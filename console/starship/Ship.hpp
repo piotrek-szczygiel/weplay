@@ -29,11 +29,13 @@ public:
 
     void update(float dt, Vector3 map_size, const std::vector<Column>& columns);
 
+    void set_controls(ShipControls controls) { m_controls = controls; }
+
     Vector3 position() { return m_position; }
 
     Camera camera() { return m_camera.camera; }
 
-    void set_controls(ShipControls controls) { m_controls = controls; }
+    float roll() { return m_controls.roll; }
 
 private:
     Vector3 m_position;

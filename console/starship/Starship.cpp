@@ -1,5 +1,6 @@
 #include "Starship.hpp"
 #include "../Util.hpp"
+#include <raymath.h>
 
 namespace Starship {
 
@@ -23,6 +24,14 @@ void Starship::update(const std::vector<ControllerState>& controllers)
         });
     }
 
+    // m_player_1.set_controls({
+    //    IsKeyDown(KEY_UP),
+    //    IsKeyDown(KEY_DOWN),
+    //    IsKeyDown(KEY_Z),
+    //    IsKeyDown(KEY_X),
+    //    IsKeyDown(KEY_LEFT) ? -1.0F : IsKeyDown(KEY_RIGHT) ? 1.0F : 0.0F,
+    //});
+
     float dt = GetFrameTime();
     m_player_1.update(dt, m_map_size, m_columns);
     m_player_2.update(dt, m_map_size, m_columns);
@@ -33,6 +42,7 @@ void Starship::draw()
     for (int i = 0; i < 2; ++i) {
         auto& view = (i == 0) ? m_view_1 : m_view_2;
         auto& player = (i == 0) ? m_player_1 : m_player_2;
+        auto& opponent = (i == 0) ? m_player_2 : m_player_1;
 
         BeginTextureMode(view);
         ClearBackground(BLACK);
@@ -82,6 +92,9 @@ void Starship::draw()
                 break;
             }
         }
+
+        m_plane.transform = MatrixRotateXYZ({ 0.0F, 0.0F, opponent.roll() * -PI / 8.0F });
+        DrawModel(m_plane, opponent.position(), 0.1F, WHITE);
 
         EndMode3D();
         EndTextureMode();
