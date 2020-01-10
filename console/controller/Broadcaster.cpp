@@ -9,6 +9,11 @@ namespace Controller {
 
 void Broadcaster::start()
 {
+    if (!Config::boolean("network", "enabled", true)) {
+        spdlog::warn("Networking disabled, broadcaster won't start");
+        return;
+    }
+
     const uint16_t port = Config::integer("network", "broadcast_port", 1985);
 
     spdlog::debug("Obtaining local network addresses");

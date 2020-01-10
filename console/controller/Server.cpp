@@ -7,6 +7,11 @@ namespace Controller {
 
 void Server::start()
 {
+    if (!Config::boolean("network", "enabled", true)) {
+        spdlog::warn("Networking disabled, controller server won't start");
+        return;
+    }
+
     spdlog::info("Starting server");
     ServerSocket server { static_cast<uint16_t>(Config::integer("network", "server_port", 1984)) };
 
