@@ -1,5 +1,8 @@
 #include "Pong.hpp"
 #include "../Util.hpp"
+#include "random.hpp"
+
+using Random = effolkronium::random_static;
 
 namespace Pong {
 
@@ -21,9 +24,9 @@ void Pong::update(const std::vector<ControllerState>& controllers)
         } else {
             m_power_up_timer = POWER_UP_DELAY;
 
-            int random_power_up_type = m_dis_int(m_gen);
+            auto random_power_up_type = Random::get(0, 1);
 
-            float pos = m_dis_real(m_gen);
+            auto pos = Random::get(200.0F, 824.0F);
 
             if (random_power_up_type == 0) {
                 m_power_ups.emplace_back(PowerUpType::PALETTE_SIZE, pos);

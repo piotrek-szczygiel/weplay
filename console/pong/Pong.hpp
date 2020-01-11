@@ -67,10 +67,6 @@ private:
     std::string m_score {};
     std::string m_last_score {};
 
-    std::mt19937 m_gen { std::random_device {}() };
-    std::uniform_real_distribution<> m_dis_real { 200.0F, 824.0F };
-    std::uniform_int_distribution<> m_dis_int { 0, 1 };
-
     void new_round();
     void add_score(int id);
     int text_position_center(const char* text, int font_size);

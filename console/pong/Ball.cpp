@@ -1,6 +1,9 @@
 #include "Ball.hpp"
 #include "../Util.hpp"
+#include "random.hpp"
 #include <cmath>
+
+using Random = effolkronium::random_static;
 
 namespace Pong {
 
@@ -25,7 +28,7 @@ void Ball::init_round()
         m_speed_factor = SPEED_FACTOR;
     }
 
-    float modAngle = m_dis(m_gen);
+    float modAngle = Random::get(-PI / 8.0F, PI / 8.0F);
     float dirX = std::signbit(m_speed.x) ? -1.0F : 1.0F;
 
     if (dirX > 0.0F) {
@@ -92,7 +95,7 @@ void Ball::update(float dt, int max_height)
 
 void Ball::draw()
 {
-    Color color = RAYWHITE;
+    auto color = RAYWHITE;
     if (m_power_up_timer > 0.0F) {
         // full power up color {254, 109, 41, 255}
         // after normalization:
@@ -111,9 +114,9 @@ void Ball::draw()
         float b = sin_out_easing(time, color_norm.z, 1.0F - color_norm.z, duration);
 
         // compute char color value
-        unsigned char r_val = static_cast<unsigned char>(255.0F * r);
-        unsigned char g_val = static_cast<unsigned char>(255.0F * g);
-        unsigned char b_val = static_cast<unsigned char>(255.0F * b);
+        auto r_val = static_cast<unsigned char>(255.0F * r);
+        auto g_val = static_cast<unsigned char>(255.0F * g);
+        auto b_val = static_cast<unsigned char>(255.0F * b);
 
         color = { r_val, g_val, b_val, 255 };
     }

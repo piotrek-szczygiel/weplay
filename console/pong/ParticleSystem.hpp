@@ -38,8 +38,5 @@ private:
     };
 
     std::vector<Particle> m_particles;
-
-    std::mt19937 m_gen { std::random_device {}() };
-    std::uniform_real_distribution<> m_dis { 0.0F, 1.0F };
 };
 }

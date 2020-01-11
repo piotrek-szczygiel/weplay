@@ -1,4 +1,7 @@
 #include "ParticleSystem.hpp"
+#include "random.hpp"
+
+using Random = effolkronium::random_static;
 
 namespace Pong {
 
@@ -36,16 +39,16 @@ void ParticleSystem::emit(const ParticleProps& particle_props)
     Particle& particle = m_particles.back();
 
     particle.position = particle_props.position;
-    particle.rotation = m_dis(m_gen) * 2.0F * PI;
+    particle.rotation = Random::get(0.0F, 1.0F) * 2.0F * PI;
 
     particle.speed = particle_props.speed;
-    particle.speed.x += particle_props.speed_variation.x * (m_dis(m_gen) - 0.5F);
-    particle.speed.y += particle_props.speed_variation.y * (m_dis(m_gen) - 0.5F);
+    particle.speed.x += particle_props.speed_variation.x * (Random::get(0.0F, 1.0F) - 0.5F);
+    particle.speed.y += particle_props.speed_variation.y * (Random::get(0.0F, 1.0F) - 0.5F);
 
     particle.color_begin = particle_props.color_begin;
     particle.color_end = particle_props.color_end;
 
-    float random_variation = particle_props.size_variation * (m_dis(m_gen) - 0.5F);
+    float random_variation = particle_props.size_variation * (Random::get(0.0F, 1.0F) - 0.5F);
 
     particle.size_begin = particle_props.size_begin + random_variation;
     particle.size_end = particle_props.size_end;

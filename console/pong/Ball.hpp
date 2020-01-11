@@ -60,10 +60,6 @@ public:
 private:
     float m_speed_factor;
     float m_particles_delay;
-    Color m_power_up_color { 254, 109, 41, 255 };
-
-    std::mt19937 m_gen { std::random_device {}() };
-    std::uniform_real_distribution<> m_dis { -PI / 8.0F, PI / 8.0F };
 
     ParticleProps m_normal_particle, m_power_up_particle;
     ParticleSystem m_particle_system;

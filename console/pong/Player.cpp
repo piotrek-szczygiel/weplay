@@ -55,7 +55,7 @@ void Player::init_round(Vector2 pos)
 
 void Player::draw()
 {
-    Color color = RAYWHITE;
+    auto color = RAYWHITE;
     if (m_power_up_timer > 0.0F) {
         // full power up color {255, 255, 0, 255}
         // after normalization:
@@ -72,7 +72,7 @@ void Player::draw()
         float b = sin_out_easing(time, color_norm.z, 1.0F - color_norm.z, duration);
 
         // compute char color value
-        unsigned char b_val = static_cast<unsigned char>(255.0F * b);
+        auto b_val = static_cast<unsigned char>(255.0F * b);
 
         color = { 255, 255, b_val, 255 };
     }
