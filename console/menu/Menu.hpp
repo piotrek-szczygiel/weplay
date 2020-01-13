@@ -37,20 +37,20 @@ public:
     Menu()
         : m_width { 1024 }
         , m_height { 768 }
-        , m_texture_width { 350 }
-        , m_texture_height { 350 }
+        , m_game_logo_width { 256 }
+        , m__game_logo_height { 256 }
         , m_framebuffer { LoadRenderTexture(m_width, m_height) }
     {
-        int pos_y = m_height / 2 - m_texture_height / 2;
+        int pos_y = m_height / 2 - m__game_logo_height / 2;
 
         m_logos[0] = {
             0,
             0,
-            m_width / 2 - m_texture_width / 2,
+            m_width / 2 - m_game_logo_width / 2,
             pos_y,
             true,
             StateChange::Starship,
-            LoadTexture("resources/menu/starship.png"),
+            LoadTexture("resources/menu/starships.png"),
             "Starship",
         };
 
@@ -72,9 +72,11 @@ public:
             pos_y,
             false,
             StateChange::Pong,
-            LoadTexture("resources/menu/pong.png"),
+            LoadTexture("resources/menu/ping_pong.png"),
             "Pong",
         };
+
+        m_console_logo = LoadTexture("resources/menu/weplay_red.png");
 
         std::vector<std::string> background {};
         for (auto& p : std::filesystem::directory_iterator("resources/menu/wallpaper")) {
@@ -96,6 +98,8 @@ public:
         for (auto& logo : m_logos) {
             UnloadTexture(logo.texture);
         }
+
+        UnloadTexture(m_console_logo);
 
         UnloadRenderTexture(m_framebuffer);
     }
@@ -135,11 +139,13 @@ private:
     int m_game_index {};
     int m_last_game_index {};
     int m_game_name_position {};
-    int m_texture_width {};
-    int m_texture_height {};
+    int m_game_logo_width {};
+    int m__game_logo_height {};
     AnimationState m_animation_state { AnimationState::NONE };
     float m_animation_timer {};
 
     std::array<Logo, GAMES> m_logos;
+
+    Texture2D m_console_logo;
 };
 }

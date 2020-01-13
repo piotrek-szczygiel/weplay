@@ -59,6 +59,8 @@ void Menu::draw()
     DrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
     DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
+    DrawTextureEx(m_console_logo, { 256.0F, 0.0F }, 0.0F, 0.5F, RAYWHITE);
+
     draw_game_name(64);
     draw_game_image(GetFrameTime());
 
@@ -90,8 +92,8 @@ void Menu::draw_game_name(int font_size)
 }
 void Menu::draw_game_image(float dt)
 {
-    int left_border = 0 - m_texture_width;
-    int middle = m_width / 2 - m_texture_width / 2;
+    int left_border = 0 - m_game_logo_width;
+    int middle = m_width / 2 - m_game_logo_width / 2;
     int right_border = m_width;
 
     // SET UP ANIMATION START AND DESTINATION POSITION
