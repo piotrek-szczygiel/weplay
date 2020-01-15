@@ -87,6 +87,8 @@ public:
         for (auto& p : background) {
             m_background.push_back(LoadTexture(p.c_str()));
         }
+
+        m_controller_icon = LoadTexture("resources/menu/controller.png");
     }
 
     ~Menu() override
@@ -100,7 +102,7 @@ public:
         }
 
         UnloadTexture(m_console_logo);
-
+        UnloadTexture(m_controller_icon);
         UnloadRenderTexture(m_framebuffer);
     }
 
@@ -145,7 +147,8 @@ private:
     float m_animation_timer {};
 
     std::array<Logo, GAMES> m_logos;
-
     Texture2D m_console_logo;
+
+    Texture2D m_controller_icon;
 };
 }

@@ -54,29 +54,33 @@ void Menu::draw()
         m_background_frame %= m_background.size();
     }
 
-    DrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
-    DrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
-    DrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
-    DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
+    for (int i = 0; i < m_connected; ++i) {
+        DrawTexture(m_controller_icon, 945 - 24 * i, 12, WHITE);
+    }
+
+    // DrawText(TextFormat("Connected controllers: %d", m_connected), 10, 70, 16, RAYWHITE);
+    // DrawText(TextFormat("Yaw: %d", m_yaw), 10, 100, 16, RAYWHITE);
+    // DrawText(TextFormat("Pitch: %d", m_pitch), 10, 130, 16, RAYWHITE);
+    // DrawText(TextFormat("Roll: %d", m_roll), 10, 160, 16, RAYWHITE);
 
     DrawTextureEx(m_console_logo, { 256.0F, 0.0F }, 0.0F, 0.5F, RAYWHITE);
 
     draw_game_name(64);
     draw_game_image(GetFrameTime());
 
-    for (size_t i = 0; i < m_buttons.size(); ++i) {
-        if (m_buttons[i]) {
-            DrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
-                RAYWHITE);
-        }
-    }
+    // for (size_t i = 0; i < m_buttons.size(); ++i) {
+    //    if (m_buttons[i]) {
+    //        DrawText(TextFormat("Button %d pressed", i), 10, 200 + 30 * static_cast<int>(i), 16,
+    //            RAYWHITE);
+    //    }
+    //}
 
     char time[16];
 
     const auto raw_time = std::time(nullptr);
     const auto time_info = localtime(&raw_time);
     strftime(time, sizeof(time), "%H:%M", time_info);
-    DrawText(time, 980, 10, 16, RAYWHITE);
+    DrawText(time, 975, 15, 16, RAYWHITE);
 
     EndTextureMode();
 
