@@ -41,7 +41,10 @@ void Console::run()
 
         m_current_state->draw();
 
-        DrawFPS(10, 10);
+        if (m_show_fps) {
+            DrawFPS(10, 10);
+        }
+
         EndDrawing();
     }
 }

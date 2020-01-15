@@ -1,3 +1,4 @@
+#include "../Config.hpp"
 #include "../State.hpp"
 #include <algorithm>
 #include <array>
