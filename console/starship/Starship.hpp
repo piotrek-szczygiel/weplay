@@ -59,11 +59,19 @@ private:
     Ship m_player_1 { { 10.0, 5.0, 5.0 }, 50.0F };
     Ship m_player_2 { { -10.0, 5.0, 5.0 }, 50.0F };
 
-    Vector3 m_map_size { 40.0F, 30.0F, 10'000.0F };
+    Vector3 m_map_size { 40.0F, 30.0F, 1'000.0F };
     float m_render_distance;
 
     std::vector<Column> m_columns;
 
     Model m_plane;
+
+    enum class StarshipState {
+        RACING,
+        PLAYER_1_WON,
+        PLAYER_2_WON,
+    };
+
+    StarshipState m_state { StarshipState::RACING };
 };
 }

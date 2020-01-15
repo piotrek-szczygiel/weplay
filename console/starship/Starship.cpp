@@ -35,6 +35,14 @@ void Starship::update(const std::vector<ControllerState>& controllers)
     float dt = GetFrameTime();
     m_player_1.update(dt, m_map_size, m_columns);
     m_player_2.update(dt, m_map_size, m_columns);
+
+    if (m_state == StarshipState::RACING) {
+        if (m_player_1.position().z >= m_map_size.z) {
+            m_state = StarshipState::PLAYER_1_WON;
+        } else if (m_player_2.position().z >= m_map_size.z) {
+            m_state = StarshipState::PLAYER_2_WON;
+        }
+    }
 }
 
 void Starship::draw()
@@ -102,5 +110,26 @@ void Starship::draw()
 
     DrawTexturePro(m_view_1.texture, m_view_source, m_view_dest_1, {}, 0.0F, WHITE);
     DrawTexturePro(m_view_2.texture, m_view_source, m_view_dest_2, {}, 0.0F, WHITE);
+
+    if (m_state != StarshipState::RACING) {
+        int font_size = m_height / 10;
+
+        int y1 = m_height / 4 - font_size / 2;
+        int y2 = m_height / 4 * 3 - font_size / 2;
+
+        int p1 = m_state == StarshipState::PLAYER_1_WON ? y1 : y2;
+        int p2 = m_state == StarshipState::PLAYER_1_WON ? y2 : y1;
+
+        const char* t1 = "VICTORY";
+        const char* t2 = "DEFEAT";
+
+        DrawRectangleGradientH(
+            m_width / 4, m_height / 8, m_width / 2, m_height / 4, DARKGRAY, GRAY);
+        DrawRectangleGradientH(
+            m_width / 4, m_height / 8 * 5, m_width / 2, m_height / 4, DARKGRAY, GRAY);
+
+        DrawText(t1, (m_width - MeasureText(t1, font_size)) / 2, p1, font_size, GREEN);
+        DrawText(t2, (m_width - MeasureText(t2, font_size)) / 2, p2, font_size, RED);
+    }
 }
 }
