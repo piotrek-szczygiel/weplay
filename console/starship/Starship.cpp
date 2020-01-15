@@ -101,9 +101,6 @@ void Starship::draw()
             }
         }
 
-        m_plane.transform = MatrixRotateXYZ({ 0.0F, 0.0F, opponent.roll() * -PI / 8.0F });
-        DrawModel(m_plane, opponent.position(), 0.1F, WHITE);
-
         EndMode3D();
         EndTextureMode();
     }

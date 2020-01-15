@@ -25,18 +25,9 @@ public:
               static_cast<size_t>(m_map_size.z / 10.0F), m_map_size, true) }
     {
         m_render_distance = Config::real("starship", "render_distance", 300.0F);
-
-        m_plane = LoadModel("resources/starship/plane.obj");
-        m_plane.materials[0].maps[MAP_DIFFUSE].texture
-            = LoadTexture("resources/starship/plane_diffuse.png");
     }
 
-    ~Starship() override
-    {
-        UnloadRenderTexture(m_framebuffer);
-        UnloadTexture(m_plane.materials[0].maps[MAP_DIFFUSE].texture);
-        UnloadModel(m_plane);
-    }
+    ~Starship() override { UnloadRenderTexture(m_framebuffer); }
 
     void update(const std::vector<ControllerState>& controllers) override;
     void draw() override;
@@ -63,8 +54,6 @@ private:
     float m_render_distance;
 
     std::vector<Column> m_columns;
-
-    Model m_plane;
 
     enum class StarshipState {
         RACING,
